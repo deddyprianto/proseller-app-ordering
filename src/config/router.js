@@ -151,6 +151,8 @@ import TermsAndConditions from '../pages/TermsAndConditions';
 import Outlets from '../pages/Outlets';
 import OneSignal from 'react-native-onesignal';
 import {HistoryNotificationModal} from '../components/modal';
+import {connect} from 'react-redux';
+import {setNotificationData} from '../actions/order.action';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -218,7 +220,7 @@ const transitionConfig = () => ({
 
 let backPressed = 0;
 
-export default class Routes extends Component {
+class Routes extends Component {
   constructor() {
     super();
     this.state = {
@@ -244,18 +246,47 @@ export default class Routes extends Component {
   };
 
   handleCloseNotification = () => {
+    if (
+      this.state.notification.additionalData?.action ===
+      'GET_TRANSACTION_BY_REFERENCE_NO'
+    ) {
+      return this.setState({openNotification: false}, () => {
+        Actions.pendingOrderDetail({
+          order: this.state.notification.additionalData,
+        });
+      });
+    }
     this.setState({openNotification: false});
+  };
+
+  handleOpenNotification = notification => {
+    if (
+      notification.additionalData?.action === 'GET_TRANSACTION_BY_REFERENCE_NO'
+    ) {
+      setTimeout(() => {
+        Actions.pendingOrderDetail({
+          order: notification.additionalData,
+        });
+      }, 1000);
+    }
   };
 
   handleGetNotification = () => {
     try {
+      OneSignal.setNotificationOpenedHandler(notification => {
+        console.log({notification}, 'luluk');
+      });
+      OneSignal.setNotificationOpenedHandler(notification => {
+        this.handleOpenNotification(notification.notification);
+      });
       OneSignal.setNotificationWillShowInForegroundHandler(
         notificationReceivedEvent => {
           const getNotification = notificationReceivedEvent.getNotification();
-          console.log('masuk sini');
           this.setState({
             notification: getNotification,
           });
+          this.props.dispatch(setNotificationData(getNotification));
+
           this.setState({openNotification: true});
           notificationReceivedEvent.complete(getNotification);
         },
@@ -477,3 +508,12 @@ export default class Routes extends Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Routes);

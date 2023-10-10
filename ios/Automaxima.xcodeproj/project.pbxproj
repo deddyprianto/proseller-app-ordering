@@ -16,6 +16,7 @@
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		6306A376103C8973D833FA50 /* libPods-Automaxima-fareastfloranew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4F41188A016E44FD47821BA /* libPods-Automaxima-fareastfloranew.a */; };
 		6D77A383D9A8E21D1CB62C10 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
+		6DABBDE10652126FEFBAEAF9 /* libPods-Automaxima-fareastfloranew-dev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F8843D0AF8B6AEA33600D319 /* libPods-Automaxima-fareastfloranew-dev.a */; };
 		6F983F8ED0ABC9A8B0392172 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 		71B9617994155D4F62B30BD3 /* libPods-Automaxima-fareastflora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87293050123C19071C661328 /* libPods-Automaxima-fareastflora.a */; };
 		7B4FF2F926284ECC00262C97 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
@@ -26,7 +27,7 @@
 		7B4FF304262852E300262C97 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
 		7B8BA49826AA61AC00486032 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		7BD1A640265E73280011B660 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
-		86089DDAFBACE34E91D17BDC /* libPods-Automaxima-fareastfloranew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C144E1C4D571DD63350A920 /* libPods-Automaxima-fareastfloranew.a */; };
+		86089DDAFBACE34E91D17BDC /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		88072DF92A4BEBB600E3D5A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		88072DFA2A4BEBB600E3D5A4 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
 		88072DFC2A4BEBB600E3D5A4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
@@ -44,6 +45,8 @@
 		88072E0A2A4BEBB600E3D5A4 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		88072E0B2A4BEBB600E3D5A4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		88072E0C2A4BEBB600E3D5A4 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
+		881C82692AD53C0B00DD1C92 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881C82682AD53C0B00DD1C92 /* NotificationService.swift */; };
+		881C826D2AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 881C82662AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		881D49852A1B3DDE009E45B9 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
 		88A12C412AB183F0003936F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		88A12C422AB183F0003936F8 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
@@ -116,10 +119,44 @@
 		942F222339174ACAB6A6FDA4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
 		A06195447CE66214B5DBF2A4 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 		B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
-		C059695DF9A863BFBAED6300 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		C059695DF9A863BFBAED6300 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		E0D99CE8E56FC748DB21480C /* libPods-Automaxima-acemart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A22CF5A6B799FECB1E329625 /* libPods-Automaxima-acemart.a */; };
 		F346368D4E6EABE89E099638 /* libPods-Automaxima-funtoast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 38BC866C066A0605360EEAC1 /* libPods-Automaxima-funtoast.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		881C826B2AD53C0B00DD1C92 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 881C82652AD53C0B00DD1C92;
+			remoteInfo = OneSignalNotificationServiceExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		881C82522AD53B3300DD1C92 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		881C82712AD53C0B00DD1C92 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				881C826D2AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -184,6 +221,9 @@
 		87293050123C19071C661328 /* libPods-Automaxima-fareastflora.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Automaxima-fareastflora.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		88072E142A4BEBB600E3D5A4 /* fareastfloranew-dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "fareastfloranew-dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		88072E152A4BEBB700E3D5A4 /* fareastfloranew-dev.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fareastfloranew-dev.plist"; path = "/Volumes/ssdeksternal/Kantor/proseller-new/ios/fareastfloranew-dev.plist"; sourceTree = "<absolute>"; };
+		881C82662AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		881C82682AD53C0B00DD1C92 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		881C826A2AD53C0B00DD1C92 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-SemiBold.ttf"; path = "assets/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
 		88A12C5C2AB183F0003936F8 /* fareastflora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fareastflora.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88A12C5D2AB183F3003936F8 /* fareastflora-live.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fareastflora-live.plist"; path = "/Volumes/ssdeksternal/Kantor/proseller-new/ios/fareastflora-live.plist"; sourceTree = "<absolute>"; };
@@ -209,6 +249,7 @@
 		C9A3B5E8FBDD4EBB91B0B1F4 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		CA8778DEB0FD4FD787674DC9 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		CEAC92907F8E4E6E8A8098F0 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		D0B0A5FB1B7EEEA295A72B51 /* Pods-Automaxima-fareastfloranew-dev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-fareastfloranew-dev.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-fareastfloranew-dev/Pods-Automaxima-fareastfloranew-dev.release.xcconfig"; sourceTree = "<group>"; };
 		D7BD8C712156486598A6C52A /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		DF794E79A4AFF2E4E9548AD8 /* Pods-Automaxima.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima/Pods-Automaxima.debug.xcconfig"; sourceTree = "<group>"; };
 		E09C9D233F064FE7A691C0C7 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
@@ -219,8 +260,10 @@
 		F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Bold.ttf"; path = "../src/assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; };
 		F7EC34CA2ECC8DEE4128C639 /* Pods-Automaxima-fareastflora.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-fareastflora.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-fareastflora/Pods-Automaxima-fareastflora.debug.xcconfig"; sourceTree = "<group>"; };
 		F82A72A513974AF1948867F4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		F8843D0AF8B6AEA33600D319 /* libPods-Automaxima-fareastfloranew-dev.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Automaxima-fareastfloranew-dev.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F915A6369F710F046DE258B7 /* Pods-AutomaximaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AutomaximaTests.debug.xcconfig"; path = "Target Support Files/Pods-AutomaximaTests/Pods-AutomaximaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		FA0FDC68260DE28A79A60850 /* Pods-Automaxima-AutomaximaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-AutomaximaTests.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-AutomaximaTests/Pods-Automaxima-AutomaximaTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FBD2A89A3A0E44BAA8E7128D /* Pods-Automaxima-fareastfloranew-dev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-fareastfloranew-dev.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-fareastfloranew-dev/Pods-Automaxima-fareastfloranew-dev.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,7 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */,
-				C059695DF9A863BFBAED6300 /* BuildFile in Frameworks */,
+				C059695DF9A863BFBAED6300 /* (null) in Frameworks */,
 				38CD02B10E3B635F55C1978A /* libPods-Automaxima.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -239,6 +282,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				88072DFC2A4BEBB600E3D5A4 /* libz.tbd in Frameworks */,
+				6DABBDE10652126FEFBAEAF9 /* libPods-Automaxima-fareastfloranew-dev.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		881C82632AD53C0B00DD1C92 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,7 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88D1A7002A40301B00C00653 /* libz.tbd in Frameworks */,
-				86089DDAFBACE34E91D17BDC /* libPods-Automaxima-fareastfloranew.a in Frameworks */,
+				86089DDAFBACE34E91D17BDC /* (null) in Frameworks */,
 				6306A376103C8973D833FA50 /* libPods-Automaxima-fareastfloranew.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -334,6 +385,7 @@
 				2CF7891731725588E3C416FB /* libPods-Automaxima.a */,
 				87293050123C19071C661328 /* libPods-Automaxima-fareastflora.a */,
 				B4F41188A016E44FD47821BA /* libPods-Automaxima-fareastfloranew.a */,
+				F8843D0AF8B6AEA33600D319 /* libPods-Automaxima-fareastfloranew-dev.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -391,6 +443,7 @@
 				13B07FAE1A68108700A75B9A /* Automaxima */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* AutomaximaTests */,
+				881C82672AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				852A7AC518F649BB91866045 /* Resources */,
@@ -416,6 +469,7 @@
 				88D1A7182A40301B00C00653 /* fareastfloranew.app */,
 				88072E142A4BEBB600E3D5A4 /* fareastfloranew-dev.app */,
 				88A12C5C2AB183F0003936F8 /* fareastflora.app */,
+				881C82662AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -468,6 +522,15 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		881C82672AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension */ = {
+			isa = PBXGroup;
+			children = (
+				881C82682AD53C0B00DD1C92 /* NotificationService.swift */,
+				881C826A2AD53C0B00DD1C92 /* Info.plist */,
+			);
+			path = OneSignalNotificationServiceExtension;
+			sourceTree = "<group>";
+		};
 		D84DD4EB2504900510345296 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -485,6 +548,8 @@
 				2E678EDB06D4AB9211907F50 /* Pods-Automaxima-fareastflora.release.xcconfig */,
 				8E48F14F0994DF109BD765F5 /* Pods-Automaxima-fareastfloranew.debug.xcconfig */,
 				9EB9FC6D5979E29C1AA02CA0 /* Pods-Automaxima-fareastfloranew.release.xcconfig */,
+				FBD2A89A3A0E44BAA8E7128D /* Pods-Automaxima-fareastfloranew-dev.debug.xcconfig */,
+				D0B0A5FB1B7EEEA295A72B51 /* Pods-Automaxima-fareastfloranew-dev.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -519,12 +584,16 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 88072E112A4BEBB600E3D5A4 /* Build configuration list for PBXNativeTarget "fareastfloranew-dev" */;
 			buildPhases = (
+				35903F5E201179FA1D9D9B59 /* [CP] Check Pods Manifest.lock */,
 				88072DF72A4BEBB600E3D5A4 /* Start Packager */,
 				88072DF82A4BEBB600E3D5A4 /* Sources */,
 				88072DFB2A4BEBB600E3D5A4 /* Frameworks */,
 				88072DFE2A4BEBB600E3D5A4 /* Resources */,
 				88072E0D2A4BEBB600E3D5A4 /* Bundle React Native code and images */,
 				88072E0E2A4BEBB600E3D5A4 /* Upload Debug Symbols to Sentry */,
+				C18CE40481E9E795ED07C602 /* [CP] Embed Pods Frameworks */,
+				16A879D9DBA0E838DC8C81C0 /* [CP] Copy Pods Resources */,
+				881C82522AD53B3300DD1C92 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -534,6 +603,23 @@
 			productName = Automaxima;
 			productReference = 88072E142A4BEBB600E3D5A4 /* fareastfloranew-dev.app */;
 			productType = "com.apple.product-type.application";
+		};
+		881C82652AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 881C826E2AD53C0B00DD1C92 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
+			buildPhases = (
+				881C82622AD53C0B00DD1C92 /* Sources */,
+				881C82632AD53C0B00DD1C92 /* Frameworks */,
+				881C82642AD53C0B00DD1C92 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OneSignalNotificationServiceExtension;
+			productName = OneSignalNotificationServiceExtension;
+			productReference = 881C82662AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		88A12C3D2AB183F0003936F8 /* fareastflora */ = {
 			isa = PBXNativeTarget;
@@ -548,10 +634,12 @@
 				88A12C562AB183F0003936F8 /* Upload Debug Symbols to Sentry */,
 				88A12C572AB183F0003936F8 /* [CP] Copy Pods Resources */,
 				88A12C582AB183F0003936F8 /* [CP] Embed Pods Frameworks */,
+				881C82712AD53C0B00DD1C92 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				881C826C2AD53C0B00DD1C92 /* PBXTargetDependency */,
 			);
 			name = fareastflora;
 			productName = Automaxima;
@@ -633,6 +721,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = Automaxima;
 				TargetAttributes = {
@@ -642,6 +731,11 @@
 					};
 					88072DF52A4BEBB600E3D5A4 = {
 						DevelopmentTeam = YSZ34Z59CY;
+					};
+					881C82652AD53C0B00DD1C92 = {
+						CreatedOnToolsVersion = 14.2;
+						DevelopmentTeam = YSZ34Z59CY;
+						ProvisioningStyle = Automatic;
 					};
 					88A12C3D2AB183F0003936F8 = {
 						DevelopmentTeam = YSZ34Z59CY;
@@ -677,6 +771,7 @@
 				88D1A6F92A40301B00C00653 /* fareastfloranew */,
 				88072DF52A4BEBB600E3D5A4 /* fareastfloranew-dev */,
 				88A12C3D2AB183F0003936F8 /* fareastflora */,
+				881C82652AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -721,6 +816,13 @@
 				88072E0A2A4BEBB600E3D5A4 /* Lato-Italic.ttf in Resources */,
 				88072E0B2A4BEBB600E3D5A4 /* Lato-Medium.ttf in Resources */,
 				88072E0C2A4BEBB600E3D5A4 /* Lato-Regular.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		881C82642AD53C0B00DD1C92 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -849,6 +951,60 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima/Pods-Automaxima-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		16A879D9DBA0E838DC8C81C0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew-dev/Pods-Automaxima-fareastfloranew-dev-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionFaceModel/GoogleMVFaceDetectorResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionTextModel/GoogleMVTextDetectorResources.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVFaceDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew-dev/Pods-Automaxima-fareastfloranew-dev-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		22187624F835C1DEA5772359 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -916,6 +1072,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
+		};
+		35903F5E201179FA1D9D9B59 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Automaxima-fareastfloranew-dev-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 		4CA557EB3FBA4CEEA0E56861 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1530,6 +1708,30 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-acemart/Pods-Automaxima-acemart-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		C18CE40481E9E795ED07C602 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew-dev/Pods-Automaxima-fareastfloranew-dev-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignal.framework/OneSignal",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalCore/OneSignalCore.framework/OneSignalCore",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalExtension/OneSignalExtension.framework/OneSignalExtension",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalOutcomes/OneSignalOutcomes.framework/OneSignalOutcomes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignal.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalExtension.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalOutcomes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew-dev/Pods-Automaxima-fareastfloranew-dev-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		D0A3B10CF04E9282AD4955F6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1614,6 +1816,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		881C82622AD53C0B00DD1C92 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				881C82692AD53C0B00DD1C92 /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		88A12C402AB183F0003936F8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1651,6 +1861,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		881C826C2AD53C0B00DD1C92 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 881C82652AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension */;
+			targetProxy = 881C826B2AD53C0B00DD1C92 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
@@ -1847,11 +2065,13 @@
 		};
 		88072E122A4BEBB600E3D5A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FBD2A89A3A0E44BAA8E7128D /* Pods-Automaxima-fareastfloranew-dev.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1866,7 +2086,7 @@
 				INFOPLIST_FILE = "fareastfloranew-dev.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1883,11 +2103,13 @@
 		};
 		88072E132A4BEBB600E3D5A4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D0B0A5FB1B7EEEA295A72B51 /* Pods-Automaxima-fareastfloranew-dev.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1902,7 +2124,7 @@
 				INFOPLIST_FILE = "fareastfloranew-dev.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1917,14 +2139,82 @@
 			};
 			name = Release;
 		};
+		881C826F2AD53C0B00DD1C92 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OneSignalNotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Automaxima. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-live.OneSignalNotificationServiceExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		881C82702AD53C0B00DD1C92 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OneSignalNotificationServiceExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Automaxima. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-live.OneSignalNotificationServiceExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		88A12C5A2AB183F0003936F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F7EC34CA2ECC8DEE4128C639 /* Pods-Automaxima-fareastflora.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1939,7 +2229,7 @@
 				INFOPLIST_FILE = "fareastflora-live.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1958,10 +2248,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2E678EDB06D4AB9211907F50 /* Pods-Automaxima-fareastflora.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1976,7 +2267,7 @@
 				INFOPLIST_FILE = "fareastflora-live.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.1.2;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -1998,7 +2289,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -2013,7 +2304,7 @@
 				INFOPLIST_FILE = "fareastflora-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2035,7 +2326,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 68;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -2050,7 +2341,7 @@
 				INFOPLIST_FILE = "fareastflora-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.31;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2237,6 +2528,15 @@
 			buildConfigurations = (
 				88072E122A4BEBB600E3D5A4 /* Debug */,
 				88072E132A4BEBB600E3D5A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		881C826E2AD53C0B00DD1C92 /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				881C826F2AD53C0B00DD1C92 /* Debug */,
+				881C82702AD53C0B00DD1C92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

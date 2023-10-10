@@ -2164,3 +2164,12 @@ export const getOrderDetail = refNo => {
     }
   };
 };
+
+export const setNotificationData = payload => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'SET_NOTIFICATION_DATA',
+      payload,
+    });
+  };
+};

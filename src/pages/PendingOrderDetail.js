@@ -6,17 +6,16 @@
  */
 
 import React, {useEffect} from 'react';
-import {Actions} from 'react-native-router-flux';
 import {StyleSheet, SafeAreaView} from 'react-native';
 
 import colorConfig from '../config/colorConfig';
 
-import {isEmptyArray} from '../helper/CheckEmpty';
 import Header from '../components/layout/header';
 import Theme from '../theme';
 import OrderDetail from './OrderDetail';
 import {useDispatch} from 'react-redux';
 import {getOrderDetail} from '../actions/order.action';
+import LoadingScreen from '../components/loadingScreen';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -202,26 +201,27 @@ const useStyles = () => {
 const PendingOrderDetail = ({order}) => {
   const styles = useStyles();
   const [dataOrder, setDataOrder] = React.useState(order);
+  const [isLoading, setIsLoading] = React.useState(true);
   const dispatch = useDispatch();
   const fetchOrderDetail = async () => {
-    if (order?.transactionRefNo) {
+    if (order?.transactionRefNo && order?.action) {
+      setIsLoading(true);
       const response = await dispatch(getOrderDetail(order?.transactionRefNo));
       setDataOrder(response);
-      console.log({response}, 'laka');
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
     }
   };
   useEffect(() => {
     fetchOrderDetail();
   }, []);
 
-  if (isEmptyArray(order?.details)) {
-    Actions.pop();
-  }
-
   return (
     <SafeAreaView style={styles.root}>
       <Header title="Order Detail" />
-      <OrderDetail data={dataOrder} />
+      <LoadingScreen loading={isLoading} />
+      {!isLoading ? <OrderDetail data={dataOrder} /> : null}
     </SafeAreaView>
   );
 };
