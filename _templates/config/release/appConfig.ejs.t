@@ -18,6 +18,7 @@ const appConfig = {
   modifierType: '<%= modifierType %>',
   pointType: '<%= pointType %>',
   textModifier: '<%= textModifier %>',
+  isApplyPromoCode: '<%= isApplyPromoCode %>',
   
 
   // image company

@@ -206,9 +206,19 @@ class DetailPoint extends Component {
     return local;
   };
 
+  eliminateZeroPoint = () => {
+    if (!isEmptyArray(this.state.history)) {
+      const removeZeroPoint = this.state.history.filter(
+        history => history?.pointBalance > 0,
+      );
+
+      return removeZeroPoint;
+    }
+  };
+
   render() {
     const {colors, campignData} = this.props;
-    const {customerActivity, dataLength, actualLength, history} = this.state;
+    const {customerActivity, dataLength, actualLength} = this.state;
     return (
       <SafeAreaView>
         {this.state.loading && <Loader />}
@@ -232,15 +242,25 @@ class DetailPoint extends Component {
                   {`$${campignData?.points?.netSpendToPoint0}`} spent
                 </GlobalText>
               </View>
-              {!isEmptyArray(history) && (
-                <View style={styles.ph16}>
-                  <View style={styles.pointExpiredContainer(colors.greyScale4)}>
-                    <GlobalText style={styles.pointExpiredText(colors.primary)}>
-                      {history[0].pointBalance} points will expire on{' '}
-                      {format(new Date(history[0].expiryDate), 'dd MMM yyyy')}
-                    </GlobalText>
-                  </View>
-                </View>
+              {!isEmptyArray(this.eliminateZeroPoint()) && (
+                <>
+                  {this.eliminateZeroPoint()[0]?.pointBalance > 0 ? (
+                    <View style={styles.ph16}>
+                      <View
+                        style={styles.pointExpiredContainer(colors.greyScale4)}>
+                        <GlobalText
+                          style={styles.pointExpiredText(colors.primary)}>
+                          {this.eliminateZeroPoint()[0].pointBalance} points
+                          will expire on{' '}
+                          {format(
+                            new Date(this.eliminateZeroPoint()[0].expiryDate),
+                            'dd MMM yyyy',
+                          )}
+                        </GlobalText>
+                      </View>
+                    </View>
+                  ) : null}
+                </>
               )}
 
               <View style={[styles.ph16, styles.mv16]}>
