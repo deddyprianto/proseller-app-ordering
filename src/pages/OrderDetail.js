@@ -937,7 +937,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             />
           </View>
 
-          {data?.earnedPoint > 0 ? (
+          {data?.earnedPoint > 0 || data?.point > 0 ? (
             <>
               <View style={styles.orderDetailWrapCOntainer}>
                 <GlobalText style={styles.oredrDetailText}>Rewards</GlobalText>
@@ -953,7 +953,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                   <View>
                     <GlobalText
                       style={[styles.primaryColor, styles.mediumFont]}>
-                      {data?.earnedPoint}
+                      {data?.earnedPoint || data?.point}
                     </GlobalText>
                   </View>
                 </View>
