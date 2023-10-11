@@ -149,6 +149,10 @@ import ProfilePaymentMethod from '../pages/ProfilePaymentMethod/PaymentMethod';
 import CreditCardDetail from '../pages/CreditCardDetail';
 import TermsAndConditions from '../pages/TermsAndConditions';
 import Outlets from '../pages/Outlets';
+import OneSignal from 'react-native-onesignal';
+import {HistoryNotificationModal} from '../components/modal';
+import {connect} from 'react-redux';
+import {setNotificationData} from '../actions/order.action';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -216,17 +220,81 @@ const transitionConfig = () => ({
 
 let backPressed = 0;
 
-export default class Routes extends Component {
-  componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-  }
-
+class Routes extends Component {
   constructor() {
     super();
     this.state = {
       backPressed: 1,
+      notification: null,
+      openNotification: false,
     };
   }
+
+  componentDidMount() {
+    this.handleGetNotification();
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  renderHistoryNotificationModal = () => {
+    return (
+      <HistoryNotificationModal
+        value={this.state.notification}
+        open={this.state.openNotification}
+        handleClose={this.handleCloseNotification}
+      />
+    );
+  };
+
+  handleCloseNotification = () => {
+    if (
+      this.state.notification.additionalData?.action ===
+      'GET_TRANSACTION_BY_REFERENCE_NO'
+    ) {
+      return this.setState({openNotification: false}, () => {
+        Actions.pendingOrderDetail({
+          order: this.state.notification.additionalData,
+        });
+      });
+    }
+    this.setState({openNotification: false});
+  };
+
+  handleOpenNotification = notification => {
+    if (
+      notification.additionalData?.action === 'GET_TRANSACTION_BY_REFERENCE_NO'
+    ) {
+      setTimeout(() => {
+        Actions.pendingOrderDetail({
+          order: notification.additionalData,
+        });
+        this.setState({openNotification: false});
+      }, 1000);
+    }
+  };
+
+  handleGetNotification = () => {
+    try {
+      OneSignal.setNotificationOpenedHandler(notification => {
+        this.handleOpenNotification(notification.notification);
+      });
+      OneSignal.setNotificationWillShowInForegroundHandler(
+        notificationReceivedEvent => {
+          const getNotification = notificationReceivedEvent.getNotification();
+          this.setState({
+            notification: getNotification,
+          });
+          this.props.dispatch(setNotificationData(getNotification));
+
+          this.setState({openNotification: true});
+          notificationReceivedEvent.complete(getNotification);
+        },
+      );
+    } catch (e) {
+      if (__DEV__) {
+        console.log(e, 'error one signal');
+      }
+    }
+  };
 
   handleBackButton = () => {
     if (
@@ -249,189 +317,201 @@ export default class Routes extends Component {
 
   render() {
     return (
-      <Router uriPrefix={awsConfig.APP_DEEP_LINK}>
-        <Scene>
-          <Scene
-            transitionConfig={transitionConfig}
-            key="app"
-            hideNavBar={true}>
-            <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
-            <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
+      <>
+        <Router uriPrefix={awsConfig.APP_DEEP_LINK}>
+          <Scene>
             <Scene
-              key="signInPhoneNumberWithPassword"
-              component={SignInPhoneNumberWithPassword}
-            />
-            <Scene key="signInEmail" component={SignInEmail} />
-            <Scene
-              key="signInEmailWithPassword"
-              component={SignInEmailWithPassword}
-            />
-            <Scene key="inputEmail" component={InputEmail} />
-            <Scene
-              key="verifyOtpAfterRegister"
-              component={VerifyOtpAfterRegister}
-            />
-            <Scene
-              key="verifyOtpAfterRegisterEmail"
-              component={VerifyOtpAfterRegisterEmail}
-            />
-            <Scene key="mobileRegister" component={MobileRegister} />
-            <Scene key="inboxDetailMessage" component={InboxDetailMessage} />
-            <Scene
-              key="mobileRegisterWithPassword"
-              component={MobileRegisterWithPassword}
-            />
-            <Scene key="emailRegister" component={EmailRegister} />
-            <Scene
-              key="emailRegisterWithPassword"
-              component={EmailRegisterWithPassword}
-            />
-            <Scene key="listLanguages" component={ListLanguages} />
-            <Scene key="pay" component={Pay} />
-            <Scene key="rewards" component={VoucherDetailV2} />
-            <Scene key="qrcode" component={RewardsQRmenu} />
-            <Scene
-              key="scan"
-              path={'/payment/:paymentRefNo/'}
-              component={RewardsQRscan}
-            />
-            <Scene key="scanBarcode" component={ScanBarcode} />
-            <Scene key="voucher" component={VoucherDetail} />
-            <Scene
-              key="historyDetailPayment"
-              component={HistoryDetailPayment}
-            />
-            <Scene key="store" component={Store} />
-            <Scene key="storeDetailStores" component={StoreDetailStores} />
-            <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
-            <Scene
-              key="storeDetailPromotion"
-              component={StoreDetailPromotion}
-            />
-            <Scene key="storeSeeMap" component={StoresMap} />
-            <Scene key="myVouchers" component={MyVouchers} />
-            <Scene key="redeemVoucher" component={RedeemVoucher} />
-            <Scene key="accountEditProfil" component={AccountEditProfil} />
-            <Scene key="paymentDetail" component={PaymentDetail} />
-            <Scene
-              key="paymentSuccess"
-              component={PaymentSuccess}
-              drawerLockMode="locked-closed"
-              gesturesEnabled={false}
-            />
-            <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
-            <Scene key="paymentDetailItem" component={PaymentDetailItem} />
-            <Scene key="inboxDetail" component={InboxDetail} />
-            <Scene key="inbox" component={Inbox} />
-            <Scene key="paymentAddPoint" component={PaymentAddPoint} />
-            <Scene key="detailStamps" component={RewardsStamps} />
-            <Scene key="detailPoint" component={DetailPoint} />
-            <Scene key="order" component={Order} />
-            <Scene key="categoryProducts" component={CategoryProducts} />
-            <Scene key="productsMode2" component={ProductsRetail} />
-            <Scene key="specificCategory" component={ProductsSpecific} />
-            <Scene key="basket" component={Basket} />
-            {/* <Scene key="cart" component={Cart} /> */}
-            <Scene key="scanQRTable" component={ScanQRTable} />
-            <Scene key="confirmTable" component={ConfirmTable} />
-            <Scene key="settleOrder" component={SettleOrder} />
-            <Scene key="waitingFood" component={WaitingFood} />
-            <Scene key="QRCodeCart" component={QRCodeCart} />
-            <Scene key="listCard" component={ListCard} />
-            <Scene key="hostedPayment" component={HostedPayment} />
-            <Scene key="hostedTrx" component={HostedTransaction} />
-            <Scene key="detailCard" component={DetailCard} />
-            <Scene key="paymentMethods" component={PaymentMethods} />
-            <Scene key="paymentAddCard" component={PaymentAddCard} />
-            <Scene key="listMembership" component={ListMembership} />
-            <Scene key="detailMembership" component={DetailMembership} />
-            <Scene key="listAddress" component={ListAddress} />
-            <Scene key="addAddress" component={AddAddress} />
-            <Scene key="pickCoordinate" component={PickCoordinate} />
-            <Scene key="editAddress" component={EditAddress} />
-            <Scene key="selectAddress" component={SelectAddress} />
-            <Scene key="listLanguages" component={ListLanguages} />
-            <Scene key="listReferral" component={ListReferral} />
-            <Scene key="addReferral" component={AddReferral} />
-            <Scene key="contacts" component={Contacts} />
-            <Scene key="pickUpTime" component={PickUpTime} />
-            <Scene key="changeCredentials" component={ChangeCredentials} />
-            <Scene key="menuCategory" component={MenuCategory} />
-            <Scene key="termsCondition" component={TermsCondition} />
-            <Scene key="stores" component={Stores} />
-            <Scene
-              key="changeCredentialsOTP"
-              component={ChangeCredentialsOTP}
-            />
-            <Scene key="summary" component={Summary} />
-            <Scene key="buySVC" component={BuySVC} />
-            <Scene key="SVCDetail" component={SVCDetail} />
-            <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
-            <Scene key="transferSVC" component={TransferSVC} />
-            <Scene key="applyPromoCode" component={ApplyPromoCode} />
-            <Scene key="editProfile" component={EditProfile} />
-            <Scene key="verifyRegister" component={VerifyRegister} />
-            <Scene key="notifications" component={Notifications} />
-            {/* //martin */}
-            {/* <Scene key="pageIndex" component={PageIndex} initial={true} /> */}
-            <Scene key="pageIndex" component={NewPageIndex} initial={true} />
-            <Scene key="eStore" component={EStore} />
-            <Scene key="eCard" component={ECard} />
-            <Scene key="onBoarding" component={OnBoarding} />
-            <Scene key="register" component={Register} />
-            <Scene key="registerForm" component={RegisterForm} />
-            <Scene key="otp" component={OTP} />
-            <Scene key="login" component={Login} />
-            <Scene key="eGift" component={EGift} />
-            <Scene key="sendEGift" component={SendEGift} />
-            <Scene key="orderHere" component={OrderHere} />
-            <Scene key="cart" component={Cart} />
-            <Scene key="redeem" component={Redeem} />
-            <Scene key="myFavoriteOutlets" component={MyFavoriteOutlets} />
-            <Scene key="favoriteOutlets" component={FavoriteOutlets} />
-            <Scene
-              key="favoriteOutletDetail"
-              component={FavoriteOutletDetail}
-            />
-            <Scene key="voucherDetail" component={VoucherDetail} />
-            <Scene
-              key="pointDetailAndHistory"
-              component={PointDetailAndHistory}
-            />
-            <Scene key="myDeliveryAddress" component={MyDeliveryAddress} />
-            <Scene key="addNewAddress" component={AddNewAddress} />
-            <Scene key="pendingOrderDetail" component={PendingOrderDetail} />
-            <Scene key="homeRetail" component={HomeRetail} />
-            <Scene key="scannerBarcode" component={ScannerBarcode} />
-            <Scene key="searchProduct" component={SearchProduct} />
-            <Scene key="faq" component={FAQ} />
-            <Scene key="referral" component={Referral} />
-            <Scene key="policy" component={WebviewPage} />
+              transitionConfig={transitionConfig}
+              key="app"
+              hideNavBar={true}>
+              <Scene key="inputPhoneNumber" component={InputPhoneNumber} />
+              <Scene key="signInPhoneNumber" component={SignInPhoneNumber} />
+              <Scene
+                key="signInPhoneNumberWithPassword"
+                component={SignInPhoneNumberWithPassword}
+              />
+              <Scene key="signInEmail" component={SignInEmail} />
+              <Scene
+                key="signInEmailWithPassword"
+                component={SignInEmailWithPassword}
+              />
+              <Scene key="inputEmail" component={InputEmail} />
+              <Scene
+                key="verifyOtpAfterRegister"
+                component={VerifyOtpAfterRegister}
+              />
+              <Scene
+                key="verifyOtpAfterRegisterEmail"
+                component={VerifyOtpAfterRegisterEmail}
+              />
+              <Scene key="mobileRegister" component={MobileRegister} />
+              <Scene key="inboxDetailMessage" component={InboxDetailMessage} />
+              <Scene
+                key="mobileRegisterWithPassword"
+                component={MobileRegisterWithPassword}
+              />
+              <Scene key="emailRegister" component={EmailRegister} />
+              <Scene
+                key="emailRegisterWithPassword"
+                component={EmailRegisterWithPassword}
+              />
+              <Scene key="listLanguages" component={ListLanguages} />
+              <Scene key="pay" component={Pay} />
+              <Scene key="rewards" component={VoucherDetailV2} />
+              <Scene key="qrcode" component={RewardsQRmenu} />
+              <Scene
+                key="scan"
+                path={'/payment/:paymentRefNo/'}
+                component={RewardsQRscan}
+              />
+              <Scene key="scanBarcode" component={ScanBarcode} />
+              <Scene key="voucher" component={VoucherDetail} />
+              <Scene
+                key="historyDetailPayment"
+                component={HistoryDetailPayment}
+              />
+              <Scene key="store" component={Store} />
+              <Scene key="storeDetailStores" component={StoreDetailStores} />
+              <Scene key="seeMorePromotion" component={StoreSeeMorePromotion} />
+              <Scene
+                key="storeDetailPromotion"
+                component={StoreDetailPromotion}
+              />
+              <Scene key="storeSeeMap" component={StoresMap} />
+              <Scene key="myVouchers" component={MyVouchers} />
+              <Scene key="redeemVoucher" component={RedeemVoucher} />
+              <Scene key="accountEditProfil" component={AccountEditProfil} />
+              <Scene key="paymentDetail" component={PaymentDetail} />
+              <Scene
+                key="paymentSuccess"
+                component={PaymentSuccess}
+                drawerLockMode="locked-closed"
+                gesturesEnabled={false}
+              />
+              <Scene key="paymentAddVoucers" component={PaymentAddVoucers} />
+              <Scene key="paymentDetailItem" component={PaymentDetailItem} />
+              <Scene key="inboxDetail" component={InboxDetail} />
+              <Scene key="inbox" component={Inbox} />
+              <Scene key="paymentAddPoint" component={PaymentAddPoint} />
+              <Scene key="detailStamps" component={RewardsStamps} />
+              <Scene key="detailPoint" component={DetailPoint} />
+              <Scene key="order" component={Order} />
+              <Scene key="categoryProducts" component={CategoryProducts} />
+              <Scene key="productsMode2" component={ProductsRetail} />
+              <Scene key="specificCategory" component={ProductsSpecific} />
+              <Scene key="basket" component={Basket} />
+              {/* <Scene key="cart" component={Cart} /> */}
+              <Scene key="scanQRTable" component={ScanQRTable} />
+              <Scene key="confirmTable" component={ConfirmTable} />
+              <Scene key="settleOrder" component={SettleOrder} />
+              <Scene key="waitingFood" component={WaitingFood} />
+              <Scene key="QRCodeCart" component={QRCodeCart} />
+              <Scene key="listCard" component={ListCard} />
+              <Scene key="hostedPayment" component={HostedPayment} />
+              <Scene key="hostedTrx" component={HostedTransaction} />
+              <Scene key="detailCard" component={DetailCard} />
+              <Scene key="paymentMethods" component={PaymentMethods} />
+              <Scene key="paymentAddCard" component={PaymentAddCard} />
+              <Scene key="listMembership" component={ListMembership} />
+              <Scene key="detailMembership" component={DetailMembership} />
+              <Scene key="listAddress" component={ListAddress} />
+              <Scene key="addAddress" component={AddAddress} />
+              <Scene key="pickCoordinate" component={PickCoordinate} />
+              <Scene key="editAddress" component={EditAddress} />
+              <Scene key="selectAddress" component={SelectAddress} />
+              <Scene key="listLanguages" component={ListLanguages} />
+              <Scene key="listReferral" component={ListReferral} />
+              <Scene key="addReferral" component={AddReferral} />
+              <Scene key="contacts" component={Contacts} />
+              <Scene key="pickUpTime" component={PickUpTime} />
+              <Scene key="changeCredentials" component={ChangeCredentials} />
+              <Scene key="menuCategory" component={MenuCategory} />
+              <Scene key="termsCondition" component={TermsCondition} />
+              <Scene key="stores" component={Stores} />
+              <Scene
+                key="changeCredentialsOTP"
+                component={ChangeCredentialsOTP}
+              />
+              <Scene key="summary" component={Summary} />
+              <Scene key="buySVC" component={BuySVC} />
+              <Scene key="SVCDetail" component={SVCDetail} />
+              <Scene key="virtualKeyboard" component={VirtualKeyboardCom} />
+              <Scene key="transferSVC" component={TransferSVC} />
+              <Scene key="applyPromoCode" component={ApplyPromoCode} />
+              <Scene key="editProfile" component={EditProfile} />
+              <Scene key="verifyRegister" component={VerifyRegister} />
+              <Scene key="notifications" component={Notifications} />
+              {/* //martin */}
+              {/* <Scene key="pageIndex" component={PageIndex} initial={true} /> */}
+              <Scene key="pageIndex" component={NewPageIndex} initial={true} />
+              <Scene key="eStore" component={EStore} />
+              <Scene key="eCard" component={ECard} />
+              <Scene key="onBoarding" component={OnBoarding} />
+              <Scene key="register" component={Register} />
+              <Scene key="registerForm" component={RegisterForm} />
+              <Scene key="otp" component={OTP} />
+              <Scene key="login" component={Login} />
+              <Scene key="eGift" component={EGift} />
+              <Scene key="sendEGift" component={SendEGift} />
+              <Scene key="orderHere" component={OrderHere} />
+              <Scene key="cart" component={Cart} />
+              <Scene key="redeem" component={Redeem} />
+              <Scene key="myFavoriteOutlets" component={MyFavoriteOutlets} />
+              <Scene key="favoriteOutlets" component={FavoriteOutlets} />
+              <Scene
+                key="favoriteOutletDetail"
+                component={FavoriteOutletDetail}
+              />
+              <Scene key="voucherDetail" component={VoucherDetail} />
+              <Scene
+                key="pointDetailAndHistory"
+                component={PointDetailAndHistory}
+              />
+              <Scene key="myDeliveryAddress" component={MyDeliveryAddress} />
+              <Scene key="addNewAddress" component={AddNewAddress} />
+              <Scene key="pendingOrderDetail" component={PendingOrderDetail} />
+              <Scene key="homeRetail" component={HomeRetail} />
+              <Scene key="scannerBarcode" component={ScannerBarcode} />
+              <Scene key="searchProduct" component={SearchProduct} />
+              <Scene key="faq" component={FAQ} />
+              <Scene key="referral" component={Referral} />
+              <Scene key="policy" component={WebviewPage} />
 
-            <Scene key="orderingMode" component={OrderingMode} />
-            <Scene key="payment" component={Payment} />
-            <Scene key="contactUs" component={ContactUsBasic} />
-            <Scene key="voucherV2" component={VoucherDetailV2} />
-            <Scene key="contactUsBasic" component={ContactUsBasic} />
-            <Scene key="contactUsStarter" component={ContactUsStarter} />
+              <Scene key="orderingMode" component={OrderingMode} />
+              <Scene key="payment" component={Payment} />
+              <Scene key="contactUs" component={ContactUsBasic} />
+              <Scene key="voucherV2" component={VoucherDetailV2} />
+              <Scene key="contactUsBasic" component={ContactUsBasic} />
+              <Scene key="contactUsStarter" component={ContactUsStarter} />
 
-            <Scene key="membership" component={Membership} />
-            <Scene key="membershipAllTier" component={MembershipAllTier} />
-            <Scene key="privacyPolicy" component={PrivacyPolicy} />
-            <Scene key="cartStep1" component={CartStep1} />
-            <Scene key="promotionDetail" component={PromotionDetail} />
-            <Scene key="productDetail" component={ProductDetail} />
-            <Scene
-              key="profilePaymentMethod"
-              component={ProfilePaymentMethod}
-            />
-            <Scene key="creditCardDetail" component={CreditCardDetail} />
-            <Scene key="termsAndConditions" component={TermsAndConditions} />
-            <Scene key="outlets" component={Outlets} />
-            {/* //martin */}
+              <Scene key="membership" component={Membership} />
+              <Scene key="membershipAllTier" component={MembershipAllTier} />
+              <Scene key="privacyPolicy" component={PrivacyPolicy} />
+              <Scene key="cartStep1" component={CartStep1} />
+              <Scene key="promotionDetail" component={PromotionDetail} />
+              <Scene key="productDetail" component={ProductDetail} />
+              <Scene
+                key="profilePaymentMethod"
+                component={ProfilePaymentMethod}
+              />
+              <Scene key="creditCardDetail" component={CreditCardDetail} />
+              <Scene key="termsAndConditions" component={TermsAndConditions} />
+              <Scene key="outlets" component={Outlets} />
+              {/* //martin */}
+            </Scene>
           </Scene>
-        </Scene>
-      </Router>
+        </Router>
+        {this.renderHistoryNotificationModal()}
+      </>
     );
   }
 }
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Routes);

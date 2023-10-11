@@ -151,6 +151,18 @@ const orderingDateTime = (state = {}, action) => {
   }
 };
 
+const notificationData = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_NOTIFICATION_DATA':
+      return {
+        notificationData: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -164,4 +176,5 @@ export default combineReducers({
   orderingSetting,
   orderingDateTime,
   outletSelectionMode,
+  notificationData,
 });
