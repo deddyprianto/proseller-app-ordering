@@ -272,10 +272,10 @@ class HistoryPayment extends Component {
                   <View style={styles.detail}>
                     <View style={styles.sejajarSpace}>
                       <Text style={styles.storeName}>
-                        {item.outlet.name.substr(0, 15)}
+                        {item.outlet?.name?.substr(0, 15)}
                         {item.outlet !== undefined &&
-                          item.outlet.name.length >
-                            item.outlet.name.substr(0, 15).length &&
+                          item.outlet?.name?.length >
+                            item.outlet.name?.substr(0, 15).length &&
                           '...'}
                       </Text>
                       <Text style={styles.itemType}>
@@ -343,8 +343,6 @@ class HistoryPayment extends Component {
 const styles = StyleSheet.create({
   component: {
     marginTop: -3,
-    // marginBottom: 10,
-    // flexDirection: 'row',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',

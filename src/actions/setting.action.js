@@ -8,10 +8,16 @@ import {fetchApiMasterData} from '../service/apiMasterData';
 import {fetchApiOrder} from '../service/apiOrder';
 
 const handleDataType = ({settings, key}) => {
+  if (!settings) {
+    settings = [];
+  }
   const result = settings?.filter(item => item.dataType === key);
   return result;
 };
 const handleSettingValue = ({values, key}) => {
+  if (!values) {
+    values = [];
+  }
   const result = values?.find(value => value?.settingKey === key)?.settingValue;
   return result;
 };

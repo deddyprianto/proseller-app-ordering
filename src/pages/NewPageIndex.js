@@ -171,17 +171,6 @@ const NewPageIndex = () => {
   const screens =
     awsConfig.COMPANY_TYPE === 'Retail' ? dataRetailScreens : dataFnBScreens;
 
-  const handleGetNotification = () => {
-    OneSignal.setNotificationWillShowInForegroundHandler(
-      notificationReceivedEvent => {
-        const getNotification = notificationReceivedEvent.getNotification();
-        setNotification(getNotification);
-        setIsOpenNotification(true);
-        notificationReceivedEvent.complete(getNotification);
-      },
-    );
-  };
-
   const handleImage = name => {
     switch (name) {
       case 'Home':
@@ -266,18 +255,6 @@ const NewPageIndex = () => {
     );
   };
 
-  const renderHistoryNotificationModal = () => {
-    return (
-      <HistoryNotificationModal
-        value={notification}
-        open={isOpenNotification}
-        handleClose={() => {
-          setIsOpenNotification(false);
-        }}
-      />
-    );
-  };
-
   const TabNavigator = createBottomTabNavigator(screens, {
     initialRouteName: 'Home',
     tabBarComponent: props => {
@@ -294,10 +271,7 @@ const NewPageIndex = () => {
   } else if (isLoggedIn) {
     return (
       <SafeAreaView style={styles.root}>
-        {handleGetNotification()}
-
         <Tabs />
-        {renderHistoryNotificationModal()}
       </SafeAreaView>
     );
   } else {

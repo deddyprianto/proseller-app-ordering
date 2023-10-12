@@ -47,6 +47,7 @@ import ENV from '../../configurations/acemart/demo/env';
 // import ENV from '../../env';
 // import ENV from '../../env-demo';
 import Base64 from 'Base64';
+import {Platform} from 'react-native';
 
 let Data = {};
 // if we build to android, then read .env file
@@ -61,7 +62,8 @@ const awsConfig = {
   // AWS CONFIG
   region: Data.REGION,
   endpoint: Data.ENDPOINT,
-  onesignalID: Data.ONESIGNAL_ID,
+  onesignalID:
+    Platform.OS === 'android' ? Data.ONESIGNAL_ID : Data.ONE_SIGNAL_IOS_ID,
 
   // BASE URL CRM
   base_url: `${Data.API_HOST}crm/api`,
@@ -115,6 +117,7 @@ const awsConfig = {
   EMAIL_ONE_MAP: Config.email_one_map,
 
   PASSWORD_ONE_MAP: Config.password_map,
-};
 
+  environment: Data.environment,
+};
 export default awsConfig;

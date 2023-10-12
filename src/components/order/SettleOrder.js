@@ -465,6 +465,8 @@ class SettleOrder extends Component {
         dataVoucer: item,
         cancelVoucher: false,
       });
+
+      this.setDataPayment(false);
     } catch (e) {}
     await this.setState({loading: false});
   };
@@ -909,7 +911,7 @@ class SettleOrder extends Component {
 
   myVouchers = () => {
     const {intlData} = this.props;
-    let originalVouchers = this.props.myVoucers;
+    let originalVouchers = this?.props?.myVoucers || [];
     originalVouchers = JSON.stringify(originalVouchers);
     originalVouchers = JSON.parse(originalVouchers);
     const {dataVoucer} = this.state;
