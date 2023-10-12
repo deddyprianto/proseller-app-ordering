@@ -80,7 +80,12 @@ const useStyles = () => {
   return {styles};
 };
 
-const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
+const ModalDeliveryDetail = ({
+  isVisible,
+  closeModal,
+  feeBreakDown,
+  providerData,
+}) => {
   const {styles} = useStyles();
   const provider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
@@ -95,7 +100,6 @@ const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
       </GlobalText>
     </View>
   );
-  console.log({feeBreakDown: provider?.feeBreakDown}, 'fee');
   const renderComponentBreakdown = () => {
     if (feeBreakDown) {
       return (
@@ -114,7 +118,7 @@ const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
       </>
     );
   };
-
+  console.log(provider, 'lika');
   return (
     <GlobalModal
       title="Delivery Fee Details"
@@ -136,7 +140,9 @@ const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
             </View>
             <View>
               <GlobalText style={[styles.totalText, styles.priceTotal]}>
-                {CurrencyFormatter(provider?.deliveryFee)}
+                {provider
+                  ? CurrencyFormatter(provider?.deliveryFee)
+                  : CurrencyFormatter(providerData?.deliveryFee)}
               </GlobalText>
             </View>
           </View>

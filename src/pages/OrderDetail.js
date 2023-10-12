@@ -583,7 +583,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             </View>
             <View style={styles.columnText}>
               <GlobalText>{data?.outlet?.name}</GlobalText>
-              {data?.outlet.location ? (
+              {data?.outlet?.location ? (
                 <GlobalText>
                   {data?.outlet?.location} {data?.outlet?.location?.postalCode}
                 </GlobalText>
@@ -1060,6 +1060,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
         isVisible={showDetailDelivery}
         closeModal={toggleDeliveryDetail}
         feeBreakDown={data?.provider?.feeBreakDown}
+        providerData={data?.provider}
       />
     </Body>
   );
