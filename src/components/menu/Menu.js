@@ -18,6 +18,7 @@ import TextWarningModal from '../modal/TextWarningModal';
 import {dataStores, getOutletById} from '../../actions/stores.action';
 import {changeOrderingMode, getOrderingMode} from '../../actions/order.action';
 import LoadingScreen from '../loadingScreen/LoadingScreen';
+import MyECardModal from '../modal/MyECardModal';
 
 const useStyles = () => {
   const theme = Theme();
@@ -167,6 +168,7 @@ const Menu = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
   const [user, setUser] = useState({});
+  const [isOpenMyECardModal, setIsOpenMyECardModal] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const totalPoint = useSelector(
@@ -188,6 +190,13 @@ const Menu = () => {
       setUser(result);
     }
   }, [userDetail]);
+
+  const handleOpenMyECardModal = async () => {
+    setIsOpenMyECardModal(true);
+  };
+  const handleCloseMyECardModal = async () => {
+    setIsOpenMyECardModal(false);
+  };
 
   const handleClick = async () => {
     setIsLoading(true);
@@ -278,7 +287,7 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.viewMenu}
         onPress={() => {
-          Actions.push('eCard');
+          handleOpenMyECardModal();
         }}>
         <Image source={appConfig.iconHomeECard} style={styles.iconMenu} />
         <Text style={styles.textMenu}>My E-Card</Text>
@@ -303,6 +312,19 @@ const Menu = () => {
     );
   };
 
+  const renderMyECardModal = () => {
+    if (isOpenMyECardModal) {
+      return (
+        <MyECardModal
+          open={isOpenMyECardModal}
+          handleClose={() => {
+            handleCloseMyECardModal();
+          }}
+        />
+      );
+    }
+  };
+
   return (
     <View style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -320,6 +342,7 @@ const Menu = () => {
         {renderSendGift()}
       </View>
       <View style={styles.divider} />
+      {renderMyECardModal()}
       <TextWarningModal
         open={isOpenModal}
         handleClose={() => {
