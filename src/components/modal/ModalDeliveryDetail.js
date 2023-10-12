@@ -72,6 +72,10 @@ const useStyles = () => {
       fontSize: 16,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    priceTotal: {
+      color: theme.colors.errorColor,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
   });
   return {styles};
 };
@@ -131,7 +135,7 @@ const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
               </GlobalText>
             </View>
             <View>
-              <GlobalText style={styles.totalText}>
+              <GlobalText style={[styles.totalText, styles.priceTotal]}>
                 {CurrencyFormatter(provider?.deliveryFee)}
               </GlobalText>
             </View>
