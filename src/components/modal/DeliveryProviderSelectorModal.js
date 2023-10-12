@@ -356,11 +356,13 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
           setSelected(item);
         }}>
         {renderDeliveryProviderItemBody(item)}
+        {renderDeliveryProviderItemDisabledFooter(item, true)}
+
         {footer}
       </TouchableOpacity>
     );
   };
-
+  console.log({deliveryProviders}, 'silak');
   const renderDeliveryProviderItemDisabledFooter = item => {
     if (item.deliveryProviderError?.message) {
       return (
@@ -409,7 +411,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
 
   const renderBody = () => {
     const result = deliveryProviders.map(item => {
-      if (item.deliveryProviderError.status) {
+      if (item.deliveryProviderError.status && !item.actionRequired) {
         return renderDeliveryProviderItemDisabled(item);
       } else {
         return renderDeliveryProviderItem(item);

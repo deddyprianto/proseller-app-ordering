@@ -42,9 +42,11 @@ import currencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
 import {
   changeOrderingMode,
+  getBasket,
   getDeliveryProviderAndFee,
   getTimeSlot,
   resetOrdeingDateTime,
+  resetOrderingMode,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -470,6 +472,7 @@ const Cart = props => {
   );
 
   useEffect(() => {
+    dispatch(getBasket(true));
     return () => {
       dispatch(resetOrdeingDateTime());
     };
@@ -1157,7 +1160,8 @@ const Cart = props => {
   };
 
   const renderProvider = () => {
-    if (basket?.orderingMode === 'DELIVERY') {
+    const isSelectedDate = orderingDateTimeSelected?.date;
+    if (basket?.orderingMode === 'DELIVERY' && isSelectedDate) {
       const disabled = isEmptyObject(deliveryAddress);
       const deliveryProviderValue = basket?.provider?.name || 'Choose Provider';
 
@@ -1543,8 +1547,8 @@ const Cart = props => {
             {renderOutlet()}
             {renderOrderingType()}
             {renderAddress()}
-            {renderProvider()}
             {renderDate()}
+            {renderProvider()}
           </ScrollView>
         </Body>
         {renderModal()}
