@@ -118,7 +118,6 @@ const ModalDeliveryDetail = ({
       </>
     );
   };
-  console.log(provider, 'lika');
   return (
     <GlobalModal
       title="Delivery Fee Details"
