@@ -65,15 +65,32 @@ const useStyles = () => {
     feeText: {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
+    mt16: {
+      marginTop: 16,
+    },
+    totalText: {
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    priceTotal: {
+      color: theme.colors.errorColor,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
   });
   return {styles};
 };
 
-const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
+const ModalDeliveryDetail = ({
+  isVisible,
+  closeModal,
+  feeBreakDown,
+  providerData,
+}) => {
   const {styles} = useStyles();
   const provider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
   );
+  console.log({provider}, 'lilin');
 
   const renderBreakDown = (fee, index) => (
     <View style={styles.itemDelivery} key={index}>
@@ -83,7 +100,6 @@ const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
       </GlobalText>
     </View>
   );
-
   const renderComponentBreakdown = () => {
     if (feeBreakDown) {
       return (
@@ -102,10 +118,9 @@ const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
       </>
     );
   };
-
   return (
     <GlobalModal
-      title="Details"
+      title="Delivery Fee Details"
       isBottomModal
       closeModal={closeModal}
       isVisible={isVisible}
@@ -113,7 +128,24 @@ const ModalDeliveryDetail = ({isVisible, closeModal, feeBreakDown}) => {
       closeContainerStyle={{marginRight: 16}}>
       <ScrollView>
         <View style={styles.divider} />
-        <View style={styles.ph16}>{renderComponentBreakdown()}</View>
+        <View style={styles.ph16}>
+          {renderComponentBreakdown()}
+          <View style={[styles.divider, styles.mt16]} />
+          <View style={styles.itemDelivery}>
+            <View>
+              <GlobalText style={styles.totalText}>
+                Total Delivery Fee
+              </GlobalText>
+            </View>
+            <View>
+              <GlobalText style={[styles.totalText, styles.priceTotal]}>
+                {provider
+                  ? CurrencyFormatter(provider?.deliveryFee)
+                  : CurrencyFormatter(providerData?.deliveryFee)}
+              </GlobalText>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </GlobalModal>
   );
