@@ -125,11 +125,11 @@ const VoucherListCheckout = ({onPress, item, type}) => {
     }
     return 'Use Now';
   };
+
   const handleDescription = () => {
-    if (
-      !item?.minPurchaseAmount ||
-      item?.minPurchaseAmount <= basket?.totalNettAmount
-    ) {
+    if (!item?.minPurchaseAmount) {
+      return 'No minimum order';
+    } else if (item?.minPurchaseAmount <= basket?.totalNettAmount) {
       return `Minimum order of ${CurrencyFormatter(
         item?.minPurchaseAmount,
       )} reached`;
