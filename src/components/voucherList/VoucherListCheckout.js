@@ -1,5 +1,7 @@
 import React from 'react';
 import {TouchableOpacity, StyleSheet, View} from 'react-native';
+import DashedLine from 'react-native-dashed-line';
+
 import GlobalText from '../globalText';
 import {normalizeLayoutSizeWidth} from '../../helper/Layout';
 import Theme from '../../theme/Theme';
@@ -104,11 +106,17 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsBold,
       color: type === 'unavailable' ? theme.colors.greyScale5 : 'black',
     }),
+    flexRowStart: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
   });
   return {styles};
 };
 
 const VoucherListCheckout = ({onPress, item, type}) => {
+  const theme = Theme();
   const {styles} = useStyles();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const handleText = () => {
@@ -122,7 +130,9 @@ const VoucherListCheckout = ({onPress, item, type}) => {
       !item?.minPurchaseAmount ||
       item?.minPurchaseAmount <= basket?.totalNettAmount
     ) {
-      return ' No minimum order';
+      return `Minimum order of ${CurrencyFormatter(
+        item?.minPurchaseAmount,
+      )} reached`;
     } else {
       const calculateDifference =
         item?.minPurchaseAmount - basket?.totalNettAmount;
@@ -143,15 +153,25 @@ const VoucherListCheckout = ({onPress, item, type}) => {
               <GlobalText numberOfLines={2} style={styles.nameFont(type)}>
                 {item?.name}{' '}
               </GlobalText>
-              <GlobalText style={styles.descFont(type)} numberOfLines={2}>
-                {type !== 'unavailable' ? '\u2022 ' : ''}
-                {handleDescription()}
-              </GlobalText>
+              <View style={styles.flexRowStart}>
+                <GlobalText style={styles.descFont(type)} numberOfLines={2}>
+                  {type !== 'unavailable' ? '\u2022 ' : ''}
+                </GlobalText>
+                <GlobalText style={styles.descFont(type)} numberOfLines={2}>
+                  {handleDescription()}
+                </GlobalText>
+              </View>
             </View>
 
             {type !== 'unavailable' ? (
               <>
-                <View style={styles.leftDivider} />
+                <DashedLine
+                  dashLength={3}
+                  dashThickness={1}
+                  dashGap={4}
+                  dashColor={theme.colors.primary}
+                  axis="vertical"
+                />
                 <View style={[styles.voucherName, styles.actionWidth]}>
                   <TouchableOpacity
                     style={[styles.mlAuto, styles.buttonAction(type)]}
