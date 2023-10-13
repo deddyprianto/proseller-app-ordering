@@ -7,6 +7,7 @@
 import React, {useEffect, useState} from 'react';
 import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
+import DeviceBrightness from '@adrianso/react-native-device-brightness';
 
 import CryptoJS from 'react-native-crypto-js';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
@@ -190,6 +191,19 @@ const Menu = () => {
       setUser(result);
     }
   }, [userDetail]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const currentBrightness = await DeviceBrightness.getBrightnessLevel();
+      if (isOpenMyECardModal) {
+        return DeviceBrightness.setBrightnessLevel(1);
+      }
+      if (currentBrightness) {
+        DeviceBrightness.setBrightnessLevel(currentBrightness);
+      }
+    };
+    loadData();
+  }, [isOpenMyECardModal]);
 
   const handleOpenMyECardModal = async () => {
     setIsOpenMyECardModal(true);
