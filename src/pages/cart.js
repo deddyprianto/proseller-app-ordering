@@ -46,7 +46,6 @@ import {
   getDeliveryProviderAndFee,
   getTimeSlot,
   resetOrdeingDateTime,
-  resetOrderingMode,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -61,14 +60,9 @@ import OrderDetailCart from '../components/cart/OrderDetailCart';
 import GlobalText from '../components/globalText';
 import additionalSetting from '../config/additionalSettings';
 import OutletCard from '../components/productCartList/OutletCard';
-import GlobalButton from '../components/button/GlobalButton';
-import ThreeDot from '../assets/svg/ThreeDotSvg';
-import GlobalModal from '../components/modal/GlobalModal';
-import CurrencyFormatter from '../helper/CurrencyFormatter';
-import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
-import ModalOrderDetail from '../components/modal/ModalOrderDetail';
 import GrandTotalFloating from '../components/order/GrandTotalFloating';
 import CheckOutletStatus from '../helper/CheckOutletStatus';
+import CustomFieldContainer from '../components/customFieldProfider/CustomFieldProfider';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -1521,6 +1515,10 @@ const Cart = props => {
     return null;
   };
 
+  const renderCustomField = () => {
+    return <CustomFieldContainer />;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <Header
@@ -1549,6 +1547,7 @@ const Cart = props => {
             {renderAddress()}
             {renderDate()}
             {renderProvider()}
+            {renderCustomField()}
           </ScrollView>
         </Body>
         {renderModal()}

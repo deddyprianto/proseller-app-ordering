@@ -228,7 +228,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       };
 
       const result = await dispatch(getDeliveryProviderAndFee(payload));
-
+      console.log({result}, 'dataman');
       if (result?.data) {
         setDeliveryProviders(result?.data?.dataProvider);
       }
@@ -242,6 +242,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
 
   const handleSave = async () => {
     setIsLoading(true);
+    console.log({selected}, 'nanan');
     await dispatch(
       changeOrderingMode({
         orderingMode: basket?.orderingMode,
@@ -321,6 +322,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   };
 
   const renderDeliveryProviderItemBody = item => {
+    console.log({item}, 'sinar');
     return (
       <View style={styles.touchableItemBody}>
         <View style={styles.touchableItemBodyImageAndText}>
@@ -329,9 +331,13 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
             {item?.name}
           </Text>
         </View>
-        <Text style={styles.textPrice}>
-          {CurrencyFormatter(item?.grossAmount)}
-        </Text>
+        {item?.grossAmount > 0 ? (
+          <Text style={styles.textPrice}>
+            {CurrencyFormatter(item?.grossAmount)}
+          </Text>
+        ) : (
+          <Text style={styles.textPrice}>-</Text>
+        )}
       </View>
     );
   };
@@ -353,6 +359,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       <TouchableOpacity
         style={styleItem}
         onPress={() => {
+          console.log('yuman');
           setSelected(item);
         }}>
         {renderDeliveryProviderItemBody(item)}

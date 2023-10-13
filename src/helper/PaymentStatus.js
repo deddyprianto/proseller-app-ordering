@@ -12,6 +12,6 @@ export const handlePaymentStatus = status => {
     case 'PACKING':
       return processing;
     default:
-      return status.replace(/_/g, ' ');
+      return status?.replace(/_/g, ' ');
   }
 };

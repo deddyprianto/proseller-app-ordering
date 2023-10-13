@@ -583,7 +583,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             </View>
             <View style={styles.columnText}>
               <GlobalText>{data?.outlet?.name}</GlobalText>
-              {data?.outlet.location ? (
+              {data?.outlet?.location ? (
                 <GlobalText>
                   {data?.outlet?.location} {data?.outlet?.location?.postalCode}
                 </GlobalText>
@@ -937,7 +937,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
             />
           </View>
 
-          {data?.earnedPoint > 0 ? (
+          {data?.earnedPoint > 0 || data?.point > 0 ? (
             <>
               <View style={styles.orderDetailWrapCOntainer}>
                 <GlobalText style={styles.oredrDetailText}>Rewards</GlobalText>
@@ -953,7 +953,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
                   <View>
                     <GlobalText
                       style={[styles.primaryColor, styles.mediumFont]}>
-                      {data?.earnedPoint}
+                      {data?.earnedPoint || data?.point}
                     </GlobalText>
                   </View>
                 </View>
@@ -1060,6 +1060,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
         isVisible={showDetailDelivery}
         closeModal={toggleDeliveryDetail}
         feeBreakDown={data?.provider?.feeBreakDown}
+        providerData={data?.provider}
       />
     </Body>
   );

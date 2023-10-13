@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import appConfig from '../config/appConfig';
+import {Alert} from 'react-native';
 
 export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
@@ -2046,6 +2047,7 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
         200,
         token,
       );
+      console.log({response}, 'mana1');
       if (response.success === true) {
         await dispatch({
           type: 'DATA_ORDERING_MODE',
