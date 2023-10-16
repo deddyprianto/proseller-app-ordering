@@ -89,8 +89,9 @@ const usePayment = () => {
       if (adjustedPayload && typeof adjustedPayload === 'object') {
         Object.assign(payload, adjustedPayload);
       }
-
       const result = await dispatch(getDeliveryProviderAndFee(payload));
+      console.log({payload, result}, 'nanak');
+
       setIsLoading(false);
       return result;
     } catch (e) {

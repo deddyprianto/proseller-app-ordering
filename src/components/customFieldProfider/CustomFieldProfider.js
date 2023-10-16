@@ -120,11 +120,11 @@ const CustomFieldProvider = () => {
   const basketProvider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
   );
-
+  console.log({selectedCustomField, provider}, 'silap');
   const dispatch = useDispatch();
   const onOpenModal = async field => {
     await setOptions(field?.options);
-    await setSelectedName(field?.name);
+    await setSelectedName(field?.value);
     await setActiveModal(true);
   };
 
