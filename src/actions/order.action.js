@@ -2047,7 +2047,6 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
         200,
         token,
       );
-      console.log({response}, 'mana1');
       if (response.success === true) {
         await dispatch({
           type: 'DATA_ORDERING_MODE',
@@ -2186,6 +2185,37 @@ export const resetProvider = () => {
     dispatch({
       type: 'DATA_BASKET',
       product: newBasket,
+    });
+  };
+};
+
+export const saveDeliveryCustomField = payload => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'SAVE_DELIVERY_CUSTOM_FIELD',
+      payload,
+    });
+  };
+};
+
+export const updateProvider = provider => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const basket = state.orderReducer.dataBasket?.product;
+    const newBasket = {...basket, provider};
+    console.log({newBasket}, 'kalop');
+    dispatch({
+      type: 'DATA_BASKET',
+      product: newBasket,
+    });
+  };
+};
+
+export const resetSelectedCustomFiled = () => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'RESET_DELIVERY_CUSTOM_FIELD',
+      payload: {},
     });
   };
 };

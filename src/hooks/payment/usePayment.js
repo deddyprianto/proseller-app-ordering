@@ -62,7 +62,7 @@ const usePayment = () => {
     return voucherMap;
   };
 
-  const getDeliveryProviderFee = async orderActionDate => {
+  const getDeliveryProviderFee = async (orderActionDate, adjustedPayload) => {
     setIsLoading(true);
     try {
       const userDecrypt = CryptoJS.AES.decrypt(
@@ -79,20 +79,22 @@ const usePayment = () => {
       const cartId = basket?.cartID;
       const outletId = basket?.outlet?.id;
 
-      const payload = {
+      let payload = {
         deliveryAddress: address,
         outletId,
         cartID: cartId,
         orderActionDate,
       };
 
+      if (adjustedPayload && typeof adjustedPayload === 'object') {
+        Object.assign(payload, adjustedPayload);
+      }
+
       const result = await dispatch(getDeliveryProviderAndFee(payload));
-      console.log({result, payload}, 'result');
       setIsLoading(false);
       return result;
     } catch (e) {
       setIsLoading(false);
-      console.log(e, 'eman');
       return null;
     }
   };

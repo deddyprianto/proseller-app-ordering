@@ -163,6 +163,25 @@ const notificationData = (state = {}, action) => {
   }
 };
 
+const deliveryCustomField = (state = {}, action) => {
+  switch (action.type) {
+    case 'SAVE_DELIVERY_CUSTOM_FIELD':
+      return {
+        deliveryCustomField: {
+          ...state.deliveryCustomField,
+          ...action.payload,
+        },
+      };
+    case 'RESET_DELIVERY_CUSTOM_FIELD':
+      return {
+        deliveryCustomField: {},
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -177,4 +196,5 @@ export default combineReducers({
   orderingDateTime,
   outletSelectionMode,
   notificationData,
+  deliveryCustomField,
 });

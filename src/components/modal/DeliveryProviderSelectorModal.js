@@ -14,8 +14,7 @@ import {
 } from 'react-native';
 
 import {Dialog, Portal, Provider} from 'react-native-paper';
-import colorConfig from '../../config/colorConfig';
-import {getDeliveryProviderAndFee} from '../../actions/order.action';
+import {resetSelectedCustomFiled} from '../../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {changeOrderingMode} from '../../actions/order.action';
@@ -24,6 +23,8 @@ import LoadingScreen from '../loadingScreen';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import appConfig from '../../config/appConfig';
 import {isEmptyObject} from '../../helper/CheckEmpty';
+import usePayment from '../../hooks/payment/usePayment';
+import useDate from '../../hooks/formatDate/useDate';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -195,16 +196,19 @@ const useStyles = () => {
 const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-
   const [selected, setSelected] = useState({});
   const [deliveryProviders, setDeliveryProviders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const {getDeliveryProviderFee} = usePayment();
+  const {convertOrderActionDate} = useDate();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
-
+  const orderingDate = useSelector(
+    state =>
+      state.orderReducer?.orderingDateTime?.orderingDateTimeSelected?.date,
+  );
   useEffect(() => {
     const loadData = async () => {
       const userDecrypt = CryptoJS.AES.decrypt(
@@ -226,9 +230,8 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
         outletId,
         cartID: cartId,
       };
-
-      const result = await dispatch(getDeliveryProviderAndFee(payload));
-      console.log({result}, 'dataman');
+      let dateConvert = convertOrderActionDate(orderingDate);
+      const result = await getDeliveryProviderFee(dateConvert, payload);
       if (result?.data) {
         setDeliveryProviders(result?.data?.dataProvider);
       }
@@ -238,11 +241,11 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     };
 
     loadData();
-  }, [userDetail, value]);
+  }, [userDetail, orderingDate]);
 
   const handleSave = async () => {
     setIsLoading(true);
-    console.log({selected}, 'nanan');
+    await dispatch(resetSelectedCustomFiled());
     await dispatch(
       changeOrderingMode({
         orderingMode: basket?.orderingMode,
@@ -320,9 +323,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       );
     }
   };
-
   const renderDeliveryProviderItemBody = item => {
-    console.log({item}, 'sinar');
     return (
       <View style={styles.touchableItemBody}>
         <View style={styles.touchableItemBodyImageAndText}>
@@ -359,7 +360,6 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       <TouchableOpacity
         style={styleItem}
         onPress={() => {
-          console.log('yuman');
           setSelected(item);
         }}>
         {renderDeliveryProviderItemBody(item)}

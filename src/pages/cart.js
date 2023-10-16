@@ -42,10 +42,11 @@ import currencyFormatter from '../helper/CurrencyFormatter';
 import {showSnackbar} from '../actions/setting.action';
 import {
   changeOrderingMode,
-  getBasket,
   getDeliveryProviderAndFee,
   getTimeSlot,
   resetOrdeingDateTime,
+  resetProvider,
+  resetSelectedCustomFiled,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -466,7 +467,8 @@ const Cart = props => {
   );
 
   useEffect(() => {
-    dispatch(getBasket(true));
+    dispatch(resetProvider());
+    dispatch(resetSelectedCustomFiled());
     return () => {
       dispatch(resetOrdeingDateTime());
     };
@@ -504,7 +506,6 @@ const Cart = props => {
     const loadData = async () => {
       await dispatch(getCompanyInfo());
     };
-
     loadData();
   }, [dispatch]);
 
@@ -598,6 +599,7 @@ const Cart = props => {
       ? subTotalAfterDiscount
       : totalGrossAmount;
     setSubTotal(result);
+    setIsLoading(false);
   }, [basket]);
 
   useEffect(() => {
@@ -1553,7 +1555,6 @@ const Cart = props => {
         {renderModal()}
       </View>
       {newFooter()}
-      {/* {renderFooter()} */}
       <ModalError
         title={errorMessage.title}
         description={errorMessage.description}
@@ -1563,7 +1564,6 @@ const Cart = props => {
         titleButtonOk="Change Outlet"
         titleButtonClose="Cancel"
       />
-      {/* <ModalOrderDetail open={seeDetail} closeModal={handleCloseDetail} /> */}
     </SafeAreaView>
   );
 };

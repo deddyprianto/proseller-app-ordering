@@ -46,6 +46,11 @@ const useStyles = () => {
       margin: 0,
       justifyContent: 'flex-end',
     },
+    titleDivider: {
+      height: 1,
+      width: '100%',
+      backgroundColor: colors.greyScale3,
+    },
   });
   return {styles, colors, fontFamily};
 };
@@ -68,6 +73,7 @@ const useStyles = () => {
  * @property {import('react-native').StyleProp} scrollContainerStyle
  * @property {import('react-native').StyleProp} titleContainerStyle
  * @property {import('react-native').StyleProp} closeContainerStyle
+ * @property {boolean} enableDividerOnTitle
  */
 
 /**
@@ -118,6 +124,9 @@ const GlobalModal = props => {
             </View>
           ) : null}
         </View>
+        {props.enableDividerOnTitle ? (
+          <View style={styles.titleDivider} />
+        ) : null}
         <ScrollView
           onScroll={onScroll}
           contentContainerStyle={[
