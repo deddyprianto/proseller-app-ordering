@@ -443,6 +443,9 @@ const Cart = props => {
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
     false,
   );
+  const provider = useSelector(
+    state => state.orderReducer.dataBasket?.product?.provider,
+  );
   const [
     openOrderingModeOfflineModal,
     setOpenOrderingModeOfflineModal,

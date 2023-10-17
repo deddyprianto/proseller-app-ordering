@@ -13,6 +13,7 @@ import Theme from '../../theme/Theme';
 import usePayment from '../../hooks/payment/usePayment';
 import useDate from '../../hooks/formatDate/useDate';
 import {
+  changeOrderingMode,
   saveDeliveryCustomField,
   updateProvider,
 } from '../../actions/order.action';
@@ -120,6 +121,8 @@ const CustomFieldProvider = () => {
   const basketProvider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
   );
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+
   console.log({selectedCustomField, provider}, 'silap');
   const dispatch = useDispatch();
   const onOpenModal = async field => {
@@ -134,6 +137,8 @@ const CustomFieldProvider = () => {
     setSelectedValue(value);
   };
 
+  console.log({provider}, 'nana');
+
   const onSaveData = async () => {
     setIsLoadingDataDelivery(true);
     const payload = {
@@ -147,6 +152,12 @@ const CustomFieldProvider = () => {
       provider => provider.id === basketProvider?.id,
     );
     if (findSelectedProfider) {
+      dispatch(
+        changeOrderingMode({
+          orderingMode: basket?.orderingMode,
+          provider: findSelectedProfider,
+        }),
+      );
       dispatch(updateProvider(findSelectedProfider));
     }
     setIsLoadingDataDelivery(false);
