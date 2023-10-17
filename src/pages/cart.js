@@ -460,6 +460,9 @@ const Cart = props => {
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
+  const selectedCustomField = useSelector(
+    state => state.orderReducer?.deliveryCustomField,
+  );
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const orderingDateTimeSelected = useSelector(
@@ -1366,9 +1369,32 @@ const Cart = props => {
     );
   };
 
+  const checkCustomField = () => {
+    // const filterRequiredField = provider?.filter(data => data?.isRequired);
+
+    // const mapping = filterRequiredField?.map(data => data.value);
+    // console.log({mapping, selectedCustomField}, 'test');
+    // let disableButton = true;
+    // if (mapping?.length > 0) {
+    // }
+    // return disableButton;
+    let disableButton = false;
+    const filter = provider?.customFields?.filter(data => data?.isMandatory);
+    if (filter?.length > 0) {
+      filter?.forEach(data => {
+        if (!selectedCustomField.deliveryCustomField?.[data?.value]) {
+          disableButton = true;
+        }
+      });
+    }
+    console.log({provider, filter, selectedCustomField}, 'jojo');
+
+    return disableButton;
+  };
+
   const newFooter = () => {
     const disabled = handleDisabledPaymentButton(basket?.orderingMode);
-
+    checkCustomField();
     if (additionalSetting().cartVersion === 'basic') {
       return renderFooter();
     }

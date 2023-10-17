@@ -14,7 +14,10 @@ import {
 } from 'react-native';
 
 import {Dialog, Portal, Provider} from 'react-native-paper';
-import {resetSelectedCustomFiled} from '../../actions/order.action';
+import {
+  resetSelectedCustomFiled,
+  updateProvider,
+} from '../../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {changeOrderingMode} from '../../actions/order.action';
@@ -246,12 +249,17 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   const handleSave = async () => {
     setIsLoading(true);
     await dispatch(resetSelectedCustomFiled());
-    await dispatch(
-      changeOrderingMode({
-        orderingMode: basket?.orderingMode,
-        provider: selected,
-      }),
-    );
+    if (!selected?.actionRequired) {
+      await dispatch(
+        changeOrderingMode({
+          orderingMode: basket?.orderingMode,
+          provider: selected,
+        }),
+      );
+    } else {
+      await dispatch(updateProvider(selected));
+    }
+
     setIsLoading(false);
     handleClose();
   };
