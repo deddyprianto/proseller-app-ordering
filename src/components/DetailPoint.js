@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   contentContainer: {
-    paddingBottom: 30,
+    paddingBottom: 60,
   },
 });
 

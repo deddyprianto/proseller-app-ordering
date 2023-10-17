@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import appConfig from '../config/appConfig';
+import {Alert} from 'react-native';
 
 export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
@@ -1834,9 +1835,10 @@ export const getBasket = () => {
           product: undefined,
         });
       } else {
+        let data = response.response.data;
         dispatch({
           type: 'DATA_BASKET',
-          product: response.response.data,
+          product: data,
         });
         // check if ordering mode is exist (cart has submitted)
         let order = response.response.data;
@@ -2045,17 +2047,10 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
         200,
         token,
       );
-
-      console.log('response ordering mode', response);
-
       if (response.success === true) {
         await dispatch({
           type: 'DATA_ORDERING_MODE',
           orderingMode,
-        });
-        await dispatch({
-          type: 'ORDERING_DATE_TIME',
-          orderingDateTimeSelected: null,
         });
         await dispatch(getBasket());
       }
@@ -2063,6 +2058,15 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
     } catch (error) {
       return error;
     }
+  };
+};
+
+export const resetOrderingMode = () => {
+  return async (dispatch, getState) => {
+    await dispatch({
+      type: 'DATA_ORDERING_MODE',
+      orderingMode: null,
+    });
   };
 };
 
@@ -2078,7 +2082,6 @@ export const resetOrdeingDateTime = () => {
 export const setTimeSlotSelected = ({date, time}) => {
   return async dispatch => {
     const payload = {date, time};
-
     dispatch({
       type: 'ORDERING_DATE_TIME',
       orderingDateTimeSelected: payload,
@@ -2170,6 +2173,49 @@ export const setNotificationData = payload => {
     dispatch({
       type: 'SET_NOTIFICATION_DATA',
       payload,
+    });
+  };
+};
+
+export const resetProvider = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const basket = state.orderReducer.dataBasket?.product;
+    const newBasket = {...basket, provider: {}};
+    dispatch({
+      type: 'DATA_BASKET',
+      product: newBasket,
+    });
+  };
+};
+
+export const saveDeliveryCustomField = payload => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'SAVE_DELIVERY_CUSTOM_FIELD',
+      payload,
+    });
+  };
+};
+
+export const updateProvider = provider => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const basket = state.orderReducer.dataBasket?.product;
+    const newBasket = {...basket, provider};
+    console.log({newBasket}, 'kalop');
+    dispatch({
+      type: 'DATA_BASKET',
+      product: newBasket,
+    });
+  };
+};
+
+export const resetSelectedCustomFiled = () => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'RESET_DELIVERY_CUSTOM_FIELD',
+      payload: {},
     });
   };
 };

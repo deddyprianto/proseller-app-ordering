@@ -45,6 +45,8 @@ import {
   getDeliveryProviderAndFee,
   getTimeSlot,
   resetOrdeingDateTime,
+  resetProvider,
+  resetSelectedCustomFiled,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -59,14 +61,9 @@ import OrderDetailCart from '../components/cart/OrderDetailCart';
 import GlobalText from '../components/globalText';
 import additionalSetting from '../config/additionalSettings';
 import OutletCard from '../components/productCartList/OutletCard';
-import GlobalButton from '../components/button/GlobalButton';
-import ThreeDot from '../assets/svg/ThreeDotSvg';
-import GlobalModal from '../components/modal/GlobalModal';
-import CurrencyFormatter from '../helper/CurrencyFormatter';
-import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
-import ModalOrderDetail from '../components/modal/ModalOrderDetail';
 import GrandTotalFloating from '../components/order/GrandTotalFloating';
 import CheckOutletStatus from '../helper/CheckOutletStatus';
+import CustomFieldContainer from '../components/customFieldProfider/CustomFieldProfider';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -446,6 +443,9 @@ const Cart = props => {
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
     false,
   );
+  const provider = useSelector(
+    state => state.orderReducer.dataBasket?.product?.provider,
+  );
   const [
     openOrderingModeOfflineModal,
     setOpenOrderingModeOfflineModal,
@@ -460,6 +460,9 @@ const Cart = props => {
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
+  const selectedCustomField = useSelector(
+    state => state.orderReducer?.deliveryCustomField,
+  );
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const orderingDateTimeSelected = useSelector(
@@ -470,6 +473,8 @@ const Cart = props => {
   );
 
   useEffect(() => {
+    dispatch(resetProvider());
+    dispatch(resetSelectedCustomFiled());
     return () => {
       dispatch(resetOrdeingDateTime());
     };
@@ -507,7 +512,6 @@ const Cart = props => {
     const loadData = async () => {
       await dispatch(getCompanyInfo());
     };
-
     loadData();
   }, [dispatch]);
 
@@ -601,6 +605,7 @@ const Cart = props => {
       ? subTotalAfterDiscount
       : totalGrossAmount;
     setSubTotal(result);
+    setIsLoading(false);
   }, [basket]);
 
   useEffect(() => {
@@ -1157,7 +1162,8 @@ const Cart = props => {
   };
 
   const renderProvider = () => {
-    if (basket?.orderingMode === 'DELIVERY') {
+    const isSelectedDate = orderingDateTimeSelected?.date;
+    if (basket?.orderingMode === 'DELIVERY' && isSelectedDate) {
       const disabled = isEmptyObject(deliveryAddress);
       const deliveryProviderValue = basket?.provider?.name || 'Choose Provider';
 
@@ -1363,9 +1369,22 @@ const Cart = props => {
     );
   };
 
-  const newFooter = () => {
-    const disabled = handleDisabledPaymentButton(basket?.orderingMode);
+  const checkCustomField = () => {
+    let disableButton = false;
+    const filter = provider?.customFields?.filter(data => data?.isMandatory);
+    if (filter?.length > 0) {
+      filter?.forEach(data => {
+        if (!selectedCustomField.deliveryCustomField?.[data?.value]) {
+          disableButton = true;
+        }
+      });
+    }
+    return disableButton;
+  };
 
+  const newFooter = () => {
+    const disabled =
+      handleDisabledPaymentButton(basket?.orderingMode) || checkCustomField();
     if (additionalSetting().cartVersion === 'basic') {
       return renderFooter();
     }
@@ -1517,6 +1536,10 @@ const Cart = props => {
     return null;
   };
 
+  const renderCustomField = () => {
+    return <CustomFieldContainer />;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <Header
@@ -1543,14 +1566,14 @@ const Cart = props => {
             {renderOutlet()}
             {renderOrderingType()}
             {renderAddress()}
-            {renderProvider()}
             {renderDate()}
+            {renderProvider()}
+            {renderCustomField()}
           </ScrollView>
         </Body>
         {renderModal()}
       </View>
       {newFooter()}
-      {/* {renderFooter()} */}
       <ModalError
         title={errorMessage.title}
         description={errorMessage.description}
@@ -1560,7 +1583,6 @@ const Cart = props => {
         titleButtonOk="Change Outlet"
         titleButtonClose="Cancel"
       />
-      {/* <ModalOrderDetail open={seeDetail} closeModal={handleCloseDetail} /> */}
     </SafeAreaView>
   );
 };

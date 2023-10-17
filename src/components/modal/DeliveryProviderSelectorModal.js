@@ -14,8 +14,10 @@ import {
 } from 'react-native';
 
 import {Dialog, Portal, Provider} from 'react-native-paper';
-import colorConfig from '../../config/colorConfig';
-import {getDeliveryProviderAndFee} from '../../actions/order.action';
+import {
+  resetSelectedCustomFiled,
+  updateProvider,
+} from '../../actions/order.action';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../../config/awsConfig';
 import {changeOrderingMode} from '../../actions/order.action';
@@ -24,6 +26,8 @@ import LoadingScreen from '../loadingScreen';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import appConfig from '../../config/appConfig';
 import {isEmptyObject} from '../../helper/CheckEmpty';
+import usePayment from '../../hooks/payment/usePayment';
+import useDate from '../../hooks/formatDate/useDate';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -195,16 +199,19 @@ const useStyles = () => {
 const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-
   const [selected, setSelected] = useState({});
   const [deliveryProviders, setDeliveryProviders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const {getDeliveryProviderFee} = usePayment();
+  const {convertOrderActionDate} = useDate();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
   );
-
+  const orderingDate = useSelector(
+    state =>
+      state.orderReducer?.orderingDateTime?.orderingDateTimeSelected?.date,
+  );
   useEffect(() => {
     const loadData = async () => {
       const userDecrypt = CryptoJS.AES.decrypt(
@@ -226,9 +233,8 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
         outletId,
         cartID: cartId,
       };
-
-      const result = await dispatch(getDeliveryProviderAndFee(payload));
-
+      let dateConvert = convertOrderActionDate(orderingDate);
+      const result = await getDeliveryProviderFee(dateConvert, payload);
       if (result?.data) {
         setDeliveryProviders(result?.data?.dataProvider);
       }
@@ -238,16 +244,22 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     };
 
     loadData();
-  }, [userDetail, value]);
+  }, [userDetail, orderingDate]);
 
   const handleSave = async () => {
     setIsLoading(true);
-    await dispatch(
-      changeOrderingMode({
-        orderingMode: basket?.orderingMode,
-        provider: selected,
-      }),
-    );
+    await dispatch(resetSelectedCustomFiled());
+    if (!selected?.actionRequired) {
+      await dispatch(
+        changeOrderingMode({
+          orderingMode: basket?.orderingMode,
+          provider: selected,
+        }),
+      );
+    } else {
+      await dispatch(updateProvider(selected));
+    }
+
     setIsLoading(false);
     handleClose();
   };
@@ -319,7 +331,6 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       );
     }
   };
-
   const renderDeliveryProviderItemBody = item => {
     return (
       <View style={styles.touchableItemBody}>
@@ -329,9 +340,13 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
             {item?.name}
           </Text>
         </View>
-        <Text style={styles.textPrice}>
-          {CurrencyFormatter(item?.grossAmount)}
-        </Text>
+        {item?.grossAmount > 0 ? (
+          <Text style={styles.textPrice}>
+            {CurrencyFormatter(item?.grossAmount)}
+          </Text>
+        ) : (
+          <Text style={styles.textPrice}>-</Text>
+        )}
       </View>
     );
   };
@@ -356,11 +371,13 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
           setSelected(item);
         }}>
         {renderDeliveryProviderItemBody(item)}
+        {renderDeliveryProviderItemDisabledFooter(item, true)}
+
         {footer}
       </TouchableOpacity>
     );
   };
-
+  console.log({deliveryProviders}, 'silak');
   const renderDeliveryProviderItemDisabledFooter = item => {
     if (item.deliveryProviderError?.message) {
       return (
@@ -409,7 +426,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
 
   const renderBody = () => {
     const result = deliveryProviders.map(item => {
-      if (item.deliveryProviderError.status) {
+      if (item.deliveryProviderError.status && !item.actionRequired) {
         return renderDeliveryProviderItemDisabled(item);
       } else {
         return renderDeliveryProviderItem(item);

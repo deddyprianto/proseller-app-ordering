@@ -167,7 +167,11 @@ const OrderingMode = () => {
 
   const handleSaveClicked = async () => {
     setIsLoading(true);
-    await dispatch(changeOrderingMode({orderingMode: orderingModeSelected}));
+    await dispatch(
+      changeOrderingMode({
+        orderingMode: orderingModeSelected,
+      }),
+    );
     Actions.push('orderHere');
     setIsLoading(false);
   };

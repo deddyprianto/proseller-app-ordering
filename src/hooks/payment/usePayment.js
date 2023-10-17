@@ -2,11 +2,20 @@ import React from 'react';
 import {Alert} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import UUIDGenerator from 'react-native-uuid-generator';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {registerCard} from '../../actions/payment.actions';
+import CryptoJS from 'react-native-crypto-js';
+import awsConfig from '../../config/awsConfig';
+import {getDeliveryProviderAndFee} from '../../actions/order.action';
+
 const usePayment = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const dispatch = useDispatch();
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+
+  const userDetail = useSelector(
+    state => state.userReducer?.getUser?.userDetails,
+  );
   const registerCardHook = async (page, item) => {
     if (item) {
       setIsLoading(true);
@@ -53,10 +62,49 @@ const usePayment = () => {
     return voucherMap;
   };
 
+  const getDeliveryProviderFee = async (orderActionDate, adjustedPayload) => {
+    setIsLoading(true);
+    try {
+      const userDecrypt = CryptoJS.AES.decrypt(
+        userDetail,
+        awsConfig.PRIVATE_KEY_RSA,
+      );
+      const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+
+      const deliveryAddressDefault = user?.deliveryAddress.find(
+        address => address.isDefault,
+      );
+
+      const address = user?.selectedAddress || deliveryAddressDefault;
+      const cartId = basket?.cartID;
+      const outletId = basket?.outlet?.id;
+
+      let payload = {
+        deliveryAddress: address,
+        outletId,
+        cartID: cartId,
+        orderActionDate,
+      };
+
+      if (adjustedPayload && typeof adjustedPayload === 'object') {
+        Object.assign(payload, adjustedPayload);
+      }
+      const result = await dispatch(getDeliveryProviderAndFee(payload));
+      console.log({payload, result}, 'nanak');
+
+      setIsLoading(false);
+      return result;
+    } catch (e) {
+      setIsLoading(false);
+      return null;
+    }
+  };
+
   return {
     registerCardHook,
     isLoading,
     mapVoucherPaymentCheck,
+    getDeliveryProviderFee,
   };
 };
 

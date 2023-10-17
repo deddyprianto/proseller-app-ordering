@@ -9,10 +9,16 @@ import CalenderModal from './CalenderModal';
 import moment from 'moment';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 
-import {getTimeSlot, setTimeSlotSelected} from '../../actions/order.action';
+import {
+  getTimeSlot,
+  resetProvider,
+  setTimeSlotSelected,
+} from '../../actions/order.action';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
 import GlobalButton from '../button/GlobalButton';
+import usePayment from '../../hooks/payment/usePayment';
+import LoadingScreen from '../loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -254,7 +260,7 @@ const useStyles = () => {
 const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-
+  const {getDeliveryProviderFee, isLoading} = usePayment();
   const [dates, setDates] = useState([]);
   const [times, setTimes] = useState([]);
   const [availableDates, setAvailableDates] = useState([]);
@@ -347,9 +353,13 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   }, [value]);
 
   const handleSave = async () => {
+    const joinDateTime = `${selectedDate}`;
+    const newFormatDate = moment(joinDateTime).format('YYYY-MM-DD');
+    await dispatch(resetProvider());
     await dispatch(
       setTimeSlotSelected({date: selectedDate, time: selectedTime}),
     );
+    await getDeliveryProviderFee(newFormatDate);
     handleClose();
   };
 
@@ -598,18 +608,21 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   };
 
   return (
-    <Provider>
-      <Portal>
-        <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
-          {renderHeader()}
-          <View style={styles.divider} />
-          {renderBody()}
-          {renderFooter()}
-        </Dialog>
-        {renderCalender()}
-        {renderTimeListModal()}
-      </Portal>
-    </Provider>
+    <>
+      <LoadingScreen loading={isLoading} />
+      <Provider>
+        <Portal>
+          <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
+            {renderHeader()}
+            <View style={styles.divider} />
+            {renderBody()}
+            {renderFooter()}
+          </Dialog>
+          {renderCalender()}
+          {renderTimeListModal()}
+        </Portal>
+      </Provider>
+    </>
   );
 };
 

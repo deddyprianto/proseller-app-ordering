@@ -93,12 +93,16 @@ const ModalDeliveryDetail = ({
   console.log({provider}, 'lilin');
 
   const renderBreakDown = (fee, index) => (
-    <View style={styles.itemDelivery} key={index}>
-      <GlobalText>{fee.text}</GlobalText>
-      <GlobalText style={styles.feeText}>
-        {CurrencyFormatter(fee.fee)}
-      </GlobalText>
-    </View>
+    <>
+      {fee?.fee > 0 ? (
+        <View style={styles.itemDelivery} key={index}>
+          <GlobalText>{fee.text}</GlobalText>
+          <GlobalText style={styles.feeText}>
+            {CurrencyFormatter(fee.fee)}
+          </GlobalText>
+        </View>
+      ) : null}
+    </>
   );
   const renderComponentBreakdown = () => {
     if (feeBreakDown) {
