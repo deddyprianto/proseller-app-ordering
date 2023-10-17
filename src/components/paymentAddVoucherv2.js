@@ -30,6 +30,7 @@ import ArrowUpSvg from '../assets/svg/ArrowUpSvg';
 import ModalAction from './modal/ModalAction';
 import {getVoucherCheckout} from '../actions/user.action';
 import useCalculation from '../hooks/calculation/useCalculation';
+import appConfig from '../config/appConfig';
 
 const PaymentAddVouchersV2 = props => {
   const [usedVoucher, setUsedVoucher] = React.useState(props?.dataVoucer || []);
@@ -72,7 +73,13 @@ const PaymentAddVouchersV2 = props => {
   const onSubmit = async () => {
     setLoadingCheckVoucher(true);
     const voucherMap = mappingPayment(usedVoucher);
-    const payloadVoucher = removePointAmount(voucherMap);
+    // need more check about this
+    // const payloadVoucher = removePointAmount(voucherMap);
+
+    const payloadVoucher =
+      appConfig.pointType === 'maxPointAutoApply'
+        ? removePointAmount(voucherMap)
+        : voucherMap;
     const onlyVoucher = usedVoucher?.filter(voucher => !voucher?.isPoint);
     const payload = {
       details: cartDetail?.details,

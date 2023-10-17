@@ -797,6 +797,14 @@ class SettleOrder extends Component {
             if (tmpTotal < 0) {
               tmpTotal = 0;
             }
+            const payload = {
+              details: this.props.basket?.details,
+              outletId: this.props.basket?.outletID,
+              customerId: this.props.basket?.customerId,
+              payments: this.state.dataVoucer,
+              total: this.props?.basket?.totalNettAmount,
+            };
+            this.callApiCalculatedVoucherPoint(payload);
           }
         } catch (e) {}
       }
@@ -1143,9 +1151,13 @@ class SettleOrder extends Component {
       }
       return {...payment};
     });
-    this.setState({dataVoucer: mappingPayment}, () => {
-      this.setState({updateCalculation: false});
-    });
+
+    this.setState(
+      {dataVoucer: mappingPayment, totalBayar: response.total},
+      () => {
+        this.setState({updateCalculation: false});
+      },
+    );
   };
 
   mappingPoint = (voucherPoint = []) => {
