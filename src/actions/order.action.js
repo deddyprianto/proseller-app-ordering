@@ -2203,7 +2203,6 @@ export const updateProvider = provider => {
     const state = getState();
     const basket = state.orderReducer.dataBasket?.product;
     const newBasket = {...basket, provider};
-    console.log({newBasket}, 'kalop');
     dispatch({
       type: 'DATA_BASKET',
       product: newBasket,
@@ -2216,6 +2215,42 @@ export const resetSelectedCustomFiled = () => {
     dispatch({
       type: 'RESET_DELIVERY_CUSTOM_FIELD',
       payload: {},
+    });
+  };
+};
+
+export const resetDeliveryMode = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const basket = state.orderReducer.dataBasket?.product;
+    const newBasket = {...basket, orderingMode: null};
+    dispatch({
+      type: 'DATA_BASKET',
+      product: newBasket,
+    });
+  };
+};
+
+export const updateOrderingMode = orderingMode => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const basket = state.orderReducer.dataBasket?.product;
+    const newBasket = {...basket, orderingMode};
+    dispatch({
+      type: 'DATA_BASKET',
+      product: newBasket,
+    });
+  };
+};
+
+export const resetGrandTotal = totalNettAmount => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const basket = state.orderReducer.dataBasket?.product;
+    const newBasket = {...basket, totalNettAmount};
+    dispatch({
+      type: 'DATA_BASKET',
+      product: newBasket,
     });
   };
 };

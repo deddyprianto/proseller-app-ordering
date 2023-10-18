@@ -9,6 +9,7 @@ import useCalculation from '../../hooks/calculation/useCalculation';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import InformationSvg from '../../assets/svg/InformationSvg';
 import ModalDeliveryDetail from './ModalDeliveryDetail';
+import useValidation from '../../hooks/validation/useValidation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -111,6 +112,8 @@ const ModalOrderDetail = ({
   const provider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
   );
+  const order = useSelector(state => state.orderReducer);
+  const {checkCustomField} = useValidation();
   const [openDeliveryModal, setOpenDeliverModal] = React.useState(false);
   const delivery_mode = 'DELIVERY';
   const handleCloseDetail = () => {
@@ -182,7 +185,6 @@ const ModalOrderDetail = ({
   };
   const itemDiscount =
     basket?.totalDiscountAmount - (basket?.totalMembershipDiscountAmount || 0);
-
   const toggleModalDelivery = () => {
     if (open) {
       handleCloseDetail();
@@ -195,6 +197,13 @@ const ModalOrderDetail = ({
         handleCloseDetail();
       }, 500);
     }
+  };
+
+  const isHaveProvider = () => {
+    if (basket?.provider) {
+      return Object.keys(basket?.provider).length > 0;
+    }
+    return false;
   };
 
   return (
@@ -233,7 +242,9 @@ const ModalOrderDetail = ({
               </GlobalText>
             </View>
           ) : null}
-          {basket?.orderingMode === delivery_mode && basket?.provider ? (
+          {basket?.orderingMode === delivery_mode &&
+          isHaveProvider() &&
+          !checkCustomField() ? (
             <>
               <View style={[styles.divider, styles.noMargin]} />
               <View style={styles.modalItem}>
