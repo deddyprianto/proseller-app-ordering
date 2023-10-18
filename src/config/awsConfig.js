@@ -121,3 +121,4 @@ const awsConfig = {
   environment: Data.environment,
 };
 export default awsConfig;
+
