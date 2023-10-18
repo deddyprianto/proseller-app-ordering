@@ -44,6 +44,7 @@ import {
   changeOrderingMode,
   getDeliveryProviderAndFee,
   getTimeSlot,
+  resetGrandTotal,
   resetOrdeingDateTime,
   resetProvider,
   resetSelectedCustomFiled,
@@ -64,6 +65,8 @@ import OutletCard from '../components/productCartList/OutletCard';
 import GrandTotalFloating from '../components/order/GrandTotalFloating';
 import CheckOutletStatus from '../helper/CheckOutletStatus';
 import CustomFieldContainer from '../components/customFieldProfider/CustomFieldProfider';
+import useCalculation from '../hooks/calculation/useCalculation';
+import useValidation from '../hooks/validation/useValidation';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -443,9 +446,8 @@ const Cart = props => {
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
     false,
   );
-  const provider = useSelector(
-    state => state.orderReducer.dataBasket?.product?.provider,
-  );
+
+  const {checkCustomField} = useValidation();
   const [
     openOrderingModeOfflineModal,
     setOpenOrderingModeOfflineModal,
@@ -460,9 +462,7 @@ const Cart = props => {
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
-  const selectedCustomField = useSelector(
-    state => state.orderReducer?.deliveryCustomField,
-  );
+  const {calculatePriceAferDiscount} = useCalculation();
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const orderingDateTimeSelected = useSelector(
@@ -475,8 +475,10 @@ const Cart = props => {
   useEffect(() => {
     dispatch(resetProvider());
     dispatch(resetSelectedCustomFiled());
+    dispatch(resetGrandTotal(calculatePriceAferDiscount()));
     return () => {
       dispatch(resetOrdeingDateTime());
+      dispatch(resetProvider());
     };
   }, []);
 
@@ -581,6 +583,25 @@ const Cart = props => {
 
     loadData();
   }, [outlet, basket, orderingModesField, dispatch]);
+
+  // const initOrderingMode = async () => {
+  //   setIsLoading(true);
+  //   console.log('masuk sini');
+  //   await dispatch(
+  //     changeOrderingMode({
+  //       orderingMode: basket?.orderingMode,
+  //     }),
+  //   );
+  //   setIsLoading(false);
+  // };
+
+  // useEffect(() => {
+  //   console.log({basket}, 'habim');
+  //   if (basket?.orderingMode) {
+  //     initOrderingMode();
+  //   }
+  // }, [basket.orderingMode]);
+
   useEffect(() => {
     if (basket?.isStoreCheckoutCart) {
       const findStoreCheckout = orderingModesField.find(
@@ -1367,19 +1388,6 @@ const Cart = props => {
         {renderPaymentButton()}
       </View>
     );
-  };
-
-  const checkCustomField = () => {
-    let disableButton = false;
-    const filter = provider?.customFields?.filter(data => data?.isMandatory);
-    if (filter?.length > 0) {
-      filter?.forEach(data => {
-        if (!selectedCustomField.deliveryCustomField?.[data?.value]) {
-          disableButton = true;
-        }
-      });
-    }
-    return disableButton;
   };
 
   const newFooter = () => {

@@ -12,7 +12,10 @@ import {
 import {Dialog, Portal, Provider} from 'react-native-paper';
 
 import appConfig from '../../config/appConfig';
-import {changeOrderingMode} from '../../actions/order.action';
+import {
+  changeOrderingMode,
+  updateOrderingMode,
+} from '../../actions/order.action';
 
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
@@ -265,7 +268,11 @@ const OrderingTypeSelectorModal = ({
 
   const handleSaveClicked = async () => {
     setIsLoading(true);
-    await dispatch(changeOrderingMode({orderingMode: selected?.key}));
+    if (selected?.key === 'DELIVERY') {
+      dispatch(updateOrderingMode(selected?.key));
+    } else {
+      await dispatch(changeOrderingMode({orderingMode: selected?.key}));
+    }
     if (handleSaveCustom) {
       handleSaveCustom();
     }
