@@ -584,24 +584,6 @@ const Cart = props => {
     loadData();
   }, [outlet, basket, orderingModesField, dispatch]);
 
-  // const initOrderingMode = async () => {
-  //   setIsLoading(true);
-  //   console.log('masuk sini');
-  //   await dispatch(
-  //     changeOrderingMode({
-  //       orderingMode: basket?.orderingMode,
-  //     }),
-  //   );
-  //   setIsLoading(false);
-  // };
-
-  // useEffect(() => {
-  //   console.log({basket}, 'habim');
-  //   if (basket?.orderingMode) {
-  //     initOrderingMode();
-  //   }
-  // }, [basket.orderingMode]);
-
   useEffect(() => {
     if (basket?.isStoreCheckoutCart) {
       const findStoreCheckout = orderingModesField.find(
