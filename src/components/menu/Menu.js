@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
@@ -169,6 +170,8 @@ const Menu = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
   const [user, setUser] = useState({});
+
+  const [currentBrightness, setCurrentBrightness] = useState(null);
   const [isOpenMyECardModal, setIsOpenMyECardModal] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -192,18 +195,28 @@ const Menu = () => {
     }
   }, [userDetail]);
 
+  const initDeviceBright = async () => {
+    const result = await DeviceBrightness.getBrightnessLevel();
+    setCurrentBrightness(result);
+  };
+
+  const handleDeviceBright = async () => {
+    initDeviceBright();
+    if (isOpenMyECardModal) {
+      return DeviceBrightness.setBrightnessLevel(1);
+    }
+    if (currentBrightness) {
+      DeviceBrightness.setBrightnessLevel(currentBrightness);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      const currentBrightness = await DeviceBrightness.getBrightnessLevel();
-      if (isOpenMyECardModal) {
-        return DeviceBrightness.setBrightnessLevel(1);
-      }
-      if (currentBrightness) {
-        DeviceBrightness.setBrightnessLevel(currentBrightness);
-      }
-    };
-    loadData();
+    handleDeviceBright();
   }, [isOpenMyECardModal]);
+
+  useEffect(() => {
+    initDeviceBright();
+  }, []);
 
   const handleOpenMyECardModal = async () => {
     setIsOpenMyECardModal(true);
