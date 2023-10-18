@@ -2,7 +2,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
-// import DeviceBrightness from 'react-native-device-brightness';
 
 import {
   StyleSheet,
@@ -16,8 +15,6 @@ import {
   RefreshControl,
 } from 'react-native';
 
-import {ProgressBar} from 'react-native-paper';
-
 import appConfig from '../config/appConfig';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
@@ -25,14 +22,10 @@ import CryptoJS from 'react-native-crypto-js';
 
 import {logoutUser} from '../actions/auth.actions';
 import LoadingScreen from '../components/loadingScreen';
-import {
-  getMandatoryFields,
-  myProgressBarCampaign,
-} from '../actions/account.action';
+import {myProgressBarCampaign} from '../actions/account.action';
 import Theme from '../theme';
 import ConfirmationDialog from '../components/confirmationDialog';
 import MyECardModal from '../components/modal/MyECardModal';
-import moment from 'moment';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import BackgroundProfileSvg from '../assets/svg/BackgroundProfileSvg';
@@ -45,9 +38,7 @@ import {Body, Header} from '../components/layout';
 import additionalSetting from '../config/additionalSettings';
 import InfoMessage from '../components/infoMessage/InfoMessage';
 import {getUserProfile} from '../actions/user.action';
-import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {dataPoint, dataPointHistory} from '../actions/rewards.action';
-import {dataPromotion} from '../actions/promotion.action';
 import AsyncStorage from '@react-native-community/async-storage';
 import {
   KEY_VERIFIED_USER,
@@ -55,6 +46,7 @@ import {
 } from '../constant/storage';
 import CheckListGreenSvg from '../assets/svg/ChecklistGreenSvg';
 import useSettings from '../hooks/settings/useSettings';
+import MembershipInfo from '../components/membershipInfo';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -248,6 +240,9 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
     },
+    viewMembershipInfo: {
+      margin: 16,
+    },
     viewIconArrowRight: {
       width: 18,
       height: 18,
@@ -339,21 +334,15 @@ const Profile = props => {
   const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] = useState(
     false,
   );
-  const [visitNumber, setVisitNumber] = React.useState(null);
-  const [currentBrightness, setCurrentBrightness] = React.useState(null);
+  const [visitNumber, setVisitNumber] = useState(null);
+  const [currentBrightness, setCurrentBrightness] = useState(null);
   const [user, setUser] = useState({});
-  const [refreshing, setRefreshing] = React.useState(false);
-  const progressBarCampaign = useSelector(
-    state => state.accountsReducer?.myProgressBarCampaign.myProgress,
-  );
-  const [isConfirmVerified, setIsConfirmVerified] = React.useState(false);
 
-  const {checkLowerPriorityMandatory} = useSettings();
+  const [refreshing, setRefreshing] = useState(false);
+  const [isConfirmVerified, setIsConfirmVerified] = useState(false);
+
   const userDetail = useSelector(
     state => state.userReducer.getUser.userDetails,
-  );
-  const totalPoint = useSelector(
-    state => state.rewardsReducer.dataPoint.totalPoint,
   );
 
   const defaultOutlet = useSelector(
@@ -363,8 +352,6 @@ const Profile = props => {
   const hideReferral = useSelector(
     state => state.settingReducer.hideReferralSettings.hideReferral,
   );
-
-  const intlData = useSelector(state => state.intlData);
 
   useEffect(() => {
     const loadData = async () => {
@@ -517,193 +504,11 @@ const Profile = props => {
     );
   };
 
-  const renderVerifiedUser = () => {
-    if (!checkLowerPriorityMandatory()) {
-      if (user?.isEmailVerified || user?.isPhoneNumberVerified) {
-        return <CheckListGreenSvg width={18} height={18} />;
-      }
-      return null;
-    }
-    if (checkLowerPriorityMandatory()) {
-      if (user?.isEmailVerified && user?.isPhoneNumberVerified) {
-        return <CheckListGreenSvg width={18} height={18} />;
-      }
-      return null;
-    }
-    return null;
-  };
-
-  const renderWelcome = () => {
-    if (user?.name) {
-      const initialName = user?.name
-        .match(/(\b\S)?/g)
-        .join('')
-        .match(/(^\S|\S$)?/g)
-        .join('')
-        .toUpperCase();
-
-      return (
-        <View style={styles.viewWelcome}>
-          <View style={styles.viewInitialName}>
-            <Text style={styles.textInitialName}>{initialName}</Text>
-          </View>
-          <View>
-            <Text style={styles.textWelcome}>Welcome</Text>
-            <View style={styles.usernameContainer}>
-              <Text style={styles.textName}>{user?.name}</Text>
-              {renderVerifiedUser()}
-            </View>
-          </View>
-        </View>
-      );
-    }
-  };
-
-  const renderPoint = () => {
+  const renderMembershipInfo = () => {
     return (
-      <View style={styles.viewPointHeader}>
-        <Text style={styles.textYourPoint}>My Points</Text>
-        <TouchableOpacity
-          onPress={() => {
-            Actions.detailPoint({intlData});
-          }}
-          style={styles.viewPointValue}>
-          <Text style={styles.textPointValue}>{totalPoint} PTS</Text>
-          <View style={styles.viewIconArrowRight}>
-            <Image
-              source={appConfig.iconArrowRight}
-              style={styles.iconArrowRight}
-            />
-          </View>
-        </TouchableOpacity>
+      <View style={styles.viewMembershipInfo}>
+        <MembershipInfo />
       </View>
-    );
-  };
-
-  const renderHeaderProfileHeaderTop = () => {
-    return (
-      <View style={styles.viewWelcomeAndPoint}>
-        {renderWelcome()}
-        {renderPoint()}
-      </View>
-    );
-  };
-
-  const renderProgressBar = () => {
-    const percentage = progressBarCampaign?.progressInPercentage || 0;
-    const decimal = percentage / 100;
-    return (
-      <View style={styles.viewProgressBar}>
-        <ProgressBar
-          progress={decimal}
-          color={styles.primaryColor.color}
-          style={styles.progressBar}
-        />
-      </View>
-    );
-  };
-
-  const renderCurrentTier = () => {
-    return (
-      <Text style={styles.textCurrentTier}>
-        {progressBarCampaign?.currentGroup}
-      </Text>
-    );
-  };
-
-  const renderNextTier = () => {
-    return (
-      <Text style={styles.textNextTier}>{progressBarCampaign?.nextGroup}</Text>
-    );
-  };
-
-  const renderTier = () => {
-    return (
-      <View style={styles.viewTier}>
-        {renderCurrentTier()}
-        {renderNextTier()}
-      </View>
-    );
-  };
-
-  const textInfoHandle = () => {
-    if (progressBarCampaign) {
-      return `Spend ${CurrencyFormatter(
-        progressBarCampaign?.nextCustomerGroupCriteria?.totalPurchase -
-          progressBarCampaign?.totalPurchaseByAccumulation,
-      )} more to upgrade to`;
-    }
-    return '';
-  };
-
-  const renderTextInfo = () => {
-    return (
-      <Text style={styles.textInfo}>
-        {textInfoHandle()}{' '}
-        <Text style={[styles.textInfo, styles.bold]}>
-          {progressBarCampaign?.nextGroup}{' '}
-        </Text>{' '}
-      </Text>
-    );
-  };
-
-  const renderExpiry = () => {
-    const dateExpiry = moment(user.expiryCustomerGroup).format('DD MMMM YYYY');
-    if (additionalSetting().showExpiryMembership) {
-      return (
-        <Text style={styles.textExpiry}>
-          Membership expires on {dateExpiry}
-        </Text>
-      );
-    }
-    return null;
-  };
-  const renderTierPaidMembership = () => {
-    return (
-      <Text style={styles.textCurrentTierPaidMembership}>
-        {progressBarCampaign?.currentGroup}
-      </Text>
-    );
-  };
-
-  const renderHeaderProfileHeaderPaidMembership = () => {
-    return (
-      <View>
-        {renderTierPaidMembership()}
-        {renderExpiry()}
-      </View>
-    );
-  };
-
-  const renderHeaderProfileHeaderApplyCriteria = () => {
-    return (
-      <View>
-        {renderProgressBar()}
-        {renderTier()}
-        {renderTextInfo()}
-      </View>
-    );
-  };
-
-  const renderHeaderProfileHeaderBottom = () => {
-    if (progressBarCampaign?.showProgressBar) {
-      return renderHeaderProfileHeaderApplyCriteria();
-    } else {
-      return renderHeaderProfileHeaderPaidMembership();
-    }
-  };
-
-  const renderProfileHeader = () => {
-    return (
-      <TouchableOpacity
-        style={styles.viewHeader}
-        onPress={() => {
-          Actions.membership();
-        }}>
-        {renderHeaderProfileHeaderTop()}
-        <View style={styles.dividerHeader} />
-        {renderHeaderProfileHeaderBottom()}
-      </TouchableOpacity>
     );
   };
 
@@ -1072,7 +877,7 @@ const Profile = props => {
           }
           contentContainerStyle={styles.containerStyle}>
           {renderBackgroundImage()}
-          {renderProfileHeader()}
+          {renderMembershipInfo()}
           {renderSettingV2()}
           {renderDeleteAccountConfirmationDialog()}
           {renderLogoutConfirmationDialog()}
