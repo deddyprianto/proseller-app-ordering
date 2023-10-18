@@ -296,6 +296,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
       );
 
       setAvailableDates(timeSlot);
+      setInitDate(timeSlot[0]?.date);
       if (selectedDate.length <= 0) {
         const currentDate = availDate
           ? moment(availDate).format('ddd DD MMMM YYYY')
