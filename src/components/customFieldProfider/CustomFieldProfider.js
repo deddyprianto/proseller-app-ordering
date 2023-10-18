@@ -106,6 +106,7 @@ const CustomFieldProvider = () => {
   const [options, setOptions] = React.useState([]);
   const [selectedValue, setSelectedValue] = React.useState(null);
   const [selectedName, setSelectedName] = React.useState(null);
+  const [selectedRawName, setSelectedRawName] = React.useState(null);
   const [isLoadingDataDelivery, setIsLoadingDataDelivery] = React.useState(
     false,
   );
@@ -128,6 +129,7 @@ const CustomFieldProvider = () => {
   const onOpenModal = async field => {
     await setOptions(field?.options);
     await setSelectedName(field?.value);
+    await setSelectedRawName(field?.name);
     await setActiveModal(true);
   };
 
@@ -197,7 +199,7 @@ const CustomFieldProvider = () => {
           </View>
         ))}
       <GlobalModal
-        title={`Choose ${selectedName} Type`}
+        title={`Choose ${selectedRawName}`}
         closeModal={closeModal}
         hideCloseIcon
         modalContainerStyle={styles.noPadding}
