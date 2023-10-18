@@ -289,6 +289,13 @@ const AddNewAddress = ({address}) => {
   };
 
   const handleClickSave = async () => {
+    const convertToNumber = Number(postalCode);
+    if (isNaN(convertToNumber)) {
+      dispatch(
+        showSnackbar({message: 'Please input the correct postal code.'}),
+      );
+      return;
+    }
     const payload = handlePayload();
 
     setIsLoading(true);
@@ -431,7 +438,6 @@ const AddNewAddress = ({address}) => {
         <View style={styles.mb8}>
           <AutocompleteAddress
             onSelectAddress={onSelectAddress}
-            enableCurrentLocation
             value={streetName}
           />
         </View>
