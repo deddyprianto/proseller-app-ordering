@@ -432,7 +432,7 @@ const useStyles = () => {
       marginHorizontal: 16,
     },
     iosTextArea: {
-      height: normalizeLayoutSizeWidth(100),
+      height: normalizeLayoutSizeWidth(150),
       width: '100%',
     },
     customLabelStyle: {
