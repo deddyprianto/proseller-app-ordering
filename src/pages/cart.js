@@ -1547,7 +1547,6 @@ const Cart = props => {
   const renderCustomField = () => {
     return <CustomFieldContainer />;
   };
-  console.log({basket}, 'nakal');
 
   const onChangeNotes = value => {
     setNotes(value);
