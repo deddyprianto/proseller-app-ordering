@@ -48,6 +48,7 @@ import {
   resetOrdeingDateTime,
   resetProvider,
   resetSelectedCustomFiled,
+  sendNotes,
 } from '../actions/order.action';
 
 import Theme from '../theme';
@@ -67,6 +68,8 @@ import CheckOutletStatus from '../helper/CheckOutletStatus';
 import CustomFieldContainer from '../components/customFieldProfider/CustomFieldProfider';
 import useCalculation from '../hooks/calculation/useCalculation';
 import useValidation from '../hooks/validation/useValidation';
+import GlobalInputText from '../components/globalInputText';
+import {normalizeLayoutSizeWidth} from '../helper/Layout';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -425,6 +428,20 @@ const useStyles = () => {
     detailDotContainer: {
       marginLeft: 8,
     },
+    notes: {
+      marginHorizontal: 16,
+    },
+    iosTextArea: {
+      height: normalizeLayoutSizeWidth(100),
+      width: '100%',
+    },
+    customLabelStyle: {
+      fontSize: 16,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    noMt: {
+      marginTop: 0,
+    },
   });
   return {styles, color: theme.colors};
 };
@@ -446,7 +463,7 @@ const Cart = props => {
   const [openDeliveryProviderModal, setOpenDeliveryProviderModal] = useState(
     false,
   );
-
+  const [notes, setNotes] = React.useState('');
   const {checkCustomField} = useValidation();
   const [
     openOrderingModeOfflineModal,
@@ -873,6 +890,7 @@ const Cart = props => {
   const handleClickButtonPayment = async () => {
     try {
       const currentOutlet = await dispatch(getOutletById(outlet.id));
+      await dispatch(sendNotes(notes));
       const orderingModeAvailable = orderingModesField.filter(mode => {
         if (currentOutlet[mode.isEnabledFieldName]) {
           return mode;
@@ -1529,6 +1547,37 @@ const Cart = props => {
   const renderCustomField = () => {
     return <CustomFieldContainer />;
   };
+  console.log({basket}, 'nakal');
+
+  const onChangeNotes = value => {
+    setNotes(value);
+  };
+
+  const renderNotes = () => {
+    if (
+      basket?.orderingMode === 'STOREPICKUP' ||
+      basket?.orderingMode === 'DELIVERY'
+    ) {
+      return (
+        <View style={styles.notes}>
+          <GlobalInputText
+            showNumberLengthText={true}
+            placeholder="Example: please use less plastic"
+            label="Notes (Optional)"
+            multiline={true}
+            numberOfLines={10}
+            textAlignVertical="top"
+            maxLength={140}
+            onChangeText={onChangeNotes}
+            customInputStyle={styles.iosTextArea}
+            customLabelStyle={styles.customLabelStyle}
+            inputParentContainerCustom={styles.noMt}
+          />
+        </View>
+      );
+    }
+    return null;
+  };
 
   return (
     <SafeAreaView style={styles.root}>
@@ -1559,6 +1608,7 @@ const Cart = props => {
             {renderDate()}
             {renderProvider()}
             {renderCustomField()}
+            {renderNotes()}
           </ScrollView>
         </Body>
         {renderModal()}

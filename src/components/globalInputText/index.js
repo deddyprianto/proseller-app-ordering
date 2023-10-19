@@ -147,6 +147,8 @@ const useStyles = () => {
  * @property {Boolean} autoReset
  * @property {any} childrenLabel
  * @property {StyleProp} customInputStyle
+ * @property {StyleProp} customLabelStyle
+ * @property {StyleProp} inputParentContainerCustom
  */
 
 /**
@@ -229,9 +231,10 @@ const GlobalInputText = React.forwardRef((props, ref) => {
     );
   }
   return (
-    <View style={styles.inputParentContainer}>
+    <View
+      style={[styles.inputParentContainer, props.inputParentContainerCustom]}>
       <View style={styles.row}>
-        <GlobalText style={styles.labelStyle}>
+        <GlobalText style={[styles.labelStyle, props.customLabelStyle]}>
           {props.label}{' '}
           {props.isMandatory ? (
             <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
