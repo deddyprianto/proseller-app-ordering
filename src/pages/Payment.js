@@ -343,7 +343,6 @@ const Payment = () => {
   const order = useSelector(
     state => state.orderReducer.dataCartSingle.cartSingle,
   );
-  console.log('DELTA', order);
 
   const isPendingPayment = order?.status === 'PENDING_PAYMENT';
 
