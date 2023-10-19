@@ -145,10 +145,28 @@ const useStyles = () => {
       fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textQueueNumber1: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+
+    textQueueNumber2: {
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[24],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
 
     viewQR: {
       alignItems: 'center',
       marginTop: 24,
+    },
+    viewQueueNumber: {
+      marginTop: 24,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
 
     viewOrderDetailItem: {
@@ -325,6 +343,7 @@ const Payment = () => {
   const order = useSelector(
     state => state.orderReducer.dataCartSingle.cartSingle,
   );
+  console.log('DELTA', order);
 
   const isPendingPayment = order?.status === 'PENDING_PAYMENT';
 
@@ -622,6 +641,15 @@ const Payment = () => {
     );
   };
 
+  const renderQueueNumber = () => {
+    return (
+      <View style={styles.viewQueueNumber}>
+        <Text style={styles.textQueueNumber1}>Queue No.</Text>
+        <Text style={styles.textQueueNumber2}>{order?.queueNo}</Text>
+      </View>
+    );
+  };
+
   const renderPaymentDetails = () => {
     const result = order?.payments.map(row => {
       return renderPaymentDetailItem(row);
@@ -659,6 +687,7 @@ const Payment = () => {
           {renderQR()}
           {renderWaitingTime()}
           {renderSaveQR()}
+          {renderQueueNumber()}
           {renderStatus()}
           {renderTextTitle('Order Details')}
           {renderOrderDetails()}
