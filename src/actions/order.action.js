@@ -1605,7 +1605,7 @@ export const getDeliveryFee = payload => {
         200,
         token,
       );
-      console.log(response, 'response get delivery fee');
+      console.log({response}, 'response get delivery fee');
       if (response.success == true) {
         if (!isEmptyArray(response.response.data.dataProvider)) {
           let providers = response.response.data.dataProvider;
@@ -2252,5 +2252,22 @@ export const resetGrandTotal = totalNettAmount => {
       type: 'DATA_BASKET',
       product: newBasket,
     });
+  };
+};
+
+export const sendNotes = notes => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const {
+        authReducer: {
+          tokenUser: {token},
+        },
+      } = state;
+      const url = '/cart/updateCartInfo';
+      await fetchApiOrder(url, 'POST', {remark: notes}, 200, token);
+    } catch (e) {
+      console.log(e, 'error notes');
+    }
   };
 };

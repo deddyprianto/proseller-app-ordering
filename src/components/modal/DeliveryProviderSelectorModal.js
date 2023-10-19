@@ -340,9 +340,9 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
             {item?.name}
           </Text>
         </View>
-        {item?.grossAmount > 0 ? (
+        {item?.deliveryFee > 0 ? (
           <Text style={styles.textPrice}>
-            {CurrencyFormatter(item?.grossAmount)}
+            {CurrencyFormatter(item?.deliveryFee)}
           </Text>
         ) : (
           <Text style={styles.textPrice}>-</Text>
@@ -377,7 +377,6 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       </TouchableOpacity>
     );
   };
-  console.log({deliveryProviders}, 'silak');
   const renderDeliveryProviderItemDisabledFooter = item => {
     if (item.deliveryProviderError?.message) {
       return (
