@@ -149,11 +149,11 @@ const useStyles = () => {
     mt4: {
       marginTop: 4,
     },
-    pointText: {
-      fontSize: 12,
-      color: theme.colors.textTertiary,
+    pointText: isSwitch => ({
+      fontSize: 14,
+      color: isSwitch ? theme.colors.brandTertiary : theme.colors.textTertiary,
       fontFamily: theme.fontFamily.poppinsMedium,
-    },
+    }),
     justifyCenter: {
       justifyContent: 'center',
     },
@@ -179,6 +179,19 @@ const useStyles = () => {
     },
     ml30: {
       marginLeft: 30,
+    },
+    currentPoint: {
+      fontSize: 12,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: theme.colors.textTertiary,
+      marginTop: 8,
+    },
+    w90: {
+      width: '90%',
+    },
+    centerDevice: {
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
   return {styles, colors: theme.colors};
@@ -419,7 +432,7 @@ const CartDetail = ({
         onPress={() => {
           handleClick();
         }}
-        style={stylesView}>
+        style={[stylesView]}>
         <Animated.View
           style={[
             {
@@ -441,28 +454,23 @@ const CartDetail = ({
     const ratio = jumMoneyRatio / jumPointRatio;
 
     const totalPointValue = totalPoint * ratio;
-
-    if (pointUsed() > 0) {
-      return (
-        <View>
-          <GlobalText style={[styles.brandColor, styles.mediumFont]}>
-            {pointUsed()} points used (worth{' '}
-            {CurrencyFormatter(calculatePoint(vouchers))})
-          </GlobalText>
-        </View>
-      );
-    } else {
-      return (
-        <View>
-          <GlobalText style={styles.pointText}>
-            Available Points {totalPoint} points
-          </GlobalText>
-          <GlobalText style={styles.pointText}>
-            worth {CurrencyFormatter(totalPointValue)}
-          </GlobalText>
-        </View>
-      );
-    }
+    return (
+      <View>
+        <GlobalText style={styles.pointText(isSwitchPoint)}>
+          Points Used: {isSwitchPoint ? pointUsed() : totalPoint}
+        </GlobalText>
+        <GlobalText style={styles.pointText(isSwitchPoint)}>
+          Worth:{' '}
+          {isSwitchPoint
+            ? CurrencyFormatter(calculatePoint(vouchers))
+            : CurrencyFormatter(totalPointValue)}
+        </GlobalText>
+        <GlobalText style={styles.currentPoint}>
+          Current Points: {totalPoint} (worth{' '}
+          {CurrencyFormatter(totalPointValue)})
+        </GlobalText>
+      </View>
+    );
   };
 
   const renderPointType = () => {
@@ -485,18 +493,20 @@ const CartDetail = ({
           setIsOpenModal(true);
         }}
         style={[styles.card]}>
-        <View style={{display: 'flex', flexDirection: 'column'}}>
-          <View style={styles.row}>
-            <View style={styles.mr10}>
-              <PointSvg />
+        <View style={{display: 'flex', flexDirection: 'row'}}>
+          <View style={styles.w90}>
+            <View style={[styles.row]}>
+              <View style={styles.mr10}>
+                <PointSvg />
+              </View>
+              <View>
+                <GlobalText>Use Point </GlobalText>
+              </View>
             </View>
-            <View>
-              <GlobalText>Use Point </GlobalText>
-              {renderPointText()}
-            </View>
-            <View style={[styles.mlAuto, styles.justifyCenter]}>
-              {renderPointType()}
-            </View>
+            {renderPointText()}
+          </View>
+          <View style={styles.centerDevice}>
+            <View style={[styles.mlAuto]}>{renderPointType()}</View>
           </View>
         </View>
       </TouchableOpacity>
