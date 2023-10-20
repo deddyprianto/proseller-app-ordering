@@ -121,7 +121,7 @@ const appConfig = {
 
   iconHome: require('../assets/img/icon-home.png'),
   iconHomeEStore: require('../assets/img/icon-home-e-store.png'),
-  iconHomeECard: require('../assets/img/icon-home-e-card.png'),
+  iconHomeECard: require('../assets/img/icon-qr-code.png'),
   iconHomeOutlet: require('../assets/img/icon-home-outlet.png'),
   iconHomeSendAGift: require('../assets/img/icon-home-send-a-gift.png'),
   iconHistory: require('../assets/img/icon-history.png'),
