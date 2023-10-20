@@ -1174,8 +1174,33 @@ class WaitingFood extends Component {
             <Text style={styles.btnBackText}>Waiting Order</Text>
           </TouchableOpacity>
         </View>
+        {this.renderImage()}
+        {dataBasket != undefined && dataBasket.orderingMode == 'DELIVERY'
+          ? this.renderTextWaitingDelivery()
+          : this.renderTextWaiting()}
+        {dataBasket != undefined && dataBasket.orderingMode != 'DELIVERY'
+          ? this.renderBottomButton()
+          : this.renderBottomButtonDelivery()}
+      </SafeAreaView>
+    );
+  }
 
-        <View style={{height: '35%'}}>
+  renderImage = () => {
+    const {dataBasket} = this.props;
+    const isImagePng =
+      dataBasket.status === 'PROCESSING' ||
+      dataBasket.status === 'READY_FOR_DELIVERY' ||
+      dataBasket.status === 'READY_FOR_COLLECTION';
+
+    if (dataBasket !== undefined && isImagePng) {
+      return (
+        <View style={styles.viewImagePng}>
+          <Image source={this.getImage(dataBasket)} style={styles.imagePng} />
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.viewImageGif}>
           {dataBasket != undefined ? (
             <LottieView
               speed={1}
@@ -1185,27 +1210,29 @@ class WaitingFood extends Component {
             />
           ) : null}
         </View>
+      );
+    }
+  };
 
-        {dataBasket != undefined && dataBasket.orderingMode == 'DELIVERY'
-          ? this.renderTextWaitingDelivery()
-          : this.renderTextWaiting()}
-
-        {dataBasket != undefined && dataBasket.orderingMode != 'DELIVERY'
-          ? this.renderBottomButton()
-          : this.renderBottomButtonDelivery()}
-      </SafeAreaView>
-    );
-  }
+  getImage = dataBasket => {
+    try {
+      if (dataBasket.status === 'PROCESSING') {
+        return appConfig.imageOrderPreparing;
+      } else if (dataBasket.status === 'READY_FOR_DELIVERY') {
+        return appConfig.imageOrderReady;
+      } else if (dataBasket.status === 'READY_FOR_COLLECTION') {
+        return appConfig.imageOrderReady;
+      } else {
+        return appConfig.imageOrderReady;
+      }
+    } catch (e) {
+      return appConfig.imageOrderReady;
+    }
+  };
 
   getAnimation = dataBasket => {
     try {
-      if (dataBasket.status == 'PROCESSING') {
-        return require('../../../assets/animate/shopping-lady');
-      } else if (dataBasket.status == 'READY_FOR_DELIVERY') {
-        return require('../../../assets/animate/ready');
-      } else if (dataBasket.status == 'READY_FOR_COLLECTION') {
-        return require('../../../assets/animate/ready');
-      } else if (dataBasket.status == 'ON_THE_WAY') {
+      if (dataBasket.status === 'ON_THE_WAY') {
         return require('../../../assets/animate/delivery');
       } else {
         return require('../../../assets/animate/cooking');
@@ -1440,5 +1467,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingVertical: 3,
     color: colorConfig.pageIndex.grayColor,
+  },
+  viewImagePng: {
+    width: '100%',
+    height: '35%',
+    alignItems: 'center',
+  },
+  viewImageGif: {
+    height: '35%',
+  },
+  imagePng: {
+    width: '50%',
+    height: '100%',
   },
 });
