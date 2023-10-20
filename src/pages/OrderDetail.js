@@ -44,6 +44,7 @@ import useCalculation from '../hooks/calculation/useCalculation';
 import useOrderingTypes from '../hooks/orderingTypes/useOrderingTypes';
 import ModalDeliveryDetail from '../components/modal/ModalDeliveryDetail';
 import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
+import awsConfig from '../config/awsConfig';
 
 const useStyles = () => {
   const {colors, fontFamily, fontSize} = Theme();
@@ -740,7 +741,6 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
     }
     return 'Points will be earned';
   };
-  const theme = Theme();
 
   return (
     <Body>
@@ -797,10 +797,14 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
           </View>
         ) : null}
 
-        <View style={styles.viewQueueNumber}>
-          <Text style={styles.textQueueNumber1}>Queue No.</Text>
-          <Text style={styles.textQueueNumber2}>{data?.queueNo}</Text>
-        </View>
+        {data?.queueNo &&
+          data?.orderingMode !== 'STORECHECKOUT' &&
+          awsConfig.COMPANY_TYPE !== 'Retail' && (
+            <View style={styles.viewQueueNumber}>
+              <Text style={styles.textQueueNumber1}>Queue No.</Text>
+              <Text style={styles.textQueueNumber2}>{data?.queueNo}</Text>
+            </View>
+          )}
 
         <View style={styles.mainScrollContainer}>
           <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>

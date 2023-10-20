@@ -28,6 +28,7 @@ import appConfig from '../config/appConfig';
 import {getPendingOrderById} from '../actions/order.action';
 import {useDispatch, useSelector} from 'react-redux';
 import {permissionDownloadFile} from '../helper/Download';
+import awsConfig from '../config/awsConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -343,7 +344,6 @@ const Payment = () => {
   const order = useSelector(
     state => state.orderReducer.dataCartSingle.cartSingle,
   );
-  console.log('DELTA', order);
 
   const isPendingPayment = order?.status === 'PENDING_PAYMENT';
 
@@ -642,12 +642,19 @@ const Payment = () => {
   };
 
   const renderQueueNumber = () => {
-    return (
-      <View style={styles.viewQueueNumber}>
-        <Text style={styles.textQueueNumber1}>Queue No.</Text>
-        <Text style={styles.textQueueNumber2}>{order?.queueNo}</Text>
-      </View>
-    );
+    const isShowQueue =
+      order?.queueNo &&
+      order?.orderingMode !== 'STORECHECKOUT' &&
+      awsConfig.COMPANY_TYPE !== 'Retail';
+
+    if (isShowQueue) {
+      return (
+        <View style={styles.viewQueueNumber}>
+          <Text style={styles.textQueueNumber1}>Queue No.</Text>
+          <Text style={styles.textQueueNumber2}>{order?.queueNo}</Text>
+        </View>
+      );
+    }
   };
 
   const renderPaymentDetails = () => {

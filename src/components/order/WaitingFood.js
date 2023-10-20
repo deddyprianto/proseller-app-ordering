@@ -1175,10 +1175,10 @@ class WaitingFood extends Component {
           </TouchableOpacity>
         </View>
         {this.renderImage()}
-        {dataBasket != undefined && dataBasket.orderingMode == 'DELIVERY'
+        {dataBasket != undefined && dataBasket?.orderingMode === 'DELIVERY'
           ? this.renderTextWaitingDelivery()
           : this.renderTextWaiting()}
-        {dataBasket != undefined && dataBasket.orderingMode != 'DELIVERY'
+        {dataBasket != undefined && dataBasket?.orderingMode !== 'DELIVERY'
           ? this.renderBottomButton()
           : this.renderBottomButtonDelivery()}
       </SafeAreaView>
@@ -1188,9 +1188,9 @@ class WaitingFood extends Component {
   renderImage = () => {
     const {dataBasket} = this.props;
     const isImagePng =
-      dataBasket.status === 'PROCESSING' ||
-      dataBasket.status === 'READY_FOR_DELIVERY' ||
-      dataBasket.status === 'READY_FOR_COLLECTION';
+      dataBasket?.status === 'PROCESSING' ||
+      dataBasket?.status === 'READY_FOR_DELIVERY' ||
+      dataBasket?.status === 'READY_FOR_COLLECTION';
 
     if (dataBasket !== undefined && isImagePng) {
       return (
@@ -1216,11 +1216,11 @@ class WaitingFood extends Component {
 
   getImage = dataBasket => {
     try {
-      if (dataBasket.status === 'PROCESSING') {
+      if (dataBasket?.status === 'PROCESSING') {
         return appConfig.imageOrderPreparing;
-      } else if (dataBasket.status === 'READY_FOR_DELIVERY') {
+      } else if (dataBasket?.status === 'READY_FOR_DELIVERY') {
         return appConfig.imageOrderReady;
-      } else if (dataBasket.status === 'READY_FOR_COLLECTION') {
+      } else if (dataBasket?.status === 'READY_FOR_COLLECTION') {
         return appConfig.imageOrderReady;
       } else {
         return appConfig.imageOrderReady;
@@ -1232,7 +1232,7 @@ class WaitingFood extends Component {
 
   getAnimation = dataBasket => {
     try {
-      if (dataBasket.status === 'ON_THE_WAY') {
+      if (dataBasket?.status === 'ON_THE_WAY') {
         return require('../../../assets/animate/delivery');
       } else {
         return require('../../../assets/animate/cooking');
