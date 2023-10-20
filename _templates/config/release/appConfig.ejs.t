@@ -89,6 +89,8 @@ const appConfig = {
   imageMail: require('../assets/img/image-mail.png'),
 
   imageOrderNotAvailable: require('../assets/img/image-order-not-available.png'),
+  imageOrderReady: require('../assets/img/image-order-ready.png'),
+  imageOrderPreparing: require('../assets/img/image-order-preparing.png'),
 
   imagePromotionBackground: require('../assets/img/image-promotion-background.png'),
   // imagePointSmallBackground: require('../assets/img/image-point-small-background.png'),
