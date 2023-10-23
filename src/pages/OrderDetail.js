@@ -44,7 +44,6 @@ import useCalculation from '../hooks/calculation/useCalculation';
 import useOrderingTypes from '../hooks/orderingTypes/useOrderingTypes';
 import ModalDeliveryDetail from '../components/modal/ModalDeliveryDetail';
 import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
-import awsConfig from '../config/awsConfig';
 
 const useStyles = () => {
   const {colors, fontFamily, fontSize} = Theme();
@@ -799,7 +798,7 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
 
         {data?.queueNo &&
           data?.orderingMode !== 'STORECHECKOUT' &&
-          awsConfig.COMPANY_TYPE !== 'Retail' && (
+          data?.outlet?.outletType !== 'Retail' && (
             <View style={styles.viewQueueNumber}>
               <Text style={styles.textQueueNumber1}>Queue No.</Text>
               <Text style={styles.textQueueNumber2}>{data?.queueNo}</Text>

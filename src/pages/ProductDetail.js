@@ -562,6 +562,7 @@ const ProductDetail = ({
     if (!additionalSetting().enableAddItemToCart) {
       return true;
     }
+
     if (!isEmptyArray(product?.productModifiers) && !isLoading && qty !== 0) {
       let qtyModifierSelected = 0;
       const productModifiers = product.productModifiers.map(productModifier => {
