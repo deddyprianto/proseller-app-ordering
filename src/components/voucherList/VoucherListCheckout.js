@@ -10,6 +10,26 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 const useStyles = () => {
   const theme = Theme();
+
+  const handleButtonAction = (type, disabled) => {
+    if (disabled) {
+      return {
+        bg: theme.colors.greyScale2,
+        border: 'transparent',
+      };
+    }
+    if (type === 'used') {
+      return {
+        bg: 'white',
+        border: theme.colors.primary,
+      };
+    }
+    return {
+      bg: theme.colors.primary,
+      border: theme.colors.primary,
+    };
+  };
+
   const styles = StyleSheet.create({
     imageContainer: type => ({
       width: normalizeLayoutSizeWidth(396),
@@ -73,15 +93,15 @@ const useStyles = () => {
       borderStyle: 'dotted',
       borderRadius: 1,
     },
-    buttonAction: type => ({
-      backgroundColor: type === 'used' ? 'white' : theme.colors.primary,
+    buttonAction: (type, disabled) => ({
+      backgroundColor: handleButtonAction(type, disabled).bg,
       paddingVertical: 8,
       paddingHorizontal: 16,
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: theme.colors.primary,
+      borderColor: handleButtonAction(type, disabled).border,
     }),
     buttonText: type => ({
       fontFamily: theme.fontFamily.poppinsMedium,
@@ -115,7 +135,7 @@ const useStyles = () => {
   return {styles};
 };
 
-const VoucherListCheckout = ({onPress, item, type}) => {
+const VoucherListCheckout = ({onPress, item, type, disabled}) => {
   const theme = Theme();
   const {styles} = useStyles();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
@@ -141,7 +161,6 @@ const VoucherListCheckout = ({onPress, item, type}) => {
       )} more to your order to enjoy this voucher`;
     }
   };
-
   return (
     <View style={[styles.shadowProp, {marginTop: 16}]}>
       <View style={[styles.imageContainer(type)]}>
@@ -174,9 +193,10 @@ const VoucherListCheckout = ({onPress, item, type}) => {
                 />
                 <View style={[styles.voucherName, styles.actionWidth]}>
                   <TouchableOpacity
-                    style={[styles.mlAuto, styles.buttonAction(type)]}
+                    disabled={disabled}
+                    style={[styles.mlAuto, styles.buttonAction(type, disabled)]}
                     onPress={onPress}>
-                    <GlobalText style={styles.buttonText(type)}>
+                    <GlobalText style={styles.buttonText(type, disabled)}>
                       {handleText()}
                     </GlobalText>
                   </TouchableOpacity>
