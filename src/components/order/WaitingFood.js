@@ -1195,7 +1195,11 @@ class WaitingFood extends Component {
     if (dataBasket !== undefined && isImagePng) {
       return (
         <View style={styles.viewImagePng}>
-          <Image source={this.getImage(dataBasket)} style={styles.imagePng} />
+          <Image
+            source={this.getImage(dataBasket)}
+            style={styles.imagePng}
+            resizeMode="contain"
+          />
         </View>
       );
     } else {
@@ -1477,7 +1481,7 @@ const styles = StyleSheet.create({
     height: '35%',
   },
   imagePng: {
-    width: '50%',
+    width: '100%',
     height: '100%',
   },
 });

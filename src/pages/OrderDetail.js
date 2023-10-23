@@ -815,7 +815,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
 
         {data?.queueNo &&
           data?.orderingMode !== 'STORECHECKOUT' &&
-          awsConfig.COMPANY_TYPE !== 'Retail' && (
+          data?.outlet?.outletType !== 'Retail' && (
             <View style={styles.viewQueueNumber}>
               <Text style={styles.textQueueNumber1}>Queue No.</Text>
               <Text style={styles.textQueueNumber2}>{data?.queueNo}</Text>

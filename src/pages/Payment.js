@@ -28,7 +28,6 @@ import appConfig from '../config/appConfig';
 import {getPendingOrderById} from '../actions/order.action';
 import {useDispatch, useSelector} from 'react-redux';
 import {permissionDownloadFile} from '../helper/Download';
-import awsConfig from '../config/awsConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -645,7 +644,7 @@ const Payment = () => {
     const isShowQueue =
       order?.queueNo &&
       order?.orderingMode !== 'STORECHECKOUT' &&
-      awsConfig.COMPANY_TYPE !== 'Retail';
+      order?.outlet?.outletType !== 'Retail';
 
     if (isShowQueue) {
       return (
