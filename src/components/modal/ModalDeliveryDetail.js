@@ -90,7 +90,6 @@ const ModalDeliveryDetail = ({
   const provider = useSelector(
     state => state.orderReducer?.dataBasket?.product?.provider,
   );
-  console.log({provider}, 'lilin');
 
   const renderBreakDown = (fee, index) => (
     <>

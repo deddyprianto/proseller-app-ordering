@@ -441,6 +441,17 @@ class SettleOrder extends Component {
     } catch (e) {}
   };
 
+  calculateFinalAmount = (vouchers = []) => {
+    let amountVoucher = 0;
+    const amountMustBePay = this.props?.pembayaran?.totalNettAmount;
+    const listPaymentAmount = vouchers?.map(voucher => voucher?.paymentAmount);
+    if (listPaymentAmount.length > 0) {
+      amountVoucher = listPaymentAmount?.reduce((a, b) => a + b);
+    }
+    const total = amountMustBePay - amountVoucher;
+    return total;
+  };
+
   setDataVoucher = async item => {
     let {dataVoucer} = this.state;
     const {pembayaran} = this.props;
@@ -461,9 +472,11 @@ class SettleOrder extends Component {
       if (dataVoucer == undefined || item?.length <= 0) {
         dataVoucer = [];
       }
+      const amountToPay = this.calculateFinalAmount(item);
       await this.setState({
         dataVoucer: item,
         cancelVoucher: false,
+        totalBayar: amountToPay,
       });
 
       this.setDataPayment(false);
@@ -960,25 +973,6 @@ class SettleOrder extends Component {
         );
       }
 
-      // if (
-      //   this.state.cancelVoucher == false &&
-      //   this.state.dataVoucer != undefined
-      // ) {
-      //   var jumlah = _.find(myVoucers, {id: this.state.dataVoucer.id})
-      //     .totalRedeem;
-      //
-      //   var index = _.findIndex(myVoucers, {
-      //     id: this.state.dataVoucer.id,
-      //   });
-      //
-      //   _.updateWith(
-      //     myVoucers,
-      //     '[' + index + "]['totalRedeem']",
-      //     _.constant(jumlah - 1),
-      //     Object,
-      //   );
-      // }
-
       Actions.paymentAddVoucers({
         intlData,
         dataVoucer,
@@ -1151,7 +1145,6 @@ class SettleOrder extends Component {
       }
       return {...payment};
     });
-
     this.setState(
       {dataVoucer: mappingPayment, totalBayar: response.total},
       () => {
@@ -1263,10 +1256,18 @@ class SettleOrder extends Component {
         },
       );
     } else {
+      let amountPay = 0;
       const removeVoucher = this.state.dataVoucer?.filter(
         voucher => !voucher.isPoint,
       );
-      this.setState({dataVoucer: removeVoucher, jumPoint: 0, moneyPoint: 0});
+      amountPay = this.calculateFinalAmount(removeVoucher);
+
+      this.setState({
+        dataVoucer: removeVoucher,
+        jumPoint: 0,
+        moneyPoint: 0,
+        totalBayar: amountPay,
+      });
     }
   };
 
@@ -2576,26 +2577,9 @@ class SettleOrder extends Component {
     } catch (e) {}
 
     let {totalBayar, dataVoucer} = this.state;
-    const mapAmountVoucherUsage = dataVoucer?.map(
-      voucher => voucher?.paymentAmount,
-    );
-    const totalVoucherUsage = mapAmountVoucherUsage?.reduce((a, b) => a + b);
     let payload = {};
     try {
       await this.setState({loading: true});
-
-      // if (selectedAccount.paymentType === 'NETSCLICK') {
-      //   await NetsClick.Debit({amount: totalBayar})
-      //     .then(async r => {
-      //       await this.setState({loading: false});
-      //       Alert.alert('Success', 'Payment using netslick success');
-      //     })
-      //     .catch(async e => {
-      //       await this.setState({loading: false});
-      //       Alert.alert('Failed', 'Payment using netslick failed');
-      //     });
-      //   return;
-      // }
 
       let isNeedConfirmation = false;
       try {
@@ -2641,7 +2625,6 @@ class SettleOrder extends Component {
           }
         }
       }
-
       payload.payments = payments;
       // const totalVoucher
       // if price is 0, then dont add payment method
@@ -2690,8 +2673,7 @@ class SettleOrder extends Component {
             x => x.name === 'manual_transfer_image',
           ).value;
         } catch (e) {}
-        const paymentAmountByCc =
-          this.state.totalBayar - (totalVoucherUsage || 0);
+        const paymentAmountByCc = this.state.totalBayar;
         if (selectedAccount?.isAccountRequired === false) {
           payments.push({
             accountId: paymentPayload.accountId,
@@ -2945,9 +2927,6 @@ class SettleOrder extends Component {
 
       this.setState({loading: false});
     } catch (e) {
-      //  cancel voucher and pont selected
-      // this.cencelPoint();
-      // this.cencelVoucher();
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }

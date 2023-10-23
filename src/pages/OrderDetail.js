@@ -8,6 +8,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -44,6 +45,8 @@ import useCalculation from '../hooks/calculation/useCalculation';
 import useOrderingTypes from '../hooks/orderingTypes/useOrderingTypes';
 import ModalDeliveryDetail from '../components/modal/ModalDeliveryDetail';
 import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
+import awsConfig from '../config/awsConfig';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const {colors, fontFamily, fontSize} = Theme();
@@ -370,7 +373,7 @@ const useStyles = () => {
   return {styles, colors};
 };
 
-const OrderDetail = ({data, isFromPaymentPage}) => {
+const OrderDetail = ({data, isFromPaymentPage, step}) => {
   const {styles} = useStyles();
   const {minutes, seconds, isTimeEnd} = useCountdownV2(data);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
@@ -416,6 +419,20 @@ const OrderDetail = ({data, isFromPaymentPage}) => {
       <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
+
+  const backToHome = () => {
+    Actions.reset('app', {fromPayment: true});
+    return true;
+  };
+
+  React.useEffect(() => {
+    if (step === 4) {
+      BackHandler.addEventListener('hardwareBackPress', backToHome);
+    }
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backToHome);
+    };
+  }, []);
 
   const toggleDeliveryDetail = () =>
     setShowDetailDelivery(prevState => !prevState);

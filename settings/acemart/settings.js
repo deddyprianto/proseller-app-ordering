@@ -16,6 +16,7 @@ const additionalSetting = () => {
   const textRedeemVoucher = 'Reedemable Vouchers';
   const isUsingValidityDays = true;
   const enableUpcaScanner = false;
+  const maxVoucherInOneTransaction = null;
 
   return {
     additionalPolicy,
@@ -33,6 +34,7 @@ const additionalSetting = () => {
     textRedeemVoucher,
     isUsingValidityDays,
     enableUpcaScanner,
+    maxVoucherInOneTransaction,
   };
 };
 
