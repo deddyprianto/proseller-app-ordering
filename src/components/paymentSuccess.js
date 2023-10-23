@@ -281,7 +281,11 @@ class PaymentSuccess extends Component {
             customRightIcon={this.renderStep4Text}
             title={'Payment'}
           />
-          <OrderDetail isFromPaymentPage={true} data={dataRespons} />
+          <OrderDetail
+            step={this.props.step}
+            isFromPaymentPage={true}
+            data={dataRespons}
+          />
         </>
       );
     }

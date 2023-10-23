@@ -29,12 +29,13 @@ const additionalSetting = () => {
   const cartVersion = 'advance';
   const registerVersion = 2;
   const enableScanAndGo = true;
-  const enableAddItemToCart = false;
+  const enableAddItemToCart = true;
   const showExpiryMembership = false;
   const hideLabelForSingleOutlet = false;
   const textRedeemVoucher = 'Available Vouchers';
   const isUsingValidityDays = false;
   const enableUpcaScanner = false;
+  const maxVoucherInOneTransaction = 1;
   return {
     additionalPolicy,
     mapType,
@@ -51,6 +52,7 @@ const additionalSetting = () => {
     textRedeemVoucher,
     isUsingValidityDays,
     enableUpcaScanner,
+    maxVoucherInOneTransaction,
   };
 };
 

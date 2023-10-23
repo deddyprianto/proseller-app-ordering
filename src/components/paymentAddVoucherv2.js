@@ -31,6 +31,7 @@ import ModalAction from './modal/ModalAction';
 import {getVoucherCheckout} from '../actions/user.action';
 import useCalculation from '../hooks/calculation/useCalculation';
 import appConfig from '../config/appConfig';
+import additionalSetting from '../config/additionalSettings';
 
 const PaymentAddVouchersV2 = props => {
   const [usedVoucher, setUsedVoucher] = React.useState(props?.dataVoucer || []);
@@ -248,6 +249,7 @@ const PaymentAddVouchersV2 = props => {
         onPress={() => handleAddVoucher(item)}
         type={'available'}
         item={item}
+        disabled={handleDisableVoucher()}
       />
     );
   };
@@ -273,6 +275,19 @@ const PaymentAddVouchersV2 = props => {
 
   const closeConfirmVoucher = () => {
     setConfirmPopup(false);
+  };
+
+  const handleDisableVoucher = () => {
+    if (additionalSetting().maxVoucherInOneTransaction) {
+      if (
+        filterOnlyVoucher()?.length >=
+        additionalSetting().maxVoucherInOneTransaction
+      ) {
+        return true;
+      }
+      return false;
+    }
+    return false;
   };
 
   return (
