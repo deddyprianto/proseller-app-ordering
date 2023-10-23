@@ -387,6 +387,8 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
     listPreorder,
     availDate,
     listSelfSelection,
+    itemListWithoutRounding,
+    calculateRoundingItem,
   } = useOrder();
   const [showDetailDelivery, setShowDetailDelivery] = React.useState(false);
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
@@ -401,7 +403,6 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
       description: 'Successfully saved image to your gallery.',
     });
   };
-  console.log({data}, 'naniks');
   React.useEffect(() => {
     handleOrderingType();
   }, []);
@@ -439,7 +440,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
 
   React.useEffect(() => {
     if (data) {
-      groupingeOrder(data?.details || []);
+      groupingeOrder(itemListWithoutRounding(data) || []);
     }
   }, [data]);
 
@@ -680,8 +681,6 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
     return 'Item';
   };
 
-  console.log({data}, 'nusuk');
-
   const renderIsItemSelection = () => {
     if (listSelfSelection.length > 0) {
       return (
@@ -902,6 +901,23 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                   <View>
                     <GlobalText style={[styles.boldFont, styles.grayColor]}>
                       ({CurrencyFormatter(data?.totalMembershipDiscountAmount)})
+                    </GlobalText>
+                  </View>
+                </View>
+              </View>
+            ) : null}
+
+            {calculateRoundingItem(data) && calculateRoundingItem(data) > 0 ? (
+              <View style={[styles.listOrderDetailContainer, styles.mt16]}>
+                <View style={styles.orderStatusContainer}>
+                  <View>
+                    <GlobalText style={[styles.grayColor, styles.mediumFont]}>
+                      Rounding{' '}
+                    </GlobalText>
+                  </View>
+                  <View>
+                    <GlobalText style={[styles.boldFont, styles.grayColor]}>
+                      ({CurrencyFormatter(calculateRoundingItem(data))})
                     </GlobalText>
                   </View>
                 </View>
