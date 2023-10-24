@@ -89,6 +89,13 @@ const useStyles = () => {
     informationDelivery: {
       marginLeft: 4,
     },
+    titleStyle: {
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    mb8: {
+      marginBottom: 8,
+    },
   });
   return styles;
 };
@@ -138,8 +145,6 @@ const ModalOrderDetail = ({
   const renderInclTax = () => {
     return (
       <>
-        <View style={[styles.divider, styles.noMargin]} />
-
         <View style={styles.modalItem}>
           <GlobalText style={styles.taxPriceText}>Incl. Tax</GlobalText>
           <GlobalText style={[styles.taxPriceText, styles.semiBold]}>
@@ -165,24 +170,20 @@ const ModalOrderDetail = ({
     );
   };
 
-  const checkTax = () => {
-    if (basket?.inclusiveTax > 0 && basket?.exclusiveTax > 0) {
-      return (
-        <>
-          {renderInclTax()}
-          {renderExclTax()}
-        </>
-      );
-    }
-    if (basket?.inclusiveTax > 0) {
-      return <>{renderInclTax()}</>;
-    }
-
+  const checkExclTax = () => {
     if (basket?.exclusiveTax > 0) {
       return <>{renderExclTax()}</>;
     }
     return null;
   };
+
+  const checkInclTax = () => {
+    if (basket?.inclusiveTax > 0) {
+      return <>{renderInclTax()}</>;
+    }
+    return null;
+  };
+
   const itemDiscount =
     basket?.totalDiscountAmount - (basket?.totalMembershipDiscountAmount || 0);
   const toggleModalDelivery = () => {
@@ -212,6 +213,7 @@ const ModalOrderDetail = ({
         title="Details"
         isBottomModal
         closeModal={handleCloseDetail}
+        titleStyle={styles.titleStyle}
         modalContainerStyle={{padding: 0}}
         closeContainerStyle={{marginRight: 16}}
         isVisible={open}>
@@ -267,15 +269,16 @@ const ModalOrderDetail = ({
             </>
           ) : null}
 
-          {checkTax()}
+          {checkExclTax()}
 
           <View style={[styles.divider, styles.noMargin]} />
-          <View style={styles.modalItem}>
+          <View style={[styles.modalItem, styles.mb8]}>
             <GlobalText style={styles.grandTotalText}>Grand Total</GlobalText>
             <GlobalText style={styles.priceText}>
               {CurrencyFormatter(basket?.totalNettAmount)}{' '}
             </GlobalText>
           </View>
+          {checkInclTax()}
           {totalPointToPay && totalPointToPay > 0 ? (
             <View style={styles.modalItem}>
               <GlobalText style={styles.minusText}>Paid with point</GlobalText>

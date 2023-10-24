@@ -127,7 +127,7 @@ const useStyles = () => {
     paymentDetailCardText: {
       marginLeft: 8,
       fontFamily: fontFamily.poppinsMedium,
-      color: '#343A4A',
+      color: 'black',
       width: '60%',
     },
     shadowBox: {
@@ -281,7 +281,7 @@ const useStyles = () => {
       borderColor: colors.primary,
     },
     grayColor: {
-      color: '#343A4A',
+      color: 'black',
     },
     mv6: {
       marginVertical: 6,
@@ -310,7 +310,7 @@ const useStyles = () => {
       fontFamily: fontFamily.poppinsBold,
     },
     textColor: {
-      color: '#343A4A',
+      color: 'black',
     },
     normalFont: {
       fontFamily: fontFamily.poppinsMedium,
@@ -369,6 +369,9 @@ const useStyles = () => {
       width: '70%',
       alignItems: 'flex-end',
     },
+    taxIncl: {
+      color: colors.textTertiary,
+    },
   });
   return {styles, colors};
 };
@@ -378,7 +381,11 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
   const {minutes, seconds, isTimeEnd} = useCountdownV2(data);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
-  const {checkTaxHandle} = useCalculation();
+  const {
+    checkTaxHandle,
+    checkTaxExclusive,
+    checkTaxInclusive,
+  } = useCalculation();
   const staustPending = 'PENDING_PAYMENT';
   const store_checkout = 'STORECHECKOUT';
   const {
@@ -940,23 +947,22 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                 </View>
               </View>
             ) : null}
-            {checkTaxHandle(data).value ? (
+            {checkTaxExclusive(data).value ? (
               <View style={[styles.listOrderDetailContainer, styles.mt16]}>
                 <View style={styles.orderStatusContainer}>
                   <View>
-                    <GlobalText style={[styles.grayColor, styles.mediumFont]}>
-                      {checkTaxHandle(data).text}
+                    <GlobalText style={[styles.mediumFont]}>
+                      {checkTaxExclusive(data).text}
                     </GlobalText>
                   </View>
                   <View>
-                    <GlobalText style={[styles.boldFont, styles.grayColor]}>
-                      {checkTaxHandle(data).value}
+                    <GlobalText style={[styles.boldFont]}>
+                      {checkTaxExclusive(data).value}
                     </GlobalText>
                   </View>
                 </View>
               </View>
             ) : null}
-
             <View style={styles.divider} />
             <View
               style={[
@@ -975,6 +981,22 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                   </GlobalText>
                 </View>
               </View>
+              {checkTaxInclusive(data).value ? (
+                <View style={[styles.listOrderDetailContainer, styles.mt8]}>
+                  <View style={styles.orderStatusContainer}>
+                    <View>
+                      <GlobalText style={[styles.mediumFont, styles.taxIncl]}>
+                        {checkTaxInclusive(data).text}
+                      </GlobalText>
+                    </View>
+                    <View>
+                      <GlobalText style={[styles.boldFont, styles.taxIncl]}>
+                        {checkTaxInclusive(data).value}
+                      </GlobalText>
+                    </View>
+                  </View>
+                </View>
+              ) : null}
             </View>
           </View>
 
