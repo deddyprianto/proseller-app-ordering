@@ -75,6 +75,32 @@ const useCalculation = () => {
     };
   };
 
+  const checkTaxInclusive = data => {
+    if (data?.inclusiveTax > 0) {
+      return {
+        text: 'Incl. Tax',
+        value: CurrencyFormatter(data?.inclusiveTax),
+      };
+    }
+    return {
+      text: null,
+      value: null,
+    };
+  };
+
+  const checkTaxExclusive = data => {
+    if (data?.exclusiveTax > 0) {
+      return {
+        text: 'Excl. Tax',
+        value: CurrencyFormatter(data?.exclusiveTax),
+      };
+    }
+    return {
+      text: null,
+      value: null,
+    };
+  };
+
   const calculatePriceAferDiscount = () => {
     const amount =
       basket?.totalGrossAmount - (basket?.totalDiscountAmount || 0);
@@ -100,6 +126,8 @@ const useCalculation = () => {
     calculatePriceAferDiscount,
     calculatePoint,
     removePointAmount,
+    checkTaxInclusive,
+    checkTaxExclusive,
   };
 };
 
