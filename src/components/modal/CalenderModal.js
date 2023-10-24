@@ -8,6 +8,7 @@ import Theme from '../../theme';
 import appConfig from '../../config/appConfig';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import useCalculation from '../../hooks/calculation/useCalculation';
+import {useSelector} from 'react-redux';
 
 const useStyles = () => {
   const theme = Theme();
@@ -152,7 +153,9 @@ const CalenderModal = ({
   const styles = useStyles();
   const [dates, setDates] = useState([]);
   const [months, setMonths] = useState([]);
-  const maxDate = '2023-11-30';
+  const maxDate = useSelector(
+    state => state.orderReducer?.latestTimeSlotDate?.latestTime,
+  );
   const {isDeliveryAvailable} = useCalculation();
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');

@@ -1226,6 +1226,10 @@ export const getTimeslot = (
       console.log('RESPONSE GET TIMESLOT ', response);
 
       if (response.success === true) {
+        dispatch({
+          type: 'SAVE_LATEST_TIME_SLOT_DATE',
+          payload: response.response.latestTimeSlotDate,
+        });
         if (!isEmptyArray(response.response.data) && dontSave !== true) {
           dispatch({
             type: 'DATA_TIMESLOT',
@@ -1959,6 +1963,10 @@ export const getTimeSlot = ({outletId, date, clientTimezone, orderingMode}) => {
       console.log('RESPONSE GET TIMESLOT ', response);
 
       if (response.success === true) {
+        dispatch({
+          type: 'SAVE_LATEST_TIME_SLOT_DATE',
+          payload: response.response.latestTimeSlotDate,
+        });
         return response.response.data;
       }
       return false;

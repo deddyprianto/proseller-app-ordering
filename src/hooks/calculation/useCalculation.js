@@ -122,7 +122,7 @@ const useCalculation = () => {
   const isDeliveryAvailable = (maxDate, date) => {
     const maxDateUnix = moment(maxDate).unix();
     const dateUnix = moment(date).unix();
-    return dateUnix < maxDateUnix;
+    return dateUnix <= maxDateUnix;
   };
 
   return {

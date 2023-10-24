@@ -20,6 +20,7 @@ import GlobalButton from '../button/GlobalButton';
 import usePayment from '../../hooks/payment/usePayment';
 import LoadingScreen from '../loadingScreen';
 import useCalculation from '../../hooks/calculation/useCalculation';
+import InformationSvg from '../../assets/svg/InformationSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -253,6 +254,19 @@ const useStyles = () => {
     ph16: {
       paddingHorizontal: 16,
     },
+    informationLastDelivery: {
+      marginHorizontal: 16,
+      marginTop: 16,
+      padding: 8,
+      backgroundColor: theme.colors.accent,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    informationText: {
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+      marginLeft: 8,
+    },
   };
 
   return styles;
@@ -278,7 +292,10 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   );
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-  const maxDate = '2023-11-30';
+  const maxDate = useSelector(
+    state => state.orderReducer?.latestTimeSlotDate?.latestTime,
+  );
+
   useEffect(() => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
@@ -622,6 +639,28 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     }
   };
 
+  const renderText = () => {
+    if (basket?.orderingMode === 'DELIVERY') {
+      return 'delivery';
+    }
+    return 'store pickup';
+  };
+
+  const renderMessageLastDelivery = () => {
+    if (maxDate) {
+      return (
+        <View style={styles.informationLastDelivery}>
+          <InformationSvg />
+          <GlobalText style={styles.informationText}>
+            The last {renderText()} date is set for{' '}
+            {moment(maxDate).format('DD/MM/YYYY')}
+          </GlobalText>
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <LoadingScreen loading={isLoading} />
@@ -630,6 +669,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
           <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
             {renderHeader()}
             <View style={styles.divider} />
+            {renderMessageLastDelivery()}
             {renderBody()}
             {renderFooter()}
           </Dialog>
