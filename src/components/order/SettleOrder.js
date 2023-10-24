@@ -55,7 +55,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import {defaultPaymentAccount, getUserProfile} from '../../actions/user.action';
 import LoaderDarker from '../LoaderDarker';
-import {getOutletById} from '../../actions/stores.action';
+import {dataStores, getOutletById} from '../../actions/stores.action';
 import {refreshToken} from '../../actions/auth.actions';
 import {afterPayment, myVoucers} from '../../actions/account.action';
 import {Dialog} from 'react-native-paper';
@@ -3169,7 +3169,10 @@ class SettleOrder extends Component {
     this.setState({showErrorModal: !this.state.showErrorModal});
   };
 
-  onErrorApprove = () => {
+  onErrorApprove = async () => {
+    this.setState({loading: true});
+    await this.props.dispatch(dataStores());
+    this.setState({loading: false});
     Actions.popTo('outlets');
     // this.props.navigation.navigate('store');
     this.toggleModal();
@@ -4390,7 +4393,7 @@ class SettleOrder extends Component {
           title={this.state.errorMessage.title}
           description={this.state.errorMessage.message}
           isOpen={this.state.showErrorModal}
-          onClose={this.toggleModal}
+          // onClose={this.toggleModal}
           onOk={this.onErrorApprove}
         />
         <AwesomeAlert
