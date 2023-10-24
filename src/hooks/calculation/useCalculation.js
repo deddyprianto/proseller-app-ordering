@@ -1,5 +1,6 @@
 import {useSelector} from 'react-redux';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
+import moment from 'moment';
 const useCalculation = () => {
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const calculateVoucher = (vouchers = []) => {
@@ -118,6 +119,12 @@ const useCalculation = () => {
     return mappingNewPayload;
   };
 
+  const isDeliveryAvailable = (maxDate, date) => {
+    const maxDateUnix = moment(maxDate).unix();
+    const dateUnix = moment(date).unix();
+    return dateUnix <= maxDateUnix;
+  };
+
   return {
     calculateVoucher,
     calculateVoucherPoint,
@@ -128,6 +135,7 @@ const useCalculation = () => {
     removePointAmount,
     checkTaxInclusive,
     checkTaxExclusive,
+    isDeliveryAvailable,
   };
 };
 

@@ -182,6 +182,18 @@ const deliveryCustomField = (state = {}, action) => {
   }
 };
 
+const latestTimeSlotDate = (state = {}, action) => {
+  switch (action.type) {
+    case 'SAVE_LATEST_TIME_SLOT_DATE':
+      return {
+        ...state,
+        latestTime: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -197,4 +209,5 @@ export default combineReducers({
   outletSelectionMode,
   notificationData,
   deliveryCustomField,
+  latestTimeSlotDate,
 });

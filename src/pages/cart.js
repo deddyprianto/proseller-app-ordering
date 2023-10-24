@@ -1229,7 +1229,7 @@ const Cart = props => {
     if (isDelivery || isPickUp || isTakeAway) {
       return (
         <View style={styles.viewMethod}>
-          <Text style={styles.textMethod}>Order Date</Text>
+          <Text style={styles.textMethod}>Date & Time</Text>
           <TouchableOpacity
             style={styles.touchableMethod}
             onPress={() => {

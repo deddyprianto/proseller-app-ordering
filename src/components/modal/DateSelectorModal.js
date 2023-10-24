@@ -19,6 +19,8 @@ import GlobalText from '../globalText';
 import GlobalButton from '../button/GlobalButton';
 import usePayment from '../../hooks/payment/usePayment';
 import LoadingScreen from '../loadingScreen';
+import useCalculation from '../../hooks/calculation/useCalculation';
+import InformationSvg from '../../assets/svg/InformationSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -252,6 +254,19 @@ const useStyles = () => {
     ph16: {
       paddingHorizontal: 16,
     },
+    informationLastDelivery: {
+      marginHorizontal: 16,
+      marginTop: 16,
+      padding: 8,
+      backgroundColor: theme.colors.accent,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    informationText: {
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+      marginLeft: 8,
+    },
   };
 
   return styles;
@@ -267,7 +282,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-
+  const {isDeliveryAvailable} = useCalculation();
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
   const [initDate, setInitDate] = useState(null);
@@ -277,6 +292,9 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   );
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const maxDate = useSelector(
+    state => state.orderReducer?.latestTimeSlotDate?.latestTime,
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -294,7 +312,15 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
           orderingMode: basket.orderingMode,
         }),
       );
-
+      const mappingTimeSlot = timeSlot?.map(data => {
+        const unixTimeMax = moment(maxDate).unix();
+        const dateUnixTime = moment(data.date).unix();
+        if (dateUnixTime > unixTimeMax) {
+          return {...data, isDisabled: true};
+        }
+        return {...data, isDisabled: false};
+      });
+      console.log({mappingTimeSlot}, 'nekat');
       setAvailableDates(timeSlot);
       setInitDate(timeSlot[0]?.date);
       if (selectedDate.length <= 0) {
@@ -307,6 +333,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
     loadData();
   }, [open]);
+  console.log({selectedDate, availableDates}, 'nakal');
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
@@ -431,6 +458,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   };
 
   const renderDateItem = item => {
+    let isCanDelivery = true;
     const today =
       moment(item).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
 
@@ -446,12 +474,15 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
       .toUpperCase();
 
     const selected = selectedDate === item;
-
+    if (maxDate) {
+      isCanDelivery = isDeliveryAvailable(maxDate, item);
+    }
     const dateFormatter = moment(item).format('YYYY-MM-DD');
 
     const available =
       !isEmptyArray(availableDates) &&
-      availableDates?.find(value => value?.date === dateFormatter);
+      availableDates?.find(value => value?.date === dateFormatter) &&
+      isCanDelivery;
 
     if (selected && available) {
       return renderDateItemSelected({item, day, date, month});
@@ -608,6 +639,28 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     }
   };
 
+  const renderText = () => {
+    if (basket?.orderingMode === 'DELIVERY') {
+      return 'delivery';
+    }
+    return 'store pickup';
+  };
+
+  const renderMessageLastDelivery = () => {
+    if (maxDate) {
+      return (
+        <View style={styles.informationLastDelivery}>
+          <InformationSvg />
+          <GlobalText style={styles.informationText}>
+            The last {renderText()} date is set for{' '}
+            {moment(maxDate).format('DD/MM/YYYY')}
+          </GlobalText>
+        </View>
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       <LoadingScreen loading={isLoading} />
@@ -616,6 +669,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
           <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
             {renderHeader()}
             <View style={styles.divider} />
+            {renderMessageLastDelivery()}
             {renderBody()}
             {renderFooter()}
           </Dialog>

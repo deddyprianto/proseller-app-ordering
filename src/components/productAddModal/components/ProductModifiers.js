@@ -128,8 +128,8 @@ const useStyle = () => {
       backgroundColor: theme.colors.buttonDisabled,
     },
     checkbox: {
-      width: 18,
-      height: 18,
+      width: 24,
+      height: 24,
       backgroundColor: 'white',
       borderRadius: 3,
       borderWidth: 2,
@@ -139,8 +139,8 @@ const useStyle = () => {
       borderColor: theme.colors.greyScale2,
     },
     checkboxDisabled: {
-      width: 18,
-      height: 18,
+      width: 24,
+      height: 24,
       backgroundColor: 'white',
       borderRadius: 3,
       borderWidth: 2,
@@ -150,8 +150,8 @@ const useStyle = () => {
       borderColor: theme.colors.greyScale3,
     },
     checkboxActive: {
-      width: 18,
-      height: 18,
+      width: 24,
+      height: 24,
       borderRadius: 3,
       borderWidth: 2,
       marginRight: 8,
