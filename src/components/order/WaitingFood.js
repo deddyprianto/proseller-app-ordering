@@ -230,7 +230,7 @@ class WaitingFood extends Component {
     try {
       // clearInterval(this.intervalWaitingFood);
       // this.intervalWaitingFood = undefined;
-      this.props.dispatch(setCart(undefined));
+      // this.props.dispatch(setCart(undefined));
     } catch (e) {}
   }
 
@@ -244,7 +244,7 @@ class WaitingFood extends Component {
     try {
       // clearInterval(this.intervalWaitingFood);
       // this.intervalWaitingFood = undefined;
-      this.props.dispatch(setCart(undefined));
+      // this.props.dispatch(setCart(undefined));
     } catch (e) {}
   };
 
