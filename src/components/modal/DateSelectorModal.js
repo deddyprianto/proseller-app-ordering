@@ -19,6 +19,7 @@ import GlobalText from '../globalText';
 import GlobalButton from '../button/GlobalButton';
 import usePayment from '../../hooks/payment/usePayment';
 import LoadingScreen from '../loadingScreen';
+import useCalculation from '../../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -267,7 +268,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-
+  const {isDeliveryAvailable} = useCalculation();
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
   const [initDate, setInitDate] = useState(null);
@@ -277,7 +278,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   );
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-
+  const maxDate = '2023-11-30';
   useEffect(() => {
     const loadData = async () => {
       const clientTimezone = Math.abs(new Date().getTimezoneOffset());
@@ -294,7 +295,15 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
           orderingMode: basket.orderingMode,
         }),
       );
-
+      const mappingTimeSlot = timeSlot?.map(data => {
+        const unixTimeMax = moment(maxDate).unix();
+        const dateUnixTime = moment(data.date).unix();
+        if (dateUnixTime > unixTimeMax) {
+          return {...data, isDisabled: true};
+        }
+        return {...data, isDisabled: false};
+      });
+      console.log({mappingTimeSlot}, 'nekat');
       setAvailableDates(timeSlot);
       setInitDate(timeSlot[0]?.date);
       if (selectedDate.length <= 0) {
@@ -307,6 +316,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
     loadData();
   }, [open]);
+  console.log({selectedDate, availableDates}, 'nakal');
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
@@ -431,6 +441,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   };
 
   const renderDateItem = item => {
+    let isCanDelivery = true;
     const today =
       moment(item).format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
 
@@ -446,12 +457,15 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
       .toUpperCase();
 
     const selected = selectedDate === item;
-
+    if (maxDate) {
+      isCanDelivery = isDeliveryAvailable(maxDate, item);
+    }
     const dateFormatter = moment(item).format('YYYY-MM-DD');
 
     const available =
       !isEmptyArray(availableDates) &&
-      availableDates?.find(value => value?.date === dateFormatter);
+      availableDates?.find(value => value?.date === dateFormatter) &&
+      isCanDelivery;
 
     if (selected && available) {
       return renderDateItemSelected({item, day, date, month});

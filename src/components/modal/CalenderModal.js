@@ -7,6 +7,7 @@ import moment from 'moment';
 import Theme from '../../theme';
 import appConfig from '../../config/appConfig';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import useCalculation from '../../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -151,7 +152,8 @@ const CalenderModal = ({
   const styles = useStyles();
   const [dates, setDates] = useState([]);
   const [months, setMonths] = useState([]);
-
+  const maxDate = '2023-11-30';
+  const {isDeliveryAvailable} = useCalculation();
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
@@ -337,6 +339,7 @@ const CalenderModal = ({
   };
 
   const renderDateItem = item => {
+    let isCanDelivery = true;
     const itemDate = item.split(' ');
     const date = Number(itemDate[1]);
     const month = itemDate[2];
@@ -344,6 +347,9 @@ const CalenderModal = ({
     const isActive = selectedDate === item;
     const isThisMonth = selectedMonth === month;
     const available = handleAvailableDate(item);
+    if (maxDate) {
+      isCanDelivery = isDeliveryAvailable(maxDate, item);
+    }
 
     const styleDate = !isThisMonth
       ? styles.textDateFromAnotherMonth
@@ -358,7 +364,7 @@ const CalenderModal = ({
 
     return (
       <TouchableOpacity
-        disabled={!available}
+        disabled={!available || !isCanDelivery}
         onPress={() => {
           setSelectedDate(item);
           setSelectedMonth(month);
