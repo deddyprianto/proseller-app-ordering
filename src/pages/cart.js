@@ -1571,6 +1571,7 @@ const Cart = props => {
             customInputStyle={styles.iosTextArea}
             customLabelStyle={styles.customLabelStyle}
             inputParentContainerCustom={styles.noMt}
+            value={notes}
           />
         </View>
       );

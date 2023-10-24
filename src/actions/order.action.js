@@ -2265,7 +2265,14 @@ export const sendNotes = notes => {
         },
       } = state;
       const url = '/cart/updateCartInfo';
-      await fetchApiOrder(url, 'POST', {remark: notes}, 200, token);
+      const response = await fetchApiOrder(
+        url,
+        'POST',
+        {remark: notes},
+        200,
+        token,
+      );
+      return response;
     } catch (e) {
       console.log(e, 'error notes');
     }
