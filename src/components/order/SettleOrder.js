@@ -3170,7 +3170,8 @@ class SettleOrder extends Component {
   };
 
   onErrorApprove = () => {
-    this.props.navigation.navigate('store');
+    Actions.popTo('outlets');
+    // this.props.navigation.navigate('store');
     this.toggleModal();
   };
 
@@ -4417,7 +4418,7 @@ class SettleOrder extends Component {
           open={this.state.isOpenOrderingModeOfflineModal}
           handleClose={() => {
             this.setState({isOpenOrderingModeOfflineModal: false});
-            Actions.popTo('cart');
+            Actions.popTo('orderingMode');
           }}
         />
         {this.renderPrompPayAtPOS()}
