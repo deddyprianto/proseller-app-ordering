@@ -261,6 +261,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.accent,
       flexDirection: 'row',
       alignItems: 'center',
+      borderRadius: 4,
     },
     informationText: {
       fontSize: 14,
@@ -643,7 +644,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     if (basket?.orderingMode === 'DELIVERY') {
       return 'delivery';
     }
-    return 'store pickup';
+    return 'pickup';
   };
 
   const renderMessageLastDelivery = () => {
@@ -652,7 +653,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
         <View style={styles.informationLastDelivery}>
           <InformationSvg />
           <GlobalText style={styles.informationText}>
-            The last {renderText()} date is set for{' '}
+            The last {renderText()} date is{' '}
             {moment(maxDate).format('DD/MM/YYYY')}
           </GlobalText>
         </View>

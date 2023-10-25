@@ -404,6 +404,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
   const {handleOrderingType, handleDisplayName} = useOrderingTypes();
   const ready_items = 'Ready Items';
   const completeOrder = 'COMPLETED';
+  const RETAIL = 'RETAIL';
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
@@ -821,7 +822,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
 
         {data?.queueNo &&
           data?.orderingMode !== 'STORECHECKOUT' &&
-          data?.outlet?.outletType !== 'Retail' && (
+          data?.outlet?.outletType !== RETAIL && (
             <View style={styles.viewQueueNumber}>
               <Text style={styles.textQueueNumber1}>Queue No.</Text>
               <Text style={styles.textQueueNumber2}>{data?.queueNo}</Text>
