@@ -256,6 +256,7 @@ const useProductCartList = ({isProductUnavailable}) => {
   };
 
   const renderPrice = item => {
+    console.log({item}, 'item produk');
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceUnavailable]
       : [styles.textPriceSmall];
@@ -271,7 +272,9 @@ const useProductCartList = ({isProductUnavailable}) => {
     }
 
     return (
-      <Text style={styleTextPrice}>{CurrencyFormatter(item?.grossAmount)}</Text>
+      <Text style={styleTextPrice}>
+        {CurrencyFormatter(item?.retailPrice * item?.quantity)}
+      </Text>
     );
   };
 
