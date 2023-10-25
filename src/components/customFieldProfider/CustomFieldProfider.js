@@ -17,6 +17,8 @@ import {
   saveDeliveryCustomField,
   updateProvider,
 } from '../../actions/order.action';
+import {showSnackbar} from '../../actions/setting.action';
+import LoadingScreen from '../loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -147,21 +149,41 @@ const CustomFieldProvider = () => {
       ...selectedCustomField.deliveryCustomField,
       [selectedName]: selectedValue,
     };
-    dispatch(saveDeliveryCustomField(payload));
     const orderDate = convertOrderActionDate(orderingDate);
     const response = await getDeliveryProviderFee(orderDate, payload);
     const findSelectedProfider = response.data?.dataProvider?.find(
       provider => provider.id === basketProvider?.id,
     );
+    console.log({findSelectedProfider}, 'nanak');
+    if (
+      findSelectedProfider &&
+      !findSelectedProfider?.actionRequired &&
+      findSelectedProfider?.deliveryProviderError?.status
+    ) {
+      setIsLoadingDataDelivery(false);
+      return dispatch(
+        showSnackbar({
+          message: findSelectedProfider?.deliveryProviderError?.message,
+        }),
+      );
+    }
     if (findSelectedProfider) {
-      dispatch(
+      dispatch(saveDeliveryCustomField(payload));
+
+      await dispatch(
         changeOrderingMode({
           orderingMode: basket?.orderingMode,
           provider: findSelectedProfider,
         }),
       );
-      dispatch(updateProvider(findSelectedProfider));
+      await dispatch(updateProvider(findSelectedProfider));
+      closeDeliveryPopup();
+    } else {
+      closeDeliveryPopup();
     }
+  };
+
+  const closeDeliveryPopup = () => {
     setIsLoadingDataDelivery(false);
     closeModal();
   };
@@ -182,6 +204,7 @@ const CustomFieldProvider = () => {
 
   return (
     <>
+      <LoadingScreen loading={isLoadingDataDelivery} />
       {orderingDate &&
         provider?.customFields?.map((field, index) => (
           <View style={styles.viewMethod}>
@@ -226,11 +249,7 @@ const CustomFieldProvider = () => {
               disabled={isLoadingDataDelivery}
               onPress={onSaveData}
               buttonStyle={styles.btnStyle}>
-              {isLoadingDataDelivery ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <GlobalText style={styles.textSave}>Save </GlobalText>
-              )}
+              <GlobalText style={styles.textSave}>Save </GlobalText>
             </GlobalButton>
           </View>
         </View>
