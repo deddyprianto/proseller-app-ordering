@@ -246,7 +246,8 @@ const ModalOrderDetail = ({
           ) : null}
           {basket?.orderingMode === delivery_mode &&
           isHaveProvider() &&
-          !checkCustomField() ? (
+          !checkCustomField() &&
+          basket?.provider?.deliveryFee !== undefined ? (
             <>
               <View style={[styles.divider, styles.noMargin]} />
               <View style={styles.modalItem}>

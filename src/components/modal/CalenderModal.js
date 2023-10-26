@@ -207,11 +207,11 @@ const CalenderModal = ({
 
     return calender;
   };
-
   useEffect(() => {
-    const currentYear = moment(value).format(formatYear);
-    const currentMonth = moment(value).format(formatMonth);
-    const currentDate = moment(value).format(formatDate);
+    let newValue = handleValueDate();
+    const currentYear = moment(newValue).format(formatYear);
+    const currentMonth = moment(newValue).format(formatMonth);
+    const currentDate = moment(newValue).format(formatDate);
     const monthList = moment.monthsShort();
 
     setSelectedYear(currentYear);
@@ -233,9 +233,18 @@ const CalenderModal = ({
     handleClose();
   };
 
+  const handleValueDate = () => {
+    let newValue = value;
+    if (!newValue || newValue === '') {
+      newValue = moment().format();
+    }
+    return newValue;
+  };
+
   const handleMonthSlider = direction => {
+    let newValue = handleValueDate();
     if (direction === 'last') {
-      const subtractResult = moment(value)
+      const subtractResult = moment(newValue)
         .month(selectedMonth)
         .year(selectedYear)
         .subtract(1, 'months');
@@ -248,7 +257,7 @@ const CalenderModal = ({
     }
 
     if (direction === 'next') {
-      const addResult = moment(value)
+      const addResult = moment(newValue)
         .month(selectedMonth)
         .year(selectedYear)
         .add(1, 'months');

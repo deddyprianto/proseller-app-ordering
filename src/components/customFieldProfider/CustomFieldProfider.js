@@ -17,6 +17,8 @@ import {
   saveDeliveryCustomField,
   updateProvider,
 } from '../../actions/order.action';
+import {showSnackbar} from '../../actions/setting.action';
+import LoadingScreen from '../loadingScreen';
 
 const useStyles = () => {
   const theme = Theme();
@@ -139,29 +141,46 @@ const CustomFieldProvider = () => {
     setSelectedValue(value);
   };
 
-  console.log({provider}, 'nana');
-
   const onSaveData = async () => {
     setIsLoadingDataDelivery(true);
     const payload = {
       ...selectedCustomField.deliveryCustomField,
       [selectedName]: selectedValue,
     };
-    dispatch(saveDeliveryCustomField(payload));
     const orderDate = convertOrderActionDate(orderingDate);
     const response = await getDeliveryProviderFee(orderDate, payload);
     const findSelectedProfider = response.data?.dataProvider?.find(
       provider => provider.id === basketProvider?.id,
     );
+    if (
+      findSelectedProfider &&
+      !findSelectedProfider?.actionRequired &&
+      findSelectedProfider?.deliveryProviderError?.status
+    ) {
+      setIsLoadingDataDelivery(false);
+      return dispatch(
+        showSnackbar({
+          message: findSelectedProfider?.deliveryProviderError?.message,
+        }),
+      );
+    }
     if (findSelectedProfider) {
-      dispatch(
+      dispatch(saveDeliveryCustomField(payload));
+
+      await dispatch(
         changeOrderingMode({
           orderingMode: basket?.orderingMode,
           provider: findSelectedProfider,
         }),
       );
-      dispatch(updateProvider(findSelectedProfider));
+      await dispatch(updateProvider(findSelectedProfider));
+      closeDeliveryPopup();
+    } else {
+      closeDeliveryPopup();
     }
+  };
+
+  const closeDeliveryPopup = () => {
     setIsLoadingDataDelivery(false);
     closeModal();
   };
@@ -206,6 +225,7 @@ const CustomFieldProvider = () => {
         enableDividerOnTitle
         isVisible={activeModal}>
         <View style={styles.p16}>
+          <LoadingScreen loading={isLoadingDataDelivery} />
           {options.map((option, index) => (
             <TouchableOpacity
               onPress={() => onSelectedField(option)}
@@ -226,11 +246,7 @@ const CustomFieldProvider = () => {
               disabled={isLoadingDataDelivery}
               onPress={onSaveData}
               buttonStyle={styles.btnStyle}>
-              {isLoadingDataDelivery ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <GlobalText style={styles.textSave}>Save </GlobalText>
-              )}
+              <GlobalText style={styles.textSave}>Save </GlobalText>
             </GlobalButton>
           </View>
         </View>
