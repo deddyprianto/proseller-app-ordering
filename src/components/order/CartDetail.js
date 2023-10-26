@@ -326,8 +326,8 @@ const CartDetail = ({
               </View>
               <View>
                 <GlobalText>
-                  Will be deliver on :{' '}
-                  {moment(data?.orderActionDate).format('DD MMMM YYYY')} at{' '}
+                  To be delivered up on{' '}
+                  {moment(data?.orderActionDate).format('DD MMMM YYYY')} between{' '}
                   {data?.orderActionTimeSlot}
                 </GlobalText>
               </View>
@@ -376,7 +376,8 @@ const CartDetail = ({
             </View>
             <View style={styles.mt4}>
               <GlobalText>
-                {moment(data?.orderActionDate).format('DD MMMM YYYY')} at{' '}
+                To be picked up on{' '}
+                {moment(data?.orderActionDate).format('DD MMMM YYYY')} between{' '}
                 {data?.orderActionTimeSlot}
               </GlobalText>
             </View>
