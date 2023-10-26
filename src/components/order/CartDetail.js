@@ -245,10 +245,10 @@ const CartDetail = ({
   const handleTextSelection = () => {
     if (data?.isSelfSelection) {
       return {
-        title: 'Chosen by Customer',
-        description: `Please visit the selected outlet for item selection before ${moment(
+        title: 'Choose by Customer',
+        description: `Please visit the following outlet before ${moment(
           latestSelfSelectionDate || data?.orderActionDate,
-        ).format('DD MMMM YYYY')} .`,
+        ).format('DD MMMM YYYY')} for item selection`,
       };
     }
     return {

@@ -699,16 +699,18 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
               Items Selections
             </GlobalText>
             <GlobalText style={[styles.mlAuto, styles.normalFont]}>
-              {data?.isSelfSelection ? 'Chosen by Customer' : 'Chosen by Staff'}
+              {data?.isSelfSelection ? 'Choose by Customer' : 'Chosen by Staff'}
             </GlobalText>
           </View>
           <View>
             <GlobalText
               style={[styles.greyText, styles.normalFont, styles.mt8]}>
               {data?.isSelfSelection
-                ? `Please visit the selected outlet for item selection before ${moment(
+                ? `Please visit the following outlet before ${moment(
                     data?.selfSelectionDeadline,
-                  ).format('DD MMM YYYY')} ${data?.orderActionTimeSlot}`
+                  ).format('DD MMM YYYY')} ${
+                    data?.orderActionTimeSlot
+                  } for item selection`
                 : 'Staff assistance provided on choosing your items.'}
             </GlobalText>
           </View>
