@@ -313,28 +313,13 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
           orderingMode: basket.orderingMode,
         }),
       );
-      const mappingTimeSlot = timeSlot?.map(data => {
-        const unixTimeMax = moment(maxDate).unix();
-        const dateUnixTime = moment(data.date).unix();
-        if (dateUnixTime > unixTimeMax) {
-          return {...data, isDisabled: true};
-        }
-        return {...data, isDisabled: false};
-      });
-      console.log({mappingTimeSlot}, 'nekat');
+
       setAvailableDates(timeSlot);
       setInitDate(timeSlot[0]?.date);
-      if (selectedDate.length <= 0) {
-        const currentDate = availDate
-          ? moment(availDate).format('ddd DD MMMM YYYY')
-          : moment().format('ddd DD MMMM YYYY');
-        setSelectedDate(currentDate);
-      }
     };
 
     loadData();
   }, [open]);
-  console.log({selectedDate, availableDates}, 'nakal');
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
@@ -353,18 +338,18 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     }
   }, [availableDates, selectedDate]);
 
-  const initAllDate = date => {
+  const initAllDate = async date => {
     let dateTime = '';
     if (initDate) {
-      dateTime = moment(initDate).subtract(1, 'day');
+      dateTime = await moment(initDate).subtract(1, 'day');
     } else {
-      dateTime = moment().subtract(1, 'day');
+      dateTime = await moment().subtract(1, 'day');
     }
 
     if (selectedDate.length > 0) {
-      dateTime = moment(selectedDate).subtract(1, 'day');
+      dateTime = await moment(selectedDate).subtract(1, 'day');
     }
-    const result = Array(5)
+    const result = await Array(5)
       .fill(0)
       .map(() => {
         return dateTime.add(1, 'day').format('ddd DD MMMM YYYY');
