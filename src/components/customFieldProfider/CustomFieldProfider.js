@@ -141,8 +141,6 @@ const CustomFieldProvider = () => {
     setSelectedValue(value);
   };
 
-  console.log({provider}, 'nana');
-
   const onSaveData = async () => {
     setIsLoadingDataDelivery(true);
     const payload = {
@@ -154,7 +152,6 @@ const CustomFieldProvider = () => {
     const findSelectedProfider = response.data?.dataProvider?.find(
       provider => provider.id === basketProvider?.id,
     );
-    console.log({findSelectedProfider}, 'nanak');
     if (
       findSelectedProfider &&
       !findSelectedProfider?.actionRequired &&
@@ -204,7 +201,6 @@ const CustomFieldProvider = () => {
 
   return (
     <>
-      <LoadingScreen loading={isLoadingDataDelivery} />
       {orderingDate &&
         provider?.customFields?.map((field, index) => (
           <View style={styles.viewMethod}>
@@ -229,6 +225,7 @@ const CustomFieldProvider = () => {
         enableDividerOnTitle
         isVisible={activeModal}>
         <View style={styles.p16}>
+          <LoadingScreen loading={isLoadingDataDelivery} />
           {options.map((option, index) => (
             <TouchableOpacity
               onPress={() => onSelectedField(option)}
