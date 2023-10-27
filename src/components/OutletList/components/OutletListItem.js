@@ -156,9 +156,7 @@ const OutletListItem = ({item, handleChange}) => {
       );
 
       const distanceString =
-        result < 1
-          ? result * 1000 + ' m'
-          : Math.round(result * 10) / 10 + ' km';
+        result < 1000 ? result + ' m' : Math.round(result) / 1000 + ' km';
       setDistance(distanceString);
     }
   }, [userPosition, item]);
