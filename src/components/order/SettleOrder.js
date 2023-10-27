@@ -4037,10 +4037,11 @@ class SettleOrder extends Component {
                         item.isVoucher === true ||
                         item.isVoucherPromoCode === true ? (
                           <View
+                            key={item.name}
                             style={{
-                              height: item.isVoucherPromoCode ? 0 : 'auto',
+                              height: 'auto',
                               margin: 5,
-                              marginTop: item.isVoucherPromoCode ? 0 : 10,
+                              marginTop: 10,
                               flexDirection: 'row',
                               justifyContent: 'space-between',
                             }}>
@@ -4052,25 +4053,23 @@ class SettleOrder extends Component {
                               }}>
                               {item.name}
                             </Text>
-                            {!item.isVoucherPromoCode && (
-                              <View>
-                                <TouchableOpacity
-                                  onPress={() => this.cencelOneVoucher(i)}
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => this.cencelOneVoucher(i)}
+                                style={{
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}>
+                                <Text
                                   style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
+                                    color: colorConfig.store.colorError,
+                                    fontFamily: 'Poppins-Medium',
+                                    fontSize: 14,
                                   }}>
-                                  <Text
-                                    style={{
-                                      color: colorConfig.store.colorError,
-                                      fontFamily: 'Poppins-Medium',
-                                      fontSize: 14,
-                                    }}>
-                                    Cancel
-                                  </Text>
-                                </TouchableOpacity>
-                              </View>
-                            )}
+                                  Cancel
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
                           </View>
                         ) : null,
                       )
