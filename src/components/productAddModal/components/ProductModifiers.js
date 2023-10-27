@@ -62,8 +62,14 @@ const useStyle = () => {
       paddingVertical: 12,
       paddingHorizontal: 16,
     },
-    viewOptionNameAndPrice: {
+    viewOptionNamePrice: {
       flex: 1,
+    },
+    viewOptionName: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     viewOption: {
       flex: 1,
@@ -492,8 +498,8 @@ const ProductModifiers = ({
     );
   };
 
-  const renderOptionPrice = ({isYesNo, modifierValue}) => {
-    if (!isYesNo && modifierValue?.price) {
+  const renderOptionPrice = ({isPrice, modifierValue}) => {
+    if (isPrice) {
       return (
         <Text style={styles.textOptionPrice}>
           {CurrencyFormatter(modifierValue.price)}
@@ -503,10 +509,14 @@ const ProductModifiers = ({
   };
 
   const renderOptionNameAndPrice = ({isYesNo, modifierValue, isDisabled}) => {
+    const isPrice = !isYesNo && modifierValue?.price;
+    const styleView = isPrice
+      ? styles.viewOptionNamePrice
+      : styles.viewOptionName;
     return (
-      <View style={styles.viewOptionNameAndPrice}>
+      <View style={styleView}>
         {renderOptionName({modifierValue, isDisabled})}
-        {renderOptionPrice({isYesNo, modifierValue})}
+        {renderOptionPrice({isPrice, modifierValue})}
       </View>
     );
   };
