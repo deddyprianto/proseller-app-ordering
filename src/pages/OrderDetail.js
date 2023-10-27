@@ -47,6 +47,7 @@ import ModalDeliveryDetail from '../components/modal/ModalDeliveryDetail';
 import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
 import awsConfig from '../config/awsConfig';
 import {Actions} from 'react-native-router-flux';
+import TruckSvg from '../assets/svg/TruckSvg';
 
 const useStyles = () => {
   const {colors, fontFamily, fontSize} = Theme();
@@ -553,7 +554,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
           <View style={styles.listOrderDetailContainer}>
             <View style={[styles.orderStatusContainer, styles.columnCard]}>
               <View style={styles.paymentDetailsCard}>
-                <MapMarkerSvg />
+                <TruckSvg />
                 <GlobalText
                   style={[styles.paymentDetailCardText, styles.boldFont]}>
                   Deliver by
@@ -699,7 +700,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
           <View style={styles.row}>
             <HandsSvg />
             <GlobalText style={[styles.selectionTitle, styles.textColor]}>
-              Items Selections
+              Item Selections
             </GlobalText>
             <GlobalText style={[styles.mlAuto, styles.normalFont]}>
               {data?.isSelfSelection ? 'Choose by Customer' : 'Chosen by Staff'}

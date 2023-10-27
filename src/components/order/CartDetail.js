@@ -590,7 +590,7 @@ const CartDetail = ({
                   styles.boldFont,
                   styles.smallFont,
                 ]}>
-                Items Selections
+                Item Selections
               </GlobalText>
               <GlobalText style={[styles.mlAuto, styles.regFont]}>
                 {handleTextSelection().title}
