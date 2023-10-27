@@ -4037,6 +4037,7 @@ class SettleOrder extends Component {
                         item.isVoucher === true ||
                         item.isVoucherPromoCode === true ? (
                           <View
+                            key={item.name}
                             style={{
                               height: 'auto',
                               margin: 5,
