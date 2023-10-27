@@ -575,15 +575,16 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                 <CalendarBold />
                 <GlobalText
                   style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Date
+                  Delivery Date & Time
                 </GlobalText>
               </View>
               <View style={styles.columnText}>
                 <GlobalText>
-                  Will be deliver on{' '}
-                  {moment(data?.orderActionDate).format('DD MMM YYYY')}{' '}
-                  {data?.orderActionTimeSlot}
+                  To be delivered on{' '}
+                  {moment(data?.orderActionDate).format('DD MMMM YYYY')}
                 </GlobalText>
+
+                <GlobalText>between {data?.orderActionTimeSlot}</GlobalText>
               </View>
             </View>
           </View>
@@ -624,7 +625,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
               <MapMarkerSvg />
               <GlobalText
                 style={[styles.paymentDetailCardText, styles.boldFont]}>
-                From Outlet
+                Pickup at
               </GlobalText>
             </View>
             <View style={styles.columnText}>
@@ -646,13 +647,15 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                   <CalendarBold />
                   <GlobalText
                     style={[styles.paymentDetailCardText, styles.boldFont]}>
-                    Date & Time
+                    Pickup Date & Time
                   </GlobalText>
                 </View>
                 <View style={styles.columnText}>
                   <GlobalText>
-                    {data?.orderActionDate} {data?.orderActionTimeSlot}
+                    To be picked up on{' '}
+                    {moment(data?.orderActionDate).format('DD MMMM YYYY')}{' '}
                   </GlobalText>
+                  <GlobalText>between {data?.orderActionTimeSlot}</GlobalText>
                 </View>
               </View>
             </View>
@@ -708,9 +711,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
               {data?.isSelfSelection
                 ? `Please visit the following outlet before ${moment(
                     data?.selfSelectionDeadline,
-                  ).format('DD MMM YYYY')} ${
-                    data?.orderActionTimeSlot
-                  } for item selection`
+                  ).format('DD MMMM YYYY')} for item selection`
                 : 'Staff assistance provided on choosing your items.'}
             </GlobalText>
           </View>
