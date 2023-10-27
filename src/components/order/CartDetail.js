@@ -252,7 +252,7 @@ const CartDetail = ({
       };
     }
     return {
-      title: 'Chosen by Staff',
+      title: 'Choose by Seller',
       description: 'Staff assistance provided on choosing your items.',
     };
   };
@@ -347,7 +347,7 @@ const CartDetail = ({
             <MapSvg />
           </View>
           <GlobalText style={[styles.boldFont, styles.smallFont]}>
-            Pickup at
+            Pickup At
           </GlobalText>
         </View>
         <View style={styles.mt8}>

@@ -149,6 +149,7 @@ const CustomFieldProvider = () => {
     };
     const orderDate = convertOrderActionDate(orderingDate);
     const response = await getDeliveryProviderFee(orderDate, payload);
+
     const findSelectedProfider = response.data?.dataProvider?.find(
       provider => provider.id === basketProvider?.id,
     );
@@ -185,20 +186,18 @@ const CustomFieldProvider = () => {
     closeModal();
   };
 
-  const handleName = () => {
-    if (selectedCustomField?.deliveryCustomField?.[selectedName]) {
-      return selectedCustomField?.deliveryCustomField?.[selectedName];
+  const handleName = value => {
+    if (selectedCustomField?.deliveryCustomField?.[value]) {
+      return selectedCustomField?.deliveryCustomField?.[value];
     }
     return 'Choose';
   };
-
   const handleStyle = option => {
     if (option === selectedValue) {
       return styles.touchableItemSelected;
     }
     return styles.touchableItem;
   };
-
   return (
     <>
       {orderingDate &&
@@ -212,7 +211,7 @@ const CustomFieldProvider = () => {
               onPress={() => onOpenModal(field || [])}
               key={index}>
               <GlobalText style={styles.textMethodValue}>
-                {handleName()}
+                {handleName(field?.value)}
               </GlobalText>
             </TouchableOpacity>
           </View>

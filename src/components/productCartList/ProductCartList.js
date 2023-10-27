@@ -255,7 +255,7 @@ const ProductCartList = ({
         </View>
         {isPreOrder && availDate ? (
           <GlobalText style={styles.availableTextDate}>
-            Available on {moment(availDate).format('DD MMM YYYY')}
+            Available from {moment(availDate).format('DD MMMM YYYY')}
           </GlobalText>
         ) : null}
       </View>

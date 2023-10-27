@@ -183,7 +183,7 @@ const useStyles = () => {
     deliveryText: {
       fontSize: 16,
       fontFamily: fontFamily.poppinsBold,
-      color: colors.primary,
+      color: colors.brandTertiary,
     },
     columnText: {
       marginTop: 4,
@@ -518,7 +518,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
         <View style={[styles.boxMain, styles.shadowBox, styles.p12]}>
           <View style={styles.orderStatusContainer}>
             <GlobalText style={styles.deliveryText}>
-              {data?.orderingMode}{' '}
+              {handleDisplayName(data?.orderingMode)}{' '}
             </GlobalText>
             {data?.provider?.feeBreakDown ? (
               <TouchableOpacity
@@ -534,7 +534,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                 <MapMarkerSvg />
                 <GlobalText
                   style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Delivery to
+                  Delivery To
                 </GlobalText>
               </View>
               <View style={styles.columnText}>
@@ -557,7 +557,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                 <TruckSvg />
                 <GlobalText
                   style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Deliver by
+                  Deliver Provider
                 </GlobalText>
               </View>
               <View style={styles.columnText}>
@@ -626,7 +626,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
               <MapMarkerSvg />
               <GlobalText
                 style={[styles.paymentDetailCardText, styles.boldFont]}>
-                Pickup at
+                Pickup At
               </GlobalText>
             </View>
             <View style={styles.columnText}>
@@ -703,7 +703,9 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
               Item Selections
             </GlobalText>
             <GlobalText style={[styles.mlAuto, styles.normalFont]}>
-              {data?.isSelfSelection ? 'Choose by Customer' : 'Chosen by Staff'}
+              {data?.isSelfSelection
+                ? 'Choose by Customer'
+                : 'Choose by Seller'}
             </GlobalText>
           </View>
           <View>
@@ -745,7 +747,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
         </View>
         {isPreOrder && availDate ? (
           <GlobalText style={styles.availableTextDate}>
-            Available on {moment(availDate).format('DD MMM YYYY')}
+            Available from {moment(availDate).format('DD MMMM YYYY')}
           </GlobalText>
         ) : null}
       </View>

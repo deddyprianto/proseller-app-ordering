@@ -70,13 +70,13 @@ const OrderDetailCart = ({setSelectSelection, itemSelection}) => {
           <GlobalButton
             isOutline={status === 'own' ? false : true}
             buttonStyle={styles.buttonSTyle}
-            title="Choose Your Own"
+            title="Choose by Customer"
             onPress={() => onSelectSelection('own')}
           />
           <GlobalButton
             isOutline={status === 'staff' ? false : true}
             buttonStyle={styles.buttonSTyle}
-            title="Choose By Staff"
+            title="Choose by Seller"
             onPress={() => onSelectSelection('staff')}
           />
         </View>

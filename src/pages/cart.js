@@ -22,6 +22,9 @@ import {
   SafeAreaView,
   Dimensions,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import {ProgressBar} from 'react-native-paper';
 
@@ -70,6 +73,7 @@ import useCalculation from '../hooks/calculation/useCalculation';
 import useValidation from '../hooks/validation/useValidation';
 import GlobalInputText from '../components/globalInputText';
 import {normalizeLayoutSizeWidth} from '../helper/Layout';
+import {reportSentry} from '../helper/Sentry';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -442,6 +446,9 @@ const useStyles = () => {
     noMt: {
       marginTop: 0,
     },
+    flex: {
+      flex: 1,
+    },
   });
   return {styles, color: theme.colors};
 };
@@ -480,7 +487,7 @@ const Cart = props => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const {calculatePriceAferDiscount} = useCalculation();
-
+  const isIos = Platform.OS === 'ios';
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const orderingDateTimeSelected = useSelector(
     state => state.orderReducer?.orderingDateTime?.orderingDateTimeSelected,
@@ -1031,6 +1038,7 @@ const Cart = props => {
       });
     } catch (e) {
       console.log(e, 'eman');
+      reportSentry('submitAndPay', outlet, e);
       await dispatch(showSnackbar({message: 'Please try again'}));
     }
   };
@@ -1205,7 +1213,7 @@ const Cart = props => {
   };
 
   const renderDateText = () => {
-    if (orderingDateTimeSelected) {
+    if (orderingDateTimeSelected?.date) {
       const date = moment(orderingDateTimeSelected?.date).format('DD/MM/YY');
       return (
         <View>
@@ -1562,7 +1570,7 @@ const Cart = props => {
           <GlobalInputText
             showNumberLengthText={true}
             placeholder="Example: please use less plastic"
-            label="Notes (Optional)"
+            label="Remarks (Optional)"
             multiline={true}
             numberOfLines={10}
             textAlignVertical="top"
@@ -1588,32 +1596,39 @@ const Cart = props => {
       <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <Body>
-          <ScrollView>
-            <ProductCartList
-              setAvailaleForSelection={setAvailableSelection}
-              setAvailablePreorderDate={setAvailablePreOrder}
-              step={props.step}
-            />
-            {availableSelection.length > 0 ? (
-              <OrderDetailCart
-                itemSelection={itemSelection}
-                setSelectSelection={handleItemSelection}
+          <KeyboardAvoidingView
+            enabled={isIos}
+            keyboardVerticalOffset={120}
+            behavior="position"
+            style={styles.flex}>
+            <ScrollView>
+              <ProductCartList
+                setAvailaleForSelection={setAvailableSelection}
+                setAvailablePreorderDate={setAvailablePreOrder}
+                step={props.step}
               />
-            ) : null}
-            {renderOrderValidation()}
-            {renderDeliveryProviderTermsAndConditions()}
-            {renderOutlet()}
-            {renderOrderingType()}
-            {renderAddress()}
-            {renderDate()}
-            {renderProvider()}
-            {renderCustomField()}
-            {renderNotes()}
-          </ScrollView>
+              {availableSelection.length > 0 ? (
+                <OrderDetailCart
+                  itemSelection={itemSelection}
+                  setSelectSelection={handleItemSelection}
+                />
+              ) : null}
+              {renderOrderValidation()}
+              {renderDeliveryProviderTermsAndConditions()}
+              {renderOutlet()}
+              {renderOrderingType()}
+              {renderAddress()}
+              {renderDate()}
+              {renderProvider()}
+              {renderCustomField()}
+              {renderNotes()}
+            </ScrollView>
+          </KeyboardAvoidingView>
         </Body>
         {renderModal()}
       </View>
       {newFooter()}
+
       <ModalError
         title={errorMessage.title}
         description={errorMessage.description}
