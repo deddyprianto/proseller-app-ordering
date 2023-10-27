@@ -306,7 +306,9 @@ const CartDetail = ({
                 <View style={styles.mr10}>
                   <TruckSvg />
                 </View>
-                <GlobalText>Delivery Provider</GlobalText>
+                <GlobalText style={[styles.boldFont, styles.smallFont]}>
+                  Delivery Provider
+                </GlobalText>
                 <View style={styles.mlAuto}>
                   <GlobalText>{data?.deliveryProvider?.name}</GlobalText>
                 </View>
@@ -322,14 +324,16 @@ const CartDetail = ({
                 <View style={styles.mr10}>
                   <CalendarBold />
                 </View>
-                <GlobalText>Date & Time</GlobalText>
+                <GlobalText style={[styles.boldFont, styles.smallFont]}>
+                  Delivery Date & Time
+                </GlobalText>
               </View>
               <View>
                 <GlobalText>
-                  To be delivered up on{' '}
-                  {moment(data?.orderActionDate).format('DD MMMM YYYY')} between{' '}
-                  {data?.orderActionTimeSlot}
+                  To be delivered on{' '}
+                  {moment(data?.orderActionDate).format('DD MMMM YYYY')}
                 </GlobalText>
+                <GlobalText>between {data?.orderActionTimeSlot}</GlobalText>
               </View>
             </>
           ) : null}
@@ -372,14 +376,16 @@ const CartDetail = ({
               <View style={styles.mr10}>
                 <CalendarBold />
               </View>
-              <GlobalText>Date & Time</GlobalText>
+              <GlobalText style={[styles.boldFont, styles.smallFont]}>
+                Pickup Date & Time
+              </GlobalText>
             </View>
             <View style={styles.mt4}>
               <GlobalText>
                 To be picked up on{' '}
-                {moment(data?.orderActionDate).format('DD MMMM YYYY')} between{' '}
-                {data?.orderActionTimeSlot}
+                {moment(data?.orderActionDate).format('DD MMMM YYYY')}
               </GlobalText>
+              <GlobalText>between {data?.orderActionTimeSlot}</GlobalText>
             </View>
           </>
         ) : null}
@@ -603,7 +609,12 @@ const CartDetail = ({
                 <View>
                   <View style={styles.row}>
                     <MapSvg />
-                    <GlobalText style={[styles.titleCardText, styles.boldFont]}>
+                    <GlobalText
+                      style={[
+                        styles.titleCardText,
+                        styles.boldFont,
+                        styles.smallFont,
+                      ]}>
                       Outlet
                     </GlobalText>
                   </View>
