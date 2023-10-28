@@ -118,6 +118,13 @@ const usePayment = () => {
       basket?.orderingMode === 'DELIVERY'
     ) {
       const provider = result?.data?.dataProvider[0];
+      if (
+        !provider?.actionRequired &&
+        provider?.deliveryProviderError?.status
+      ) {
+        return setIsLoading(false);
+      }
+
       updateCustomField(provider, orderActionDate);
     } else {
       setIsLoading(false);
