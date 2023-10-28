@@ -32,12 +32,14 @@ import {getVoucherCheckout} from '../actions/user.action';
 import useCalculation from '../hooks/calculation/useCalculation';
 import appConfig from '../config/appConfig';
 import additionalSetting from '../config/additionalSettings';
+import InformationRedeem from './informationMessage/InformationRedeem';
 
 const PaymentAddVouchersV2 = props => {
   const [usedVoucher, setUsedVoucher] = React.useState(props?.dataVoucer || []);
   const cartDetail = useSelector(
     state => state.orderReducer.dataBasket?.product,
   );
+
   const [newAvailableVoucher, setNewAvailableVoucher] = React.useState([]);
   const [unavailabelVoucher, setUnavailabelVocuher] = React.useState([]);
   const [loadingCheckVoucher, setLoadingCheckVoucher] = React.useState(false);
@@ -300,6 +302,9 @@ const PaymentAddVouchersV2 = props => {
           <RefreshControl refreshing={loading} onRefresh={getVoucher} />
         }
         contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.informationContainer}>
+          <InformationRedeem />
+        </View>
         {renderTitle('USE VOUCHER CODE')}
         <View style={styles.searchContainer}>
           <InputVoucher onPressVoucher={checkVoucher} />
@@ -541,6 +546,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchContainer: {
+    marginTop: 16,
+  },
+  informationContainer: {
+    marginHorizontal: 16,
     marginTop: 16,
   },
 });
