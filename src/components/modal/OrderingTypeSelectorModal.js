@@ -14,6 +14,7 @@ import {Dialog, Portal, Provider} from 'react-native-paper';
 import appConfig from '../../config/appConfig';
 import {
   changeOrderingMode,
+  setTimeSlotSelected,
   updateOrderingMode,
 } from '../../actions/order.action';
 
@@ -268,6 +269,7 @@ const OrderingTypeSelectorModal = ({
 
   const handleSaveClicked = async () => {
     setIsLoading(true);
+    await dispatch(setTimeSlotSelected({date: null, time: null}));
     if (selected?.key === 'DELIVERY') {
       dispatch(updateOrderingMode(selected?.key));
     } else {

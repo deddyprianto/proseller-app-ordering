@@ -212,39 +212,43 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     state =>
       state.orderReducer?.orderingDateTime?.orderingDateTimeSelected?.date,
   );
-  useEffect(() => {
-    const loadData = async () => {
-      const userDecrypt = CryptoJS.AES.decrypt(
-        userDetail,
-        awsConfig.PRIVATE_KEY_RSA,
-      );
-      const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+  const loadData = async () => {
+    setIsLoading(true);
+    const userDecrypt = CryptoJS.AES.decrypt(
+      userDetail,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+    const user = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
 
-      const deliveryAddressDefault = user?.deliveryAddress.find(
-        address => address.isDefault,
-      );
+    const deliveryAddressDefault = user?.deliveryAddress.find(
+      address => address.isDefault,
+    );
 
-      const deliveryAddress = user?.selectedAddress || deliveryAddressDefault;
-      const cartId = basket?.cartID;
-      const outletId = basket?.outlet?.id;
+    const deliveryAddress = user?.selectedAddress || deliveryAddressDefault;
+    const cartId = basket?.cartID;
+    const outletId = basket?.outlet?.id;
 
-      const payload = {
-        deliveryAddress,
-        outletId,
-        cartID: cartId,
-      };
-      let dateConvert = convertOrderActionDate(orderingDate);
-      const result = await getDeliveryProviderFee(dateConvert, payload);
-      if (result?.data) {
-        setDeliveryProviders(result?.data?.dataProvider);
-      }
-
-      const currentProvider = !isEmptyObject(value) ? value : {};
-      setSelected(currentProvider);
+    const payload = {
+      deliveryAddress,
+      outletId,
+      cartID: cartId,
     };
+    let dateConvert = convertOrderActionDate(orderingDate);
+    const result = await getDeliveryProviderFee(dateConvert, payload);
+    if (result?.data) {
+      setDeliveryProviders(result?.data?.dataProvider);
+    }
 
-    loadData();
-  }, [userDetail, orderingDate]);
+    const currentProvider = !isEmptyObject(value) ? value : {};
+    setSelected(currentProvider);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (open) {
+      loadData();
+    }
+  }, [open]);
 
   const handleSave = async () => {
     setIsLoading(true);

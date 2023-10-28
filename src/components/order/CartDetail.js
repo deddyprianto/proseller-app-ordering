@@ -26,6 +26,7 @@ import ModalDeliveryDetail from '../modal/ModalDeliveryDetail';
 import UsePointModal from '../modal/UsePointModal';
 import appConfig from '../../config/appConfig';
 import useOrderingTypes from '../../hooks/orderingTypes/useOrderingTypes';
+import InformationRedeem from '../informationMessage/InformationRedeem';
 
 const useStyles = () => {
   const theme = Theme();
@@ -193,6 +194,16 @@ const useStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    textVoucher: isRedeemable => ({
+      color: isRedeemable ? 'black' : theme.colors.greyScale5,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    }),
+    mh16: {
+      marginHorizontal: 16,
+    },
+    mb8: {
+      marginBottom: 8,
+    },
   });
   return {styles, colors: theme.colors};
 };
@@ -215,6 +226,7 @@ const CartDetail = ({
   latestSelfSelectionDate,
   showPaymentMethod,
 }) => {
+  const theme = Theme();
   const {styles, colors} = useStyles();
   const selectedAccount = useSelector(
     state => state.cardReducer?.selectedAccount?.selectedAccount,
@@ -229,7 +241,7 @@ const CartDetail = ({
   );
   const [isSwitchPoint, setIsSwitchPoint] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
-
+  const basket = useSelector(state => state?.orderReducer?.dataBasket?.product);
   const [totalPointVoucher, setTotalPointVoucher] = React.useState(0);
   const {
     calculateVoucherPoint,
@@ -252,13 +264,13 @@ const CartDetail = ({
       };
     }
     return {
-      title: 'Chosen by Staff',
+      title: 'Choose by Seller',
       description: 'Staff assistance provided on choosing your items.',
     };
   };
 
   const toggleTnc = () => setIsOpenTnc(prevState => !prevState);
-
+  const isRedeemable = basket?.totalRedeemableAmount > 0;
   const handleAgreeTnc = value => {
     if (onAgreeTnc && typeof onAgreeTnc === 'function') {
       onAgreeTnc(value);
@@ -347,7 +359,7 @@ const CartDetail = ({
             <MapSvg />
           </View>
           <GlobalText style={[styles.boldFont, styles.smallFont]}>
-            Pickup at
+            Pickup At
           </GlobalText>
         </View>
         <View style={styles.mt8}>
@@ -435,7 +447,7 @@ const CartDetail = ({
       calculateVoucher(onlyVoucher) >= data?.totalNettAmount && !fullPoint;
     return (
       <TouchableOpacity
-        disabled={totalPoint === 0 || isPointtMoreThanAmount}
+        disabled={totalPoint === 0 || isPointtMoreThanAmount || !isRedeemable}
         onPress={() => {
           handleClick();
         }}
@@ -499,15 +511,17 @@ const CartDetail = ({
         onPress={() => {
           setIsOpenModal(true);
         }}
-        style={[styles.card]}>
+        style={[styles.card, styles.mt8]}>
         <View style={{display: 'flex', flexDirection: 'row'}}>
           <View style={styles.w90}>
             <View style={[styles.row]}>
               <View style={styles.mr10}>
-                <PointSvg />
+                <PointSvg color={handleColorRedeem()} />
               </View>
               <View>
-                <GlobalText>Use Point </GlobalText>
+                <GlobalText style={styles.textVoucher(isRedeemable)}>
+                  Use Point{' '}
+                </GlobalText>
               </View>
             </View>
             {renderPointText()}
@@ -543,18 +557,29 @@ const CartDetail = ({
     );
   };
 
+  const handleColorRedeem = () => {
+    if (isRedeemable) {
+      return 'black';
+    }
+    return theme.colors.greyScale5;
+  };
+
   const renderVoucher = () => {
     const vouchersWithoutPoint = vouchers?.filter(row => !row.isPoint);
-
     return (
-      <TouchableOpacity onPress={openVoucher} style={[styles.card, styles.mt8]}>
+      <TouchableOpacity
+        disabled={!isRedeemable}
+        onPress={openVoucher}
+        style={[styles.card]}>
         <View style={styles.row}>
           <View style={styles.mr10}>
-            <VoucherSvg />
+            <VoucherSvg color={handleColorRedeem()} />
           </View>
-          <GlobalText>Use Voucher</GlobalText>
+          <GlobalText style={styles.textVoucher(isRedeemable)}>
+            Use Voucher
+          </GlobalText>
           <View style={styles.mlAuto}>
-            <ArrowRight />
+            <ArrowRight color={handleColorRedeem()} />
           </View>
         </View>
         {vouchersWithoutPoint?.length > 0 ? (
@@ -590,7 +615,7 @@ const CartDetail = ({
                   styles.boldFont,
                   styles.smallFont,
                 ]}>
-                Items Selections
+                Item Selections
               </GlobalText>
               <GlobalText style={[styles.mlAuto, styles.regFont]}>
                 {handleTextSelection().title}
@@ -649,9 +674,13 @@ const CartDetail = ({
       <GlobalText style={[styles.orderText, styles.ph16, {marginTop: 36}]}>
         Payment Details
       </GlobalText>
+      <View style={[styles.mh16, styles.mb8]}>
+        <InformationRedeem />
+      </View>
       <View style={styles.ph14}>
-        {renderPoint()}
         {renderVoucher()}
+        {renderPoint()}
+
         {showPaymentMethod ? (
           <TouchableOpacity
             onPress={openPayment}

@@ -65,18 +65,18 @@ const OrderDetailCart = ({setSelectSelection, itemSelection}) => {
         <GlobalText>Ordering Details</GlobalText>
       </View>
       <View style={styles.cardContainer}>
-        <GlobalText>Items Selections</GlobalText>
+        <GlobalText>Item Selections</GlobalText>
         <View style={styles.buttonContainer}>
           <GlobalButton
             isOutline={status === 'own' ? false : true}
             buttonStyle={styles.buttonSTyle}
-            title="Choose Your Own"
+            title="Choose by Customer"
             onPress={() => onSelectSelection('own')}
           />
           <GlobalButton
             isOutline={status === 'staff' ? false : true}
             buttonStyle={styles.buttonSTyle}
-            title="Choose By Staff"
+            title="Choose by Seller"
             onPress={() => onSelectSelection('staff')}
           />
         </View>

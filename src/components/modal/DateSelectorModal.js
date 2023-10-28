@@ -262,9 +262,10 @@ const useStyles = () => {
       flexDirection: 'row',
       alignItems: 'center',
       borderRadius: 4,
+      flexWrap: 'wrap',
     },
     informationText: {
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: theme.fontFamily.poppinsSemiBold,
       marginLeft: 8,
     },
@@ -625,21 +626,14 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
     }
   };
 
-  const renderText = () => {
-    if (basket?.orderingMode === 'DELIVERY') {
-      return 'delivery';
-    }
-    return 'pickup';
-  };
-
   const renderMessageLastDelivery = () => {
     if (maxDate) {
       return (
         <View style={styles.informationLastDelivery}>
           <InformationSvg />
           <GlobalText style={styles.informationText}>
-            The last {renderText()} date is{' '}
-            {moment(maxDate).format('DD/MM/YYYY')}
+            AVAILABLE DATES : {moment(initDate).format('DD MMM YY')} -{' '}
+            {moment(maxDate).format('DD MMM YY')}
           </GlobalText>
         </View>
       );
