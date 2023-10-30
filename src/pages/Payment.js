@@ -597,6 +597,8 @@ const Payment = () => {
         return 'Paynow';
       case 'voucher':
         return 'Voucher';
+      case 'promocode':
+        return 'Voucher';
       case 'point':
         return 'Point';
       case 'Store Value Card':
@@ -611,6 +613,8 @@ const Payment = () => {
       case 'FOMO_PAY':
         return appConfig.iconPayment;
       case 'voucher':
+        return appConfig.iconVoucher;
+      case 'promocode':
         return appConfig.iconVoucher;
       case 'point':
         return appConfig.iconPoint;

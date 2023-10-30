@@ -491,6 +491,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
       ) : null}
       {item?.paymentType !== 'voucher' &&
       item?.paymentType !== 'point' &&
+      item?.paymentType !== 'promocode' &&
       item?.item?.paymentType !== 'promocode' &&
       item?.paymentAmount > 0 ? (
         <View style={[styles.listOrderDetailContainer, styles.mv6]}>
@@ -770,7 +771,6 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
     }
     return 'Points will be earned';
   };
-
   return (
     <Body>
       {data?.status === staustPending && !isTimeEnd ? (
