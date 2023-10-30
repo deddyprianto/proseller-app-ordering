@@ -449,6 +449,12 @@ const useStyles = () => {
     flex: {
       flex: 1,
     },
+    selected: isSelected => ({
+      backgroundColor: isSelected ? theme.colors.primary : 'white',
+    }),
+    textSelected: isSelected => ({
+      color: isSelected ? 'white' : theme.colors.primary,
+    }),
   });
   return {styles, color: theme.colors};
 };
@@ -1086,14 +1092,16 @@ const Cart = props => {
       );
     }
   };
-  const renderOrderingTypeHeaderText = text => {
+  const renderOrderingTypeHeaderText = (text, orderingMode) => {
+    console.log({text, orderingMode}, 'nehi');
     if (awsConfig.COMPANY_TYPE === 'Retail') {
       return (
         <TouchableOpacity
           disabled={basket?.isStoreCheckoutCart}
-          style={styles.touchableMethod}
+          style={[styles.touchableMethod, styles.selected(orderingMode)]}
           onPress={handleOpenOrderingTypeModal}>
-          <Text style={styles.textMethodValue}>
+          <Text
+            style={[styles.textMethodValue, styles.textSelected(orderingMode)]}>
             {text.length > 12 ? text.substring(0.12) + '...' : text}
           </Text>
         </TouchableOpacity>
@@ -1103,11 +1111,11 @@ const Cart = props => {
     }
   };
 
-  const renderOrderingTypeHeader = orderingTypeValue => {
+  const renderOrderingTypeHeader = (orderingTypeValue, orderingMode) => {
     return (
       <View style={styles.viewOrderingTypeHeader}>
         <Text style={styles.textMethod}>Ordering Type</Text>
-        {renderOrderingTypeHeaderText(orderingTypeValue)}
+        {renderOrderingTypeHeaderText(orderingTypeValue, orderingMode)}
       </View>
     );
   };
@@ -1137,18 +1145,19 @@ const Cart = props => {
 
     return (
       <View style={styles.viewMethodOrderingType}>
-        {renderOrderingTypeHeader(orderingTypeValue)}
+        {renderOrderingTypeHeader(orderingTypeValue, orderingMode)}
         {renderOrderingTypeBody(orderingTypeValue)}
       </View>
     );
   };
 
-  const renderAddressHeader = deliveryAddressValue => {
+  const renderAddressHeader = (deliveryAddressValue, myDeliveryAddress) => {
+    console.log({myDeliveryAddress}, 'polo');
     return (
       <View style={styles.viewDeliveryAddressHeader}>
         <Text style={styles.textMethod}>Delivery Address</Text>
         <TouchableOpacity
-          style={styles.touchableMethod}
+          style={[styles.touchableMethod, styles.selected(myDeliveryAddress)]}
           onPress={() => {
             Actions.myDeliveryAddress({
               handleResetProvider: () => {
@@ -1156,7 +1165,13 @@ const Cart = props => {
               },
             });
           }}>
-          <Text style={styles.textMethodValue}>{deliveryAddressValue}</Text>
+          <Text
+            style={[
+              styles.textMethodValue,
+              styles.textSelected(myDeliveryAddress),
+            ]}>
+            {deliveryAddressValue}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -1180,10 +1195,13 @@ const Cart = props => {
     if (basket?.orderingMode === 'DELIVERY') {
       const deliveryAddressValue =
         deliveryAddress?.tagAddress || 'Choose Address';
-
+      console.log({deliveryAddress}, 'sultan');
       return (
         <View style={styles.viewMethodDeliveryAddress}>
-          {renderAddressHeader(deliveryAddressValue)}
+          {renderAddressHeader(
+            deliveryAddressValue,
+            deliveryAddress?.tagAddress,
+          )}
           {renderAddressBody(deliveryAddress)}
         </View>
       );
@@ -1200,12 +1218,21 @@ const Cart = props => {
         <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Delivery Provider</Text>
           <TouchableOpacity
-            style={styles.touchableMethod}
+            style={[
+              styles.touchableMethod,
+              styles.selected(deliveryProviderValue),
+            ]}
             disabled={disabled}
             onPress={() => {
               handleOpenDeliveryProviderModal();
             }}>
-            <Text style={styles.textMethodValue}>{deliveryProviderValue}</Text>
+            <Text
+              style={[
+                styles.textMethodValue,
+                styles.textSelected(deliveryProviderValue),
+              ]}>
+              {deliveryProviderValue}
+            </Text>
           </TouchableOpacity>
         </View>
       );
@@ -1217,8 +1244,18 @@ const Cart = props => {
       const date = moment(orderingDateTimeSelected?.date).format('DD/MM/YY');
       return (
         <View>
-          <Text style={styles.textMethodValue}>{date}</Text>
-          <Text style={styles.textMethodValue}>
+          <Text
+            style={[
+              styles.textMethodValue,
+              styles.textSelected(orderingDateTimeSelected?.date),
+            ]}>
+            {date}
+          </Text>
+          <Text
+            style={[
+              styles.textMethodValue,
+              styles.textSelected(orderingDateTimeSelected?.date),
+            ]}>
             at {orderingDateTimeSelected?.time}
           </Text>
         </View>
@@ -1236,10 +1273,13 @@ const Cart = props => {
 
     if (isDelivery || isPickUp || isTakeAway) {
       return (
-        <View style={styles.viewMethod}>
+        <View style={[styles.viewMethod, ,]}>
           <Text style={styles.textMethod}>Date & Time</Text>
           <TouchableOpacity
-            style={styles.touchableMethod}
+            style={[
+              styles.touchableMethod,
+              styles.selected(orderingDateTimeSelected?.date),
+            ]}
             onPress={() => {
               handleOpenDeliveryDateModal();
             }}>

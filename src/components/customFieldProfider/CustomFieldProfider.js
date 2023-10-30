@@ -93,6 +93,12 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
       color: 'white',
     },
+    selected: isSelected => ({
+      backgroundColor: isSelected ? theme.colors.primary : 'white',
+    }),
+    textSelected: isSelected => ({
+      color: isSelected ? 'white' : theme.colors.primary,
+    }),
   });
   return {
     styles,
@@ -126,7 +132,6 @@ const CustomFieldProvider = () => {
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
-  console.log({selectedCustomField, provider}, 'silap');
   const dispatch = useDispatch();
   const onOpenModal = async field => {
     await setOptions(field?.options);
@@ -210,10 +215,21 @@ const CustomFieldProvider = () => {
               <GlobalText>{field?.name}</GlobalText>
             </View>
             <TouchableOpacity
-              style={styles.touchableMethod}
+              style={[
+                styles.touchableMethod,
+                styles.selected(
+                  selectedCustomField?.deliveryCustomField?.[field.value],
+                ),
+              ]}
               onPress={() => onOpenModal(field || [])}
               key={index}>
-              <GlobalText style={styles.textMethodValue}>
+              <GlobalText
+                style={[
+                  styles.textMethodValue,
+                  styles.textSelected(
+                    selectedCustomField?.deliveryCustomField?.[field.value],
+                  ),
+                ]}>
                 {handleName(field?.value)}
               </GlobalText>
             </TouchableOpacity>
