@@ -164,9 +164,7 @@ class StoreStores extends Component {
                 {
                   <TouchableOpacity
                     style={styles.storesItem}
-                    disabled={
-                      !item.storeStatus || item.orderingStatus !== 'AVAILABLE'
-                    }
+                    disabled={item.orderingStatus !== 'AVAILABLE'}
                     onPress={() => this.processChangeOutlet(item)}>
                     <View style={styles.storesDetail}>
                       <Text
