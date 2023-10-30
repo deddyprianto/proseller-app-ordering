@@ -557,7 +557,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                 <TruckSvg />
                 <GlobalText
                   style={[styles.paymentDetailCardText, styles.boldFont]}>
-                  Deliver Provider
+                  Delivery Provider
                 </GlobalText>
               </View>
               <View style={styles.columnText}>
