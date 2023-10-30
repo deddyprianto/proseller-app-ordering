@@ -22,36 +22,44 @@ const useTime = () => {
     return 'In 0 day';
   };
 
-  const handleOpenStore = (item, isOrderAvailable) => {
-    let operationalHour = [];
-    if (item?.operationalHours && Array.isArray(item?.operationalHours)) {
-      operationalHour = item?.operationalHours;
-    }
-    if (isOrderAvailable) {
-      if (item?.openAllDays) {
-        return true;
-      }
-      const day = moment().day();
-      const getOperationalHour = operationalHour?.find(
-        operational => operational?.day == day,
-      );
+  const handleOpenStore = item => {
+    try {
+      let operationalHours = item.operationalHours;
 
-      if (getOperationalHour) {
-        const closeTime =
-          moment().format('YYYY-MM-DD ') + getOperationalHour?.close;
-        const openTime =
-          moment().format('YYYY-MM-DD ') + getOperationalHour?.open;
-        const unixTimeNow = moment().unix();
-        const unixTimeClose = moment(closeTime).unix();
-        const unixTimeOpen = moment(openTime).unix();
-        if (unixTimeNow >= unixTimeOpen && unixTimeNow <= unixTimeClose) {
+      let date = new Date();
+      var dd = date.getDate();
+      var mm = date.getMonth() + 1;
+      var yyyy = date.getFullYear();
+      let currentDate = mm + '/' + dd + '/' + yyyy;
+      let day = date.getDay();
+      let time = date.getHours() + ':' + date.getMinutes();
+
+      let open;
+      operationalHours
+        .filter(item => item.day == day && item.active == true)
+        .map(day => {
+          if (
+            Date.parse(`${currentDate} ${time}`) >=
+              Date.parse(`${currentDate} ${day.open}`) &&
+            Date.parse(`${currentDate} ${time}`) <
+              Date.parse(`${currentDate} ${day.close}`)
+          ) {
+            open = true;
+          }
+        });
+
+      if (open) {
+        return true;
+      } else {
+        if (operationalHours.leading == 0) {
           return true;
+        } else {
+          return false;
         }
-        return false;
       }
+    } catch (e) {
       return false;
     }
-    return false;
   };
 
   return {
