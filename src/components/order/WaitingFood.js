@@ -36,6 +36,7 @@ import Snackbar from 'react-native-snackbar';
 import awsConfig from '../../config/awsConfig';
 import {refreshToken} from '../../actions/auth.actions';
 import {format} from 'date-fns';
+import {Header} from '../layout';
 
 class WaitingFood extends Component {
   constructor(props) {
@@ -1155,25 +1156,7 @@ class WaitingFood extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.detailOrder()}
-        <View
-          style={{
-            backgroundColor: colorConfig.pageIndex.backgroundColor,
-            marginBottom: 10,
-            paddingVertical: 3,
-            shadowColor: '#00000021',
-            shadowOffset: {
-              width: 0,
-              height: 6,
-            },
-            shadowOpacity: 0.37,
-            shadowRadius: 7.49,
-            elevation: 12,
-          }}>
-          <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-            <Icon size={25} name={'chevron-left'} style={styles.btnBackIcon} />
-            <Text style={styles.btnBackText}>Waiting Order</Text>
-          </TouchableOpacity>
-        </View>
+        <Header onBackBtn={this.goBack} title="Order Detail" />
         {this.renderImage()}
         {dataBasket != undefined && dataBasket?.orderingMode === 'DELIVERY'
           ? this.renderTextWaitingDelivery()
