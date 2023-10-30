@@ -280,14 +280,7 @@ const ModalOrderDetail = ({
             </GlobalText>
           </View>
           {checkInclTax()}
-          {totalPointToPay && totalPointToPay > 0 ? (
-            <View style={styles.modalItem}>
-              <GlobalText style={styles.minusText}>Paid with point</GlobalText>
-              <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
-                ({CurrencyFormatter(calculatePoint(vouchers))} )
-              </GlobalText>
-            </View>
-          ) : null}
+
           {calculateVoucher(voucherOnly()) > 0 ? (
             <View style={styles.modalItem}>
               <GlobalText style={styles.minusText}>
@@ -295,6 +288,14 @@ const ModalOrderDetail = ({
               </GlobalText>
               <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
                 ({CurrencyFormatter(calculateVoucher(voucherOnly()))} )
+              </GlobalText>
+            </View>
+          ) : null}
+          {totalPointToPay && totalPointToPay > 0 ? (
+            <View style={styles.modalItem}>
+              <GlobalText style={styles.minusText}>Paid with point</GlobalText>
+              <GlobalText style={[styles.modalItemPrice, styles.minusText]}>
+                ({CurrencyFormatter(calculatePoint(vouchers))} )
               </GlobalText>
             </View>
           ) : null}

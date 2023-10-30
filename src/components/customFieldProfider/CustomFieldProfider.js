@@ -193,7 +193,10 @@ const CustomFieldProvider = () => {
     return 'Choose';
   };
   const handleStyle = option => {
-    if (option === selectedValue) {
+    if (
+      option === selectedValue ||
+      option === selectedCustomField?.deliveryCustomField?.[selectedName]
+    ) {
       return styles.touchableItemSelected;
     }
     return styles.touchableItem;
