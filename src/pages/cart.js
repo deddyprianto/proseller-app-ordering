@@ -683,6 +683,8 @@ const Cart = props => {
     }
   }, [subTotal]);
 
+  const arraySkipOperationalHours = ['STOREPICKUP', 'TAKEAWAY', 'DELIVERY'];
+
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);
     setSeeDetail(false);
@@ -900,6 +902,25 @@ const Cart = props => {
     toggleErrorModal('', '');
   };
 
+  const handleCheckOperationalHours = currentOutlet => {
+    if (CheckOutletStatus(currentOutlet) === 'UNAVAILABLE') {
+      let {title, message} = outletUnavailable(currentOutlet);
+      if (currentOutlet?.offlineMessage) {
+        message = currentOutlet?.offlineMessage;
+      }
+      // setIsOffline(true);
+      toggleErrorModal(title, message);
+      // Alert.alert('The outlet is offline', message);
+      return;
+    }
+
+    if (CheckOutletStatus(currentOutlet) === 'CLOSED') {
+      let {title, message} = outletClosed(currentOutlet);
+      toggleErrorModal(title, message);
+      return;
+    }
+  };
+
   const handleClickButtonPayment = async () => {
     try {
       const currentOutlet = await dispatch(getOutletById(outlet.id));
@@ -913,25 +934,16 @@ const Cart = props => {
         row => row.key === basket?.orderingMode,
       );
 
+      const skipOperationalHours = arraySkipOperationalHours.find(
+        mode => mode === basket?.orderingMode,
+      );
+
       if (!availableCheck) {
         return handleOpenOrderingModeOfflineModal();
       }
 
-      if (CheckOutletStatus(currentOutlet) === 'UNAVAILABLE') {
-        let {title, message} = outletUnavailable(currentOutlet);
-        if (currentOutlet?.offlineMessage) {
-          message = currentOutlet?.offlineMessage;
-        }
-        // setIsOffline(true);
-        toggleErrorModal(title, message);
-        // Alert.alert('The outlet is offline', message);
-        return;
-      }
-
-      if (CheckOutletStatus(currentOutlet) === 'CLOSED') {
-        let {title, message} = outletClosed(currentOutlet);
-        toggleErrorModal(title, message);
-        return;
+      if (!skipOperationalHours) {
+        return handleCheckOperationalHours(currentOutlet);
       }
 
       if (!handleIsPassValidationOrder(outlet)) {
