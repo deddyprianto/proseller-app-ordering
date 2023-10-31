@@ -1055,7 +1055,6 @@ const Cart = props => {
         latestSelfSelectionDate: findMinimumDate,
       });
     } catch (e) {
-      console.log(e, 'eman');
       reportSentry('submitAndPay', outlet, e);
       await dispatch(showSnackbar({message: 'Please try again'}));
     }
@@ -1232,7 +1231,7 @@ const Cart = props => {
           <TouchableOpacity
             style={[
               styles.touchableMethod,
-              styles.selected(deliveryProviderValue),
+              styles.selected(basket?.provider?.name),
             ]}
             disabled={disabled}
             onPress={() => {
@@ -1241,7 +1240,7 @@ const Cart = props => {
             <Text
               style={[
                 styles.textMethodValue,
-                styles.textSelected(deliveryProviderValue),
+                styles.textSelected(basket?.provider?.name),
               ]}>
               {deliveryProviderValue}
             </Text>
