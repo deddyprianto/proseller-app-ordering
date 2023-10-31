@@ -16,6 +16,10 @@ const useStyles = () => {
     },
     icon: {
       marginRight: 8,
+      width: '8%',
+    },
+    children: {
+      width: '92%',
     },
   });
   return {styles};
@@ -28,7 +32,7 @@ const InformationMessage = ({children}) => {
       <View style={styles.icon}>
         <InformationSvg size={24} />
       </View>
-      <View>{children}</View>
+      <View style={styles.children}>{children}</View>
     </View>
   );
 };

@@ -225,6 +225,7 @@ const CartDetail = ({
   onAgreeTnc,
   latestSelfSelectionDate,
   showPaymentMethod,
+  updateCalculation,
 }) => {
   const theme = Theme();
   const {styles, colors} = useStyles();
@@ -411,9 +412,9 @@ const CartDetail = ({
   }, [vouchers, isSwitchPoint]);
 
   const pointUsed = () => {
-    const myPoint = vouchers?.find(voucher => voucher?.isPoint);
-    if (myPoint) {
-      return myPoint?.redeemValue?.toFixed(2);
+    const myUsePoint = vouchers?.find(voucher => voucher?.isPoint);
+    if (myUsePoint) {
+      return myUsePoint?.redeemValue?.toFixed(2);
     }
     return 0;
   };
@@ -467,22 +468,26 @@ const CartDetail = ({
     );
   };
   const renderPointText = () => {
-    const jumPointRatio = campaign.points.pointsToRebateRatio0;
-    const jumMoneyRatio = campaign.points.pointsToRebateRatio1;
-
+    const jumPointRatio = campaign?.points?.pointsToRebateRatio0;
+    const jumMoneyRatio = campaign?.points?.pointsToRebateRatio1;
     const ratio = jumMoneyRatio / jumPointRatio;
+    const initialWorthPoint = basket?.totalRedeemableAmount;
+    const initialPoint = basket?.totalRedeemableAmount * jumPointRatio;
 
     const totalPointValue = totalPoint * ratio;
     return (
       <View>
         <GlobalText style={styles.pointText(isSwitchPoint)}>
-          Points Used: {isSwitchPoint ? pointUsed() : totalPoint}
+          Points Used:{' '}
+          {isSwitchPoint && !updateCalculation
+            ? pointUsed()
+            : initialPoint.toFixed(2)}
         </GlobalText>
         <GlobalText style={styles.pointText(isSwitchPoint)}>
           Worth:{' '}
-          {isSwitchPoint
+          {isSwitchPoint && !updateCalculation
             ? CurrencyFormatter(calculatePoint(vouchers))
-            : CurrencyFormatter(totalPointValue)}
+            : CurrencyFormatter(initialWorthPoint)}
         </GlobalText>
         <GlobalText style={styles.currentPoint}>
           Current Points: {totalPoint} (worth{' '}

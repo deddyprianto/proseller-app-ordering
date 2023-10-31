@@ -49,6 +49,7 @@ const SettleOrderV2 = ({
   doPayment,
   totalAmount,
   latestSelfSelectionDate,
+  updateCalculation,
 }) => {
   const {styles} = useStyles();
   const [availableSelection, setAvailableSelection] = React.useState([]);
@@ -124,6 +125,7 @@ const SettleOrderV2 = ({
           isAgreeTnc={isAgreeTnc}
           latestSelfSelectionDate={latestSelfSelectionDate}
           showPaymentMethod={hanldeDisableButton(true)}
+          updateCalculation={updateCalculation}
         />
       </ScrollView>
       <GrandTotalFloating
