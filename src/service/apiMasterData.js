@@ -1,7 +1,6 @@
 import awsConfig from '../config/awsConfig';
 const BASE_URL_MASTERDATA = awsConfig.base_url_master_data;
 import CryptoJS from 'react-native-crypto-js';
-import {reportSentry} from '../helper/Sentry';
 
 export const fetchApiMasterData = async (
   url,
@@ -37,7 +36,6 @@ export const fetchApiMasterData = async (
 
     throw result;
   } catch (error) {
-    reportSentry(url, body, error);
     return error;
   }
 };

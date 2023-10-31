@@ -75,6 +75,7 @@ import additionalSetting from '../../config/additionalSettings';
 import SettleOrderV2 from './SettleOrderV2';
 import moment from 'moment';
 import {showSnackbar} from '../../actions/setting.action';
+import {reportSentry} from '../../helper/Sentry';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -2928,6 +2929,7 @@ class SettleOrder extends Component {
 
       this.setState({loading: false});
     } catch (e) {
+      reportSentry('cart/submitAndPay', intlData, e);
       Alert.alert('Oppss', 'Something went wrong, please try again');
       this.setState({loading: false, failedPay: true});
     }

@@ -8,6 +8,7 @@ import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import appConfig from '../config/appConfig';
 import {Alert} from 'react-native';
+import {reportSentry} from '../helper/Sentry';
 
 export const getProductByOutlet = (OutletId, refresh) => {
   return async (dispatch, getState) => {
@@ -656,6 +657,7 @@ export const updateSurcharge = orderingMode => {
 
       return response;
     } catch (error) {
+      reportSentry('cart/changeOrderingMode', orderingMode, error);
       return error;
     }
   };
@@ -795,6 +797,7 @@ export const getPendingCartSingle = id => {
       console.log(response, 'response get pending cart by id');
       return response.response.data;
     } catch (error) {
+      reportSentry('cart/pending', id, error);
       return error;
     }
   };
@@ -1543,6 +1546,7 @@ export const updateProductToBasket = (payload, previousData) => {
       return response;
     } catch (error) {
       console.log(error, 'response build cart');
+      reportSentry('cart/updateitem', previousData, error);
       return error;
     }
   };
@@ -1631,6 +1635,7 @@ export const getDeliveryFee = payload => {
         return false;
       }
     } catch (error) {
+      reportSentry('delivery/calculateFee', payload, error);
       return error;
     }
   };
@@ -1726,6 +1731,7 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
       });
       return response;
     } catch (error) {
+      reportSentry('cart/additem', selectedProduct, error);
       return error;
     }
   };
@@ -1856,6 +1862,7 @@ export const getBasket = () => {
 
       return response;
     } catch (error) {
+      reportSentry('cart/getcart', null, error);
       return error;
     }
   };
@@ -1900,6 +1907,7 @@ export const getDeliveryProviderAndFee = payload => {
         return false;
       }
     } catch (error) {
+      reportSentry('delivery/calculateFee', payload, error);
       return error;
     }
   };
@@ -1970,7 +1978,18 @@ export const getTimeSlot = ({outletId, date, clientTimezone, orderingMode}) => {
         return response.response.data;
       }
       return false;
-    } catch (e) {}
+    } catch (e) {
+      reportSentry(
+        'timeslot',
+        {
+          outletId,
+          date,
+          clientTimezone,
+          orderingMode,
+        },
+        e,
+      );
+    }
   };
 };
 
@@ -2064,6 +2083,7 @@ export const changeOrderingMode = ({orderingMode, provider}) => {
       }
       return response;
     } catch (error) {
+      reportSentry('cart/changeOrderingMode', {orderingMode, provider}, error);
       return error;
     }
   };
@@ -2123,6 +2143,7 @@ export const getPendingOrderById = id => {
       }
       return response?.response?.data;
     } catch (error) {
+      reportSentry('cart/pending', id, error);
       return error;
     }
   };

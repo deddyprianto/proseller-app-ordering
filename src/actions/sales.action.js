@@ -1,3 +1,4 @@
+import {reportSentry} from '../helper/Sentry';
 import {fetchApi} from '../service/api';
 
 export const dataTransaction = () => {
@@ -44,6 +45,7 @@ export const dataTransaction = () => {
         });
       }
     } catch (error) {
+      reportSentry('customer/sales', null, error);
       return error;
     }
   };
@@ -80,6 +82,7 @@ export const recentTransaction = () => {
         });
       }
     } catch (error) {
+      reportSentry('customer/sales', null, error);
       return error;
     }
   };

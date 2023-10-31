@@ -4,6 +4,7 @@ import {refreshToken} from './auth.actions';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {reportSentry} from '../helper/Sentry';
 
 export const campaign = () => {
   return async (dispatch, getState) => {
@@ -112,6 +113,7 @@ export const getStamps = () => {
         });
       }
     } catch (error) {
+      reportSentry('customer/stamps', null, error);
       return error;
     }
   };
@@ -137,6 +139,7 @@ export const setStamps = payload => {
       console.log(response.responseBody, 'response setStamps');
       return response.responseBody;
     } catch (error) {
+      reportSentry('customer/stamps', payload, error);
       return error;
     }
   };
@@ -182,6 +185,7 @@ export const dataPoint = () => {
         });
       }
     } catch (error) {
+      reportSentry('customer/point?history=false', null, error);
       return error;
     }
   };
@@ -341,6 +345,7 @@ export const dataPointHistory = () => {
         return false;
       }
     } catch (error) {
+      reportSentry('customer/point?history=true', null, error);
       return error;
     }
   };
@@ -398,6 +403,11 @@ export const getReceivedPointActivity = () => {
 
       return response.responseBody.data;
     } catch (error) {
+      reportSentry(
+        'customer/point/activity?type=received&limit=10',
+        null,
+        error,
+      );
       throw error;
     }
   };
@@ -428,6 +438,7 @@ export const getUsedPointActivity = () => {
 
       return response.responseBody.data;
     } catch (error) {
+      reportSentry('customer/point/activity?type=used&limit=10', null, error);
       throw error;
     }
   };
