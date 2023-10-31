@@ -8,11 +8,10 @@ import {Alert} from 'react-native';
 import awsConfig from '../config/awsConfig';
 import {fetchApi} from '../service/api';
 import CryptoJS from 'react-native-crypto-js';
-import appConfig from '../config/appConfig';
 import AsyncStorage from '@react-native-community/async-storage';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {submitOfflineCart, clearNetsclickData} from './order.action';
-
+import {reportSentry} from '../helper/Sentry';
 const encryptData = value => {
   const result = CryptoJS.AES.encrypt(
     value,
@@ -184,6 +183,7 @@ export const sendOTP = payload => {
         throw response;
       }
     } catch (error) {
+      reportSentry('/customer/login/send-otp', payload, error);
       return error;
     }
   };
@@ -409,7 +409,6 @@ export const createNewUserOther = payload => {
       console.log(response, 'createNewUserOther');
       return true;
     } catch (error) {
-      console.log(error);
       dispatch({
         type: 'CREAT_USER_FAIL',
         payload: error.responseBody,
@@ -479,6 +478,7 @@ export const loginOther = payload => {
         type: 'LOGIN_USER_FAIL',
         payload: error.responseBody,
       });
+      reportSentry('customer/login', payload, error);
       return error;
     }
   };
@@ -539,6 +539,7 @@ export const resendOTPCognito = payload => {
       console.log(response, 'response send otp cognito');
       return response.responseBody.ResultCode;
     } catch (error) {
+      reportSentry('customer/login/send-otp', payload, error);
       return error;
     }
   };
@@ -644,6 +645,7 @@ export const loginSendOTP = payload => {
         return true;
       }
     } catch (error) {
+      reportSentry('customer/login/send-otp', payload, error);
       return error;
     }
   };
@@ -686,6 +688,7 @@ export const createNewUser = payload => {
         type: 'CREAT_USER_FAIL',
         payload: error.responseBody,
       });
+      reportSentry('customer/register', payload, error);
       return error;
     }
   };

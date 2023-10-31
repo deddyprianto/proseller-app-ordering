@@ -4,6 +4,7 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 // import * as _ from 'lodash';
 import format from 'date-fns/format';
 import {fetchApiMasterData} from '../service/apiMasterData';
+import {reportSentry} from '../helper/Sentry';
 
 export const myVoucers = () => {
   return async (dispatch, getState) => {
@@ -185,6 +186,7 @@ export const myVouchers = () => {
         data: dataVouchers,
       });
     } catch (error) {
+      reportSentry('customer/vouchers', null, error);
       return error;
     }
   };

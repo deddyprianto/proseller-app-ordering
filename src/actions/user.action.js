@@ -4,6 +4,7 @@ import CryptoJS from 'react-native-crypto-js';
 import {fetchApiPayment} from '../service/apiPayment';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {Alert, Linking} from 'react-native';
+import {reportSentry} from '../helper/Sentry';
 
 export const requestOTP = payload => {
   return async (dispatch, getState) => {
@@ -142,6 +143,7 @@ export const getUserProfile = () => {
       }
       return response.success;
     } catch (error) {
+      reportSentry('customer/getProfile', null, error);
       return error;
     }
   };

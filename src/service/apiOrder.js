@@ -1,7 +1,6 @@
 import awsConfig from '../config/awsConfig';
 const BASE_URL_ORDER = awsConfig.base_url_order;
 import CryptoJS from 'react-native-crypto-js';
-import {reportSentry} from '../helper/Sentry';
 
 export const fetchApiOrder = async (
   url,
@@ -39,7 +38,6 @@ export const fetchApiOrder = async (
 
     throw result;
   } catch (error) {
-    reportSentry(url, body, error);
     return error;
   }
 };

@@ -4,15 +4,30 @@ import {isEmptyArray} from '../helper/CheckEmpty';
 import * as _ from 'lodash';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
+import {reportSentry} from '../helper/Sentry';
+
+const getUserDetail = userDetail => {
+  const userDecrypt = CryptoJS.AES.decrypt(
+    userDetail,
+    awsConfig.PRIVATE_KEY_RSA,
+  );
+  const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+  return result;
+};
 
 export const getProductByOutlet = (OutletId, refresh) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      const state = getState();
+      const dataUser = getUserDetail(state?.userReducer?.getUser?.userDetails);
       const PRESET_TYPE = 'app';
+      const body = {
+        customerGroupId: dataUser?.customerGroupId,
+      };
       const response = await fetchApiProduct(
         `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
         'POST',
-        null,
+        body,
         200,
         null,
       );
@@ -20,6 +35,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
         type: 'DATA_PRODUCTS_OUTLET',
         products: response.response,
       });
+      console.log({response, body}, 'log state 2');
       return response.response;
     } catch (error) {
       dispatch({
@@ -225,6 +241,7 @@ export const getBasket = () => {
 
       return response;
     } catch (error) {
+      reportSentry('cart/getcart', null, error);
       return error;
     }
   };
@@ -349,16 +366,17 @@ export const getProductByBarcode = barcode => {
 };
 
 export const getProductById = id => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      const state = getState();
+      const dataUser = getUserDetail(state?.userReducer?.getUser?.userDetails);
       const response = await fetchApiProduct(
-        `/product/${id}`,
+        `/product/${id}?customerGroupId=${dataUser?.customerGroupId}`,
         'GET',
         null,
         200,
         null,
       );
-
       if (response.success) {
         const data = response.response.data;
 
@@ -385,8 +403,6 @@ export const productByPromotion = ({promotionId, outletId}) => {
       const payload = {
         outletId,
       };
-
-      console.log('payload', payload);
 
       const response = await fetchApiProduct(
         '/promotion/items/' + promotionId,
