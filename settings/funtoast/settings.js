@@ -17,6 +17,7 @@ const additionalSetting = () => {
   const isUsingValidityDays = true;
   const enableUpcaScanner = false;
   const maxVoucherInOneTransaction = null;
+  const enableScannerButton = true;
 
   return {
     additionalPolicy,
@@ -35,6 +36,7 @@ const additionalSetting = () => {
     isUsingValidityDays,
     enableUpcaScanner,
     maxVoucherInOneTransaction,
+    enableScannerButton,
   };
 };
 

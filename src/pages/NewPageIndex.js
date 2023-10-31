@@ -29,10 +29,10 @@ import appConfig from '../config/appConfig';
 import {getColorSettings} from '../actions/setting.action';
 
 import Theme from '../theme';
-import {HistoryNotificationModal} from '../components/modal';
 import awsConfig from '../config/awsConfig';
 import {dataInbox} from '../actions/inbox.action';
 import MessageCounter from '../components/MessageCounter';
+import additionalSetting from '../config/additionalSettings';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -91,6 +91,7 @@ const useStyles = () => {
       elevation: 5,
       height: 77,
       backgroundColor: 'white',
+      width: '100%',
     },
     viewNavbarContent: {
       backgroundColor: 'transparent',
@@ -100,9 +101,9 @@ const useStyles = () => {
       alignItems: 'flex-end',
       position: 'absolute',
       bottom: 0,
+      width: '100%',
     },
     viewNavbarItem: {
-      elevation: 10,
       width: (WIDTH * 20) / 100,
       height: 77,
       display: 'flex',
@@ -237,7 +238,10 @@ const NewPageIndex = () => {
 
   const renderNavbarItem = ({props, name, index}) => {
     if (name === 'Scan') {
-      return renderNavbarScan();
+      if (additionalSetting().enableScannerButton) {
+        return renderNavbarScan();
+      }
+      return null;
     } else {
       return renderNavbarDefault({props, name, index});
     }
