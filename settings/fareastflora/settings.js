@@ -36,6 +36,8 @@ const additionalSetting = () => {
   const isUsingValidityDays = false;
   const enableUpcaScanner = false;
   const maxVoucherInOneTransaction = 1;
+  const enableScannerButton = false;
+
   return {
     additionalPolicy,
     mapType,
@@ -53,6 +55,7 @@ const additionalSetting = () => {
     isUsingValidityDays,
     enableUpcaScanner,
     maxVoucherInOneTransaction,
+    enableScannerButton,
   };
 };
 
