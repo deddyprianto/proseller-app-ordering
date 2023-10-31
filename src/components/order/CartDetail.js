@@ -471,10 +471,14 @@ const CartDetail = ({
     const jumPointRatio = campaign?.points?.pointsToRebateRatio0;
     const jumMoneyRatio = campaign?.points?.pointsToRebateRatio1;
     const ratio = jumMoneyRatio / jumPointRatio;
-    const initialWorthPoint = basket?.totalRedeemableAmount;
-    const initialPoint = basket?.totalRedeemableAmount * jumPointRatio;
+    let initialWorthPoint = basket?.totalRedeemableAmount;
+    let initialPoint = basket?.totalRedeemableAmount * jumPointRatio;
 
     const totalPointValue = totalPoint * ratio;
+    if (totalPointValue < basket?.totalRedeemableAmount) {
+      initialPoint = totalPointValue * jumPointRatio;
+      initialWorthPoint = totalPointValue;
+    }
     return (
       <View>
         <GlobalText style={styles.pointText(isSwitchPoint)}>
