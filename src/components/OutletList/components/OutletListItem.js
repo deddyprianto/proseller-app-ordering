@@ -145,6 +145,15 @@ const OutletListItem = ({item, handleChange}) => {
   const isOpen = CheckOutletStatus(item) === 'OPEN';
   const isUnavailable = CheckOutletStatus(item) === 'UNAVAILABLE';
 
+  const handleNumberDigit = number => {
+    const numberSplit = number.toString().split('.') || '';
+    if (numberSplit[1]) {
+      return number.toFixed(2);
+    } else {
+      return number;
+    }
+  };
+
   useEffect(() => {
     const userCoordinate = userPosition?.coords;
     if (userCoordinate && item?.latitude && item?.longitude) {
@@ -155,8 +164,13 @@ const OutletListItem = ({item, handleChange}) => {
         {latitude: item?.latitude, longitude: item?.longitude},
       );
 
-      const distanceString =
-        result < 1000 ? result + ' m' : Math.round(result) / 1000 + ' km';
+      const renderMeter = handleNumberDigit(result) + ' m';
+
+      const renderKilometer =
+        handleNumberDigit(Math.round(result) / 1000) + ' km';
+
+      const distanceString = result < 1000 ? renderMeter : renderKilometer;
+
       setDistance(distanceString);
     }
   }, [userPosition, item]);
