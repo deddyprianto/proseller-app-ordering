@@ -1184,6 +1184,7 @@ class SettleOrder extends Component {
   };
 
   totalPointToPay = isActive => {
+    this.setState({updateCalculation: true});
     const {companyInfo, selectedAccount} = this.props;
     const paymentData = this.getPaymentData();
     const {campign, totalPoint} = this.props;
@@ -3657,6 +3658,7 @@ class SettleOrder extends Component {
             vouchers={this.state.dataVoucer}
             doPayment={this.doPayment}
             latestSelfSelectionDate={this.props.latestSelfSelectionDate}
+            updateCalculation={this.state.updateCalculation}
           />
         </>
       );
