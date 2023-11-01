@@ -28,7 +28,7 @@ class RewardsTransaction extends Component {
   historyDetailPayment = item => {
     // to disable refresh timeout on page index
     this.props.dispatch(movePageIndex(false));
-    Actions.pendingOrderDetail({order: item});
+    Actions.historyDetailPayment({item});
   };
 
   goToHistory = async () => {
