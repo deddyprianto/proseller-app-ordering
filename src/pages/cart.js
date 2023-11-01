@@ -119,19 +119,29 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetail: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetailValue: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[10],
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+    },
+    textDetailTax: {
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textDetailValueTax: {
+      color: theme.colors.textTertiary,
+      fontSize: theme.fontSize[14],
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textDetailValueDeliveryFee: {
-      color: theme.colors.textQuaternary,
+      color: theme.colors.textPrimary,
       fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textDetailValueDeliveryFeeLineTrough: {
       marginRight: 4,
@@ -153,14 +163,14 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetailGrandTotal: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetailGrandTotalValue: {
-      color: theme.colors.primary,
-      fontSize: theme.fontSize[14],
-      fontFamily: theme.fontFamily.poppinsBold,
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textCheckoutButton: {
       color: theme.colors.text4,
@@ -192,9 +202,9 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDetailHeader: {
-      color: theme.colors.text1,
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsRegular,
+      color: theme.colors.textPrimary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textDeliveryAddressBody: {
       color: theme.colors.text2,
@@ -210,9 +220,12 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingVertical: 16,
-      borderBottomWidth: 1,
-      borderColor: theme.colors.border,
+      paddingVertical: 8,
+    },
+    viewDetailValueItemTax: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
     },
     viewDetailValueItemDeliveryFee: {
       display: 'flex',
@@ -222,7 +235,7 @@ const useStyles = () => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingVertical: 16,
+      paddingVertical: 8,
     },
     viewCheckoutButton: {
       display: 'flex',
@@ -289,6 +302,12 @@ const useStyles = () => {
       shadowColor: theme.colors.greyScale2,
       elevation: 1,
     },
+    viewBackgroundTransparent: {
+      position: 'absolute',
+      height: '100%',
+      width: '100%',
+      backgroundColor: theme.colors.backgroundTransparent1,
+    },
     viewOrderingTypeHeader: {
       display: 'flex',
       flexDirection: 'row',
@@ -332,6 +351,7 @@ const useStyles = () => {
     },
     viewDetailValue: {
       paddingHorizontal: 16,
+      paddingBottom: 16,
     },
     viewDetailHeader: {
       paddingVertical: 16,
@@ -342,6 +362,12 @@ const useStyles = () => {
       justifyContent: 'center',
       borderBottomWidth: 1,
       borderColor: theme.colors.border,
+    },
+    viewDetailDivider: {
+      height: 1,
+      width: '100%',
+      backgroundColor: theme.colors.greyScale3,
+      marginVertical: 8,
     },
     viewProgressBar: {
       flex: 1,
@@ -683,7 +709,7 @@ const Cart = props => {
     }
   }, [subTotal]);
 
-  const arraySkipOperationalHours = ['STOREPICKUP', 'TAKEAWAY', 'DELIVERY'];
+  const outletsSkipOperationalHours = ['STOREPICKUP', 'TAKEAWAY', 'DELIVERY'];
 
   const handleOpenOrderingTypeModal = () => {
     setOpenOrderingTypeModal(true);
@@ -913,7 +939,6 @@ const Cart = props => {
       // Alert.alert('The outlet is offline', message);
       return;
     }
-
     if (CheckOutletStatus(currentOutlet) === 'CLOSED') {
       let {title, message} = outletClosed(currentOutlet);
       toggleErrorModal(title, message);
@@ -925,24 +950,34 @@ const Cart = props => {
     try {
       const currentOutlet = await dispatch(getOutletById(outlet.id));
       await dispatch(sendNotes(notes));
+
       const orderingModeAvailable = orderingModesField.filter(mode => {
         if (currentOutlet[mode.isEnabledFieldName]) {
           return mode;
         }
       });
+
       const availableCheck = orderingModeAvailable.find(
         row => row.key === basket?.orderingMode,
       );
 
-      const skipOperationalHours = arraySkipOperationalHours.find(
+      const outletsOperationalHours = outletsSkipOperationalHours.find(
         mode => mode === basket?.orderingMode,
       );
+
+      const isUnavailable =
+        CheckOutletStatus(currentOutlet) === 'UNAVAILABLE' &&
+        !outletsOperationalHours;
+
+      const isClosed =
+        CheckOutletStatus(currentOutlet) === 'CLOSED' &&
+        !outletsOperationalHours;
 
       if (!availableCheck) {
         return handleOpenOrderingModeOfflineModal();
       }
 
-      if (!skipOperationalHours) {
+      if (isUnavailable || isClosed) {
         return handleCheckOperationalHours(currentOutlet);
       }
 
@@ -1038,6 +1073,7 @@ const Cart = props => {
           }
         }
       } catch (e) {}
+
       let findMinimumDate = pembayaran?.orderActionDate;
       if (availableTimes && Array.isArray(availableTimes)) {
         findMinimumDate = availableTimes?.find(
@@ -1310,7 +1346,7 @@ const Cart = props => {
       <View style={styles.viewDetailValueItem}>
         <Text style={styles.textDetail}>Total</Text>
         <Text style={styles.textDetailValue}>
-          {currencyFormatter(subTotal)}
+          {currencyFormatter(basket?.totalGrossAmount)}
         </Text>
       </View>
     );
@@ -1330,19 +1366,64 @@ const Cart = props => {
     }
   };
 
-  const renderDetailTax = () => {
-    const {exclusiveTax} = basket;
-    if (exclusiveTax) {
+  const renderDetailItemDiscount = () => {
+    const totalMembershipDiscountAmount =
+      basket?.totalMembershipDiscountAmount || 0;
+    const totalDiscountAmount = basket?.totalDiscountAmount || 0;
+    const totalItemDiscount =
+      totalDiscountAmount - totalMembershipDiscountAmount;
+    if (totalItemDiscount) {
       return (
         <View style={styles.viewDetailValueItem}>
-          <Text style={styles.textDetail}>Tax</Text>
+          <Text style={styles.textDetail}>Item Discount</Text>
           <Text style={styles.textDetailValue}>
-            {currencyFormatter(exclusiveTax)}
+            ({currencyFormatter(totalItemDiscount)})
           </Text>
         </View>
       );
     }
   };
+
+  const renderDetailMembershipDiscount = () => {
+    const {totalMembershipDiscountAmount} = basket;
+    if (totalMembershipDiscountAmount) {
+      return (
+        <View style={styles.viewDetailValueItem}>
+          <Text style={styles.textDetail}>Membership Discount</Text>
+          <Text style={styles.textDetailValue}>
+            ({currencyFormatter(totalMembershipDiscountAmount)})
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailTax = () => {
+    const exclusiveTax = basket?.exclusiveTax;
+    const inclusiveTax = basket?.inclusiveTax;
+
+    const value = inclusiveTax || exclusiveTax;
+
+    const text = inclusiveTax ? 'Incl. Tax' : 'Excl. Tax';
+
+    if (value) {
+      return (
+        <View style={styles.viewDetailValueItemTax}>
+          <Text style={styles.textDetailTax}>{text}</Text>
+          <Text style={styles.textDetailValueTax}>
+            {currencyFormatter(value)}
+          </Text>
+        </View>
+      );
+    }
+  };
+
+  const renderDetailDivider = value => {
+    if (value) {
+      return <View style={styles.viewDetailDivider} />;
+    }
+  };
+
   const renderDetailDeliveryCost = () => {
     if (!isEmptyObject(basket?.provider)) {
       const minAmount = Number(basket?.provider?.minPurchaseForFreeDelivery);
@@ -1361,7 +1442,7 @@ const Cart = props => {
 
       return (
         <View style={styles.viewDetailValueItem}>
-          <Text style={styles.textDetail}>Delivery Cost</Text>
+          <Text style={styles.textDetail}>Delivery Fee</Text>
           <View style={styles.viewDetailValueItemDeliveryFee}>
             <Text style={styles.textDetailValueDeliveryFeeLineTrough}>
               {costDefaultCurrency}
@@ -1407,17 +1488,29 @@ const Cart = props => {
     );
   };
 
+  const renderDetailBody = () => {
+    const isSurcharge = basket?.totalSurchargeAmount;
+    const isDelivery = !isEmptyObject(basket?.provider);
+    return (
+      <View style={styles.viewDetailValue}>
+        {renderDetailTotal()}
+        {renderDetailItemDiscount()}
+        {renderDetailMembershipDiscount()}
+        {renderDetailDivider(isSurcharge || isDelivery)}
+        {renderDetailDeliveryCost()}
+        {renderDetailServiceCharge()}
+        {renderDetailDivider(basket?.totalNettAmount)}
+        {renderDetailGrandTotal()}
+        {renderDetailTax()}
+      </View>
+    );
+  };
+
   const renderDetail = () => {
     return (
       <View>
         {renderDetailHeader()}
-        <View style={styles.viewDetailValue}>
-          {renderDetailTotal()}
-          {renderDetailDeliveryCost()}
-          {renderDetailServiceCharge()}
-          {renderDetailTax()}
-          {renderDetailGrandTotal()}
-        </View>
+        {renderDetailBody()}
       </View>
     );
   };
@@ -1452,6 +1545,7 @@ const Cart = props => {
   const newFooter = () => {
     const disabled =
       handleDisabledPaymentButton(basket?.orderingMode) || checkCustomField();
+
     if (additionalSetting().cartVersion === 'basic') {
       return renderFooter();
     }
@@ -1638,15 +1732,21 @@ const Cart = props => {
     return null;
   };
 
+  const renderBackgroundDark = () => {
+    if (seeDetail) {
+      return <View style={styles.viewBackgroundTransparent} />;
+    }
+  };
+
   return (
     <SafeAreaView style={styles.root}>
-      <Header
-        customRightIcon={renderStep}
-        title={props.step ? 'Order Details' : 'Cart'}
-      />
-      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <Body>
+          <Header
+            customRightIcon={renderStep}
+            title={props.step ? 'Order Details' : 'Cart'}
+          />
+          <LoadingScreen loading={isLoading} />
           <KeyboardAvoidingView
             enabled={isIos}
             keyboardVerticalOffset={120}
@@ -1676,6 +1776,7 @@ const Cart = props => {
             </ScrollView>
           </KeyboardAvoidingView>
         </Body>
+        {renderBackgroundDark()}
         {renderModal()}
       </View>
       {newFooter()}
