@@ -469,7 +469,6 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       </View>
     );
   };
-  console.log({isLoadingAutoSelect}, 'naniks4');
   return (
     <>
       <LoadingScreen loading={isLoadingAutoSelect} />

@@ -177,8 +177,6 @@ const usePayment = () => {
         provider?.name,
       );
 
-      console.log({response, provider, selectedProvider, basket}, 'naniks2');
-      // const selectedProvider = mySelectedProvider(response)
       await dispatch(saveDeliveryCustomField(payload));
       await dispatch(updateProvider(selectedProvider));
       await dispatch(
