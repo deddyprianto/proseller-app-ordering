@@ -37,10 +37,8 @@ const useStyles = () => {
     },
 
     viewProductModifierItem: {
-      display: 'flex',
+      width: '70%',
       flexDirection: 'row',
-      alignItems: 'flex-start',
-      paddingHorizontal: 12,
     },
     viewBullet: {
       height: 6,
@@ -139,6 +137,15 @@ const useStyles = () => {
     mlAuto: {
       marginLeft: 'auto',
     },
+    rightPrice: {
+      width: '30%',
+      alignItems: 'flex-end',
+    },
+    leftDesc: {
+      flexDirection: 'row',
+      width: '100%',
+      flex: 1,
+    },
   });
   return styles;
 };
@@ -162,7 +169,7 @@ const useProductCartList = ({isProductUnavailable}) => {
       : styles.textModifierItemPrice;
 
     return (
-      <>
+      <View style={styles.leftDesc}>
         <View style={[styles.viewProductModifierItem, styleItem]}>
           <View style={styles.viewBullet} />
 
@@ -170,13 +177,13 @@ const useProductCartList = ({isProductUnavailable}) => {
             <Text style={styleTextQty}>{qty}x </Text>
             <Text style={styles.textModifierItemName}> {name} </Text>
           </Text>
-          <View style={[styles.mlAuto, textPriceContainer]}>
-            <Text style={[styleTextPrice, textPrice]}>
-              {''}+ {CurrencyFormatter(price)}{' '}
-            </Text>
-          </View>
         </View>
-      </>
+        <View style={[styles.rightPrice, textPriceContainer]}>
+          <Text style={[styleTextPrice, textPrice]}>
+            {''}+ {CurrencyFormatter(price)}{' '}
+          </Text>
+        </View>
+      </View>
     );
   };
 

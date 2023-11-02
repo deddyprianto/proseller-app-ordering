@@ -50,7 +50,7 @@ const useStyles = () => {
       backgroundColor: theme.colors.background,
     },
     body: {
-      marginBottom: 16,
+      marginBottom: 0,
       height: 'auto',
       flexDirection: 'row',
     },
@@ -574,8 +574,19 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
 
   const renderBodyLeft = () => {
     return (
-      <View style={[styles.bodyLeft]}>
-        {renderProductHeader(item)}
+      <>
+        <View style={[styles.bodyLeft]}>{renderProductHeader(item)}</View>
+      </>
+    );
+  };
+
+  const renderBody = () => {
+    return (
+      <>
+        <View style={styles.body}>
+          {renderBodyLeft()}
+          {renderBodyRight()}
+        </View>
         {renderProductModifier(
           item,
           styles.noPh,
@@ -587,16 +598,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
         {renderDivider()}
         {renderNotes()}
         {renderNonDiscountAbleText()}
-      </View>
-    );
-  };
-
-  const renderBody = () => {
-    return (
-      <View style={styles.body}>
-        {renderBodyLeft()}
-        {renderBodyRight()}
-      </View>
+      </>
     );
   };
 
