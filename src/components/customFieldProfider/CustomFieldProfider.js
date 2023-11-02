@@ -185,7 +185,6 @@ const CustomFieldProvider = () => {
       closeDeliveryPopup();
     }
   };
-
   const closeDeliveryPopup = () => {
     setIsLoadingDataDelivery(false);
     closeModal();
@@ -198,10 +197,11 @@ const CustomFieldProvider = () => {
     return 'Choose';
   };
   const handleStyle = option => {
-    if (
-      option === selectedValue ||
-      option === selectedCustomField?.deliveryCustomField?.[selectedName]
-    ) {
+    let value = selectedValue;
+    if (!value) {
+      value = selectedCustomField?.deliveryCustomField?.[selectedName];
+    }
+    if (option === value) {
       return styles.touchableItemSelected;
     }
     return styles.touchableItem;

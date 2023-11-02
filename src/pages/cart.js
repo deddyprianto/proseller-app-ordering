@@ -1242,7 +1242,6 @@ const Cart = props => {
     if (basket?.orderingMode === 'DELIVERY') {
       const deliveryAddressValue =
         deliveryAddress?.tagAddress || 'Choose Address';
-      console.log({deliveryAddress}, 'sultan');
       return (
         <View style={styles.viewMethodDeliveryAddress}>
           {renderAddressHeader(

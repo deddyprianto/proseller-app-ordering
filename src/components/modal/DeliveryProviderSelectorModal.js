@@ -202,7 +202,11 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   const [selected, setSelected] = useState({});
   const [deliveryProviders, setDeliveryProviders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const {getDeliveryProviderFee} = usePayment();
+  const {
+    getDeliveryProviderFee,
+    autoSelectDeliveryType,
+    isLoading: isLoadingAutoSelect,
+  } = usePayment();
   const {convertOrderActionDate} = useDate();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const userDetail = useSelector(
@@ -261,6 +265,11 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
         }),
       );
     } else {
+      const customField = selected?.customFields?.[0];
+      if (customField?.options?.length === 1) {
+        //eksekusi
+        autoSelectDeliveryType(selected, orderingDate);
+      }
       await dispatch(updateProvider(selected));
     }
 
@@ -460,22 +469,24 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       </View>
     );
   };
-
   return (
-    <Modal transparent visible={open} onDismiss={handleClose}>
-      <Provider>
-        <Portal>
-          <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
-            <LoadingScreen loading={isLoading} />
-            {renderHeader()}
-            <View style={styles.divider} />
-            {renderBody()}
-            <View style={styles.divider} />
-            {renderFooter()}
-          </Dialog>
-        </Portal>
-      </Provider>
-    </Modal>
+    <>
+      <LoadingScreen loading={isLoadingAutoSelect} />
+      <Modal transparent visible={open} onDismiss={handleClose}>
+        <Provider>
+          <Portal>
+            <Dialog visible={open} onDismiss={handleClose} style={styles.root}>
+              <LoadingScreen loading={isLoading} />
+              {renderHeader()}
+              <View style={styles.divider} />
+              {renderBody()}
+              <View style={styles.divider} />
+              {renderFooter()}
+            </Dialog>
+          </Portal>
+        </Provider>
+      </Modal>
+    </>
   );
 };
 
