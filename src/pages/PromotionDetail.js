@@ -247,6 +247,7 @@ const PromotionDetail = ({handleClose, promotion}) => {
   };
 
   const renderName = () => {
+    const promotionName = promotion?.promoDisplayName || promotion?.name;
     return (
       <View
         style={{
@@ -262,7 +263,7 @@ const PromotionDetail = ({handleClose, promotion}) => {
             fontSize: theme.fontSize[14],
             fontFamily: theme.fontFamily.poppinsSemiBold,
           }}>
-          {promotion?.name}
+          {promotionName}
         </Text>
       </View>
     );

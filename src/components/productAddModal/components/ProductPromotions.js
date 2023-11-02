@@ -85,13 +85,14 @@ const ProductPromotions = ({productPromotions, disabled}) => {
   };
 
   const renderProductPromotionItemName = value => {
+    const promotionName = value?.promoDisplayName || value?.name;
     return (
       <View style={styles.viewProductPromotionItemName}>
         <Text style={styles.textProductPromotionItemNameTitle}>
           On Promotion
         </Text>
         <Text style={styles.textProductPromotionItemNameValue}>
-          {value?.name}
+          {promotionName}
         </Text>
       </View>
     );
