@@ -156,11 +156,50 @@ const usePayment = () => {
     }
   };
 
+  const mySelectedProvider = (providers = [], name) => {
+    const myProvider = providers?.find(provider => provider?.name === name);
+    return myProvider;
+  };
+
+  const autoSelectDeliveryType = async (provider, orderActionDate) => {
+    if (provider?.customFields?.[0]?.options?.length === 1) {
+      setIsLoading(true);
+      const key = provider?.customFields?.[0]?.value;
+      const value = provider?.customFields?.[0]?.options?.[0];
+      const payload = {
+        [key]: value,
+      };
+      const newPayload = payloadDelivery(orderActionDate, payload);
+
+      // console.log(payload, 'papan');
+      const response = await dispatch(getDeliveryProviderAndFee(newPayload));
+      const selectedProvider = await mySelectedProvider(
+        response?.data?.dataProvider,
+        provider?.name,
+      );
+
+      console.log({response, provider, selectedProvider, basket}, 'naniks2');
+      // const selectedProvider = mySelectedProvider(response)
+      await dispatch(saveDeliveryCustomField(payload));
+      await dispatch(updateProvider(selectedProvider));
+      await dispatch(
+        changeOrderingMode({
+          orderingMode: basket?.orderingMode,
+          provider: selectedProvider,
+        }),
+      );
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  };
+
   return {
     registerCardHook,
     isLoading,
     mapVoucherPaymentCheck,
     getDeliveryProviderFee,
+    autoSelectDeliveryType,
   };
 };
 
