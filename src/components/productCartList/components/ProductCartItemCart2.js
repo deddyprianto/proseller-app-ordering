@@ -182,6 +182,12 @@ const useStyles = () => {
     mlAuto: {
       marginLeft: 'auto',
     },
+    itemModifierStyle: {
+      paddingLeft: 12,
+    },
+    priceModifierStyle: {
+      paddingHorizontal: 12,
+    },
   });
   return {styles};
 };
@@ -278,7 +284,12 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
         </View>
       </View>
 
-      {renderProductModifier(item)}
+      {renderProductModifier(
+        item,
+        null,
+        styles.itemModifierStyle,
+        styles.priceModifierStyle,
+      )}
       <View style={[styles.row, styles.ph12]}>{renderPromoIcon()}</View>
       <View style={styles.divider} />
       {renderPrice()}
