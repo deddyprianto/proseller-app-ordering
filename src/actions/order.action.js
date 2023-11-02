@@ -1642,7 +1642,11 @@ export const getDeliveryFee = payload => {
 };
 
 //martin
-export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
+export const addProductToBasket = ({
+  defaultOutlet,
+  selectedProduct,
+  orderingMode,
+}) => {
   return async (dispatch, getState) => {
     try {
       const state = getState();
@@ -1667,6 +1671,7 @@ export const addProductToBasket = ({defaultOutlet, selectedProduct}) => {
       let payload = {
         outletID: `outlet::${defaultOutlet.id}`,
         details: [],
+        orderingMode,
       };
       if (selectedProduct?.isScannedProduct) {
         payload = {...payload, isScannedProduct: true};

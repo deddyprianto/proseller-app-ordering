@@ -29,15 +29,11 @@ import {
 } from '../actions/product.action';
 import {getBasket} from '../actions/order.action';
 
-import {isEmptyArray} from '../helper/CheckEmpty';
-import CurrencyFormatter from '../helper/CurrencyFormatter';
-
-import appConfig from '../config/appConfig';
-
 import Theme from '../theme';
 import ProductPresetList from '../components/productPresetList/ProductPresetList';
 import {Body} from '../components/layout';
 import useSettings from '../hooks/settings/useSettings';
+import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloating';
 
 const useStyles = () => {
   const theme = Theme();
@@ -255,26 +251,6 @@ const OrderHere = () => {
     }
   };
 
-  const renderButtonCart = () => {
-    if (!isEmptyArray(basket?.details)) {
-      return (
-        <TouchableOpacity
-          style={styles.viewButtonCart}
-          onPress={useCartVersion}>
-          <View style={styles.viewIconAndTextCart}>
-            <Image source={appConfig.iconCart} style={styles.icon} />
-            <Text style={styles.textButtonCart}>
-              {basket?.details?.length} Items in Cart
-            </Text>
-          </View>
-          <Text style={styles.textButtonCart}>
-            {CurrencyFormatter(basket?.totalNettAmount)}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
-  };
-
   const renderHeaderTitle = () => {
     return (
       <TouchableOpacity
@@ -316,7 +292,7 @@ const OrderHere = () => {
   };
 
   const renderFooter = () => {
-    return <View style={styles.footer}>{renderButtonCart()}</View>;
+    return <ButtonCartFloating />;
   };
 
   return (

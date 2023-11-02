@@ -270,6 +270,10 @@ const ProductDetail = ({
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
 
+  const orderingModeSelected = useSelector(
+    state => state.orderReducer.dataOrderingMode.orderingMode,
+  );
+
   const webStyles = {
     li: {
       margin: 0,
@@ -500,7 +504,7 @@ const ProductDetail = ({
     }
   };
 
-  const addUpdateProduct = async () => {
+  const handleAddUpdateProduct = async () => {
     const isSpecialBarcode = product?.isSpecialBarcode;
 
     if (!isEmptyObject(selectedProduct)) {
@@ -537,6 +541,7 @@ const ProductDetail = ({
         addProductToBasket({
           defaultOutlet,
           selectedProduct: newProductAdd,
+          orderingMode: orderingModeSelected,
         }),
       );
     }
@@ -550,7 +555,7 @@ const ProductDetail = ({
     setIsLoading(true);
     const showPopup = await checkProductScanGo(isFromScanBarcode);
     if (!showPopup) {
-      addUpdateProduct();
+      handleAddUpdateProduct();
     } else {
       setShowAlert(true);
       setIsLoading(false);
@@ -869,7 +874,7 @@ const ProductDetail = ({
         isVisible={showAlert}
         closeModal={closeAlert}
         onCancel={closeAlert}
-        onApprove={addUpdateProduct}
+        onApprove={handleAddUpdateProduct}
         title="Proceed to Add Item to Cart?"
         description={`Your current cart is only eligible for ${
           defaultOutlet?.name
