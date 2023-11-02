@@ -28,7 +28,7 @@ const dataOrderingMode = (state = {}, action) => {
   switch (action.type) {
     case 'DATA_ORDERING_MODE':
       return {
-        orderingMode: action.orderingMode,
+        orderingMode: action?.orderingMode,
       };
 
     default:
