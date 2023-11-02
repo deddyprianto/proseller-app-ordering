@@ -103,7 +103,6 @@ const usePayment = () => {
     try {
       const payload = payloadDelivery(orderActionDate, adjustedPayload);
       const result = await dispatch(getDeliveryProviderAndFee(payload));
-      console.log({payload, result}, 'nanak');
       handleAutoUpdateDeliveryType(result, orderActionDate);
 
       return result;
@@ -124,7 +123,7 @@ const usePayment = () => {
       ) {
         return setIsLoading(false);
       }
-
+      await dispatch(updateProvider(provider));
       updateCustomField(provider, orderActionDate);
     } else {
       setIsLoading(false);
