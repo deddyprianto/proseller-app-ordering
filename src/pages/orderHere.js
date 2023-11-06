@@ -51,6 +51,11 @@ const useStyles = () => {
       width: '100%',
       paddingHorizontal: 16,
     },
+    textHeader: {
+      color: theme.colors.textQuaternary,
+      fontSize: theme.fontSize[16],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
     textBody: {
       fontSize: 12,
       fontWeight: 'bold',
@@ -258,7 +263,7 @@ const OrderHere = () => {
         onPress={() => {
           Actions.store();
         }}>
-        <Text>{defaultOutlet?.name}</Text>
+        <Text style={styles.textHeader}>{defaultOutlet?.name}</Text>
       </TouchableOpacity>
     );
   };

@@ -42,7 +42,7 @@ import appConfig from '../config/appConfig';
 import ModalOrder from './order/Modal';
 import * as _ from 'lodash';
 import CartIcon from './order/CartIcon';
-import {Body} from './layout';
+import {Body, Header} from './layout';
 
 const ViewTypes = {
   FULL: 0,
@@ -1073,27 +1073,7 @@ class StoreDetailPromotion extends Component {
             selectedCategoryModifier={this.state.selectedCategoryModifier}
             loadModifierTime={this.state.loadModifierTime}
           />
-          <View style={styles.headerNav}>
-            <TouchableOpacity style={styles.btnBack} onPress={this.goBack}>
-              <Icon
-                size={26}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-back'
-                    : 'md-arrow-round-back'
-                }
-                style={styles.btnBackIcon}
-              />
-              <Text style={styles.btnBackText} numberOfLines={1}>
-                {this.props.dataPromotion.name.substr(0, 50)}{' '}
-              </Text>
-            </TouchableOpacity>
-            {/* <CartIcon
-            outletID={this.state.item.id}
-            dataBasket={this.props.dataBasket}
-            refreshQuantityProducts={this.refreshQuantityProducts}
-          /> */}
-          </View>
+          <Header title={this.props.dataPromotion.name.substr(0, 50)} />
 
           {this.renderMainList()}
         </Body>

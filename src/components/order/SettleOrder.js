@@ -69,7 +69,7 @@ import {getSVCBalance} from '../../actions/SVC.action';
 import {campaign, dataPoint, vouchers} from '../../actions/rewards.action';
 import ModalTransfer from './ModalTransfer';
 import OrderingModeOfflineModal from '../modal/OrderingModeOfflineModal';
-import {Body} from '../layout';
+import {Body, Header} from '../layout';
 import withHooksComponent from '../HOC';
 import additionalSetting from '../../config/additionalSettings';
 import SettleOrderV2 from './SettleOrderV2';
@@ -3677,60 +3677,8 @@ class SettleOrder extends Component {
           hideModal={this.hideModal}
           totalNettAmount={this.state.totalBayar}
         />
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: colorConfig.pageIndex.backgroundColor,
-              alignItems: 'center',
-              borderWidth: 0.4,
-              borderColor: colorConfig.pageIndex.grayColor,
-              paddingVertical: 4,
-              shadowColor: '#00000021',
-              shadowOffset: {
-                width: 0,
-                height: 6,
-              },
-              shadowOpacity: 0.37,
-              shadowRadius: 7.49,
-              elevation: 12,
-            }}>
-            <TouchableOpacity onPress={this.goBack}>
-              <Icon
-                size={28}
-                name={
-                  Platform.OS === 'ios'
-                    ? 'ios-arrow-back'
-                    : 'md-arrow-round-back'
-                }
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  margin: 10,
-                  marginLeft: 20,
-                  paddingRight: 50,
-                }}
-              />
-            </TouchableOpacity>
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: 10,
-                marginBottom: 10,
-                left: -50,
-              }}>
-              <Text
-                style={{
-                  color: colorConfig.pageIndex.activeTintColor,
-                  fontSize: 20,
-                  fontWeight: 'bold',
-                }}>
-                Confirm Payment
-              </Text>
-            </View>
-          </View>
-        </View>
+        <Header title={'Confirm Payment'} onBackBtn={this.goBack} />
+
         <Body>
           <ScrollView
             refreshControl={
