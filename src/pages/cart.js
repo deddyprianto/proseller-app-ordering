@@ -1231,6 +1231,10 @@ const Cart = props => {
             {item?.recipient?.name} - {item?.recipient?.phoneNumber}
           </Text>
           <Text style={styles.textDeliveryAddressBody}>{item?.streetName}</Text>
+          <Text style={styles.textDeliveryAddressBody}>#{item?.unitNo}</Text>
+          <Text style={styles.textDeliveryAddressBody}>
+            SG {item?.postalCode}
+          </Text>
         </>
       );
     }

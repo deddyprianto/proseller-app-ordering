@@ -309,6 +309,8 @@ const CartDetail = ({
           </View>
           <View>
             <GlobalText>{data.deliveryAddress?.streetName}</GlobalText>
+            <GlobalText>#{data.deliveryAddress?.unitNo}</GlobalText>
+            <GlobalText>SG {data.deliveryAddress?.postalCode}</GlobalText>
           </View>
           <View style={styles.mv12}>
             <DashSvg />

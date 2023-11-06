@@ -246,11 +246,10 @@ const AddNewAddress = ({address, selectedIndex, user: userParent}) => {
         value.isDefault = false;
       });
     }
-    const newStreetName = `${streetName} ${unitNumber} SG ${postalCode}`;
     const value = {
       isSelected,
       tagAddress,
-      streetName: newStreetName,
+      streetName,
       postalCode,
       unitNo: unitNumber,
       coordinate: {
@@ -426,7 +425,6 @@ const AddNewAddress = ({address, selectedIndex, user: userParent}) => {
         myAddress += item[key] + ' ';
       }
     });
-
     setStreetName(myAddress);
     setPostalCode(item['POSTAL']);
   };

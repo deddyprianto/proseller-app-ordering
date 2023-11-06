@@ -543,11 +543,9 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
                   {data?.deliveryAddress?.recipient?.name} |{' '}
                   {data?.deliveryAddress?.recipient?.phoneNumber}
                 </GlobalText>
-                <GlobalText>
-                  {data?.deliveryAddress?.streetName}{' '}
-                  {data?.deliveryAddress?.unitNo}
-                  {data?.deliveryAddress?.postalCode}
-                </GlobalText>
+                <GlobalText>{data?.deliveryAddress?.streetName} </GlobalText>
+                <GlobalText>#{data?.deliveryAddress?.unitNo}</GlobalText>
+                <GlobalText>SG {data?.deliveryAddress?.postalCode}</GlobalText>
               </View>
             </View>
           </View>
@@ -738,7 +736,6 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
       );
     }
   };
-  console.log({data}, 'naniks');
   const renderHeader = (title, containerStyle, isPreOrder) => (
     <>
       <View style={styles.centerComponent}>

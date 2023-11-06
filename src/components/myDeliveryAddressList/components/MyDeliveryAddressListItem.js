@@ -216,6 +216,9 @@ const useStyles = () => {
     noPadding: {
       padding: 0,
     },
+    noMarginTop: {
+      marginTop: 0,
+    },
   });
   return styles;
 };
@@ -383,10 +386,15 @@ const MyDeliveryAddressItem = ({
           {item?.recipient?.name}
         </Text>
         <Text style={styles.textStreetName}>{item?.streetName}</Text>
+        <Text style={[styles.textStreetName, styles.noMarginTop]}>
+          #{item?.unitNo}
+        </Text>
+        <Text style={[styles.textStreetName, styles.noMarginTop]}>
+          SG {item?.postalCode}
+        </Text>
       </View>
     );
   };
-
   const renderEditButton = () => {
     return (
       <View style={styles.editButtonContainer}>
