@@ -32,11 +32,7 @@ class RewardsTransaction extends Component {
   };
 
   goToHistory = async () => {
-    try {
-      await this.props.dispatch(afterPayment(false));
-      Actions.reset('app', {fromPayment: true});
-      // this.props.screen.navigation.navigate('History');
-    } catch (e) {}
+    this?.props?.screen?.navigation?.navigate('History');
   };
 
   render() {
