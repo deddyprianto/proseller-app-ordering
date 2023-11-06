@@ -608,7 +608,6 @@ const Cart = props => {
     const address = !isEmptyObject(result?.selectedAddress)
       ? result?.selectedAddress
       : deliveryAddressDefault;
-
     setDeliveryAddress(address);
   }, [userDetail]);
 
@@ -1199,7 +1198,6 @@ const Cart = props => {
   };
 
   const renderAddressHeader = (deliveryAddressValue, myDeliveryAddress) => {
-    console.log({myDeliveryAddress}, 'polo');
     return (
       <View style={styles.viewDeliveryAddressHeader}>
         <Text style={styles.textMethod}>Delivery Address</Text>
@@ -1233,11 +1231,14 @@ const Cart = props => {
             {item?.recipient?.name} - {item?.recipient?.phoneNumber}
           </Text>
           <Text style={styles.textDeliveryAddressBody}>{item?.streetName}</Text>
+          <Text style={styles.textDeliveryAddressBody}>#{item?.unitNo}</Text>
+          <Text style={styles.textDeliveryAddressBody}>
+            SG {item?.postalCode}
+          </Text>
         </>
       );
     }
   };
-
   const renderAddress = () => {
     if (basket?.orderingMode === 'DELIVERY') {
       const deliveryAddressValue =

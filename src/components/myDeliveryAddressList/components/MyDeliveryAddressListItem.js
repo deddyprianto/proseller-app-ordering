@@ -216,6 +216,9 @@ const useStyles = () => {
     noPadding: {
       padding: 0,
     },
+    noMarginTop: {
+      marginTop: 0,
+    },
   });
   return styles;
 };
@@ -251,7 +254,6 @@ const MyDeliveryAddressItem = ({
     const selected = !isEmptyObject(result?.selectedAddress)
       ? result?.selectedAddress?.index
       : result?.deliveryAddressDefault?.index;
-
     setSelectedIndex(selected);
     setUser(result);
   }, [userDetail]);
@@ -263,7 +265,6 @@ const MyDeliveryAddressItem = ({
       phoneNumber: user.phoneNumber,
       deliveryAddress: result,
     };
-
     try {
       setIsLoading(true);
       await dispatch(updateUser(payload));
@@ -385,10 +386,15 @@ const MyDeliveryAddressItem = ({
           {item?.recipient?.name}
         </Text>
         <Text style={styles.textStreetName}>{item?.streetName}</Text>
+        <Text style={[styles.textStreetName, styles.noMarginTop]}>
+          #{item?.unitNo}
+        </Text>
+        <Text style={[styles.textStreetName, styles.noMarginTop]}>
+          SG {item?.postalCode}
+        </Text>
       </View>
     );
   };
-
   const renderEditButton = () => {
     return (
       <View style={styles.editButtonContainer}>
@@ -400,7 +406,7 @@ const MyDeliveryAddressItem = ({
           ]}
           title="Edit Address"
           onPress={() => {
-            Actions.addNewAddress({address: item});
+            Actions.addNewAddress({address: item, user, selectedIndex});
           }}
         />
         {item?.isDefault || !isFromProfileScene ? null : (

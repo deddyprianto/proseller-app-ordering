@@ -160,7 +160,7 @@ const useStyles = () => {
   return styles;
 };
 
-const AddNewAddress = ({address}) => {
+const AddNewAddress = ({address, selectedIndex, user: userParent}) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
@@ -189,7 +189,6 @@ const AddNewAddress = ({address}) => {
   const update = !isEmptyObject(address);
 
   const titleHeader = update ? 'Edit Address' : 'Add New Address';
-
   useEffect(() => {
     const result = getUserDetail();
     setUser(result);
@@ -247,7 +246,6 @@ const AddNewAddress = ({address}) => {
         value.isDefault = false;
       });
     }
-
     const value = {
       isSelected,
       tagAddress,
@@ -266,7 +264,6 @@ const AddNewAddress = ({address}) => {
       },
       isDefault: deliveryAddresses?.length === 0 || isDefault,
     };
-
     if (typeof address?.index === 'number') {
       deliveryAddresses[address.index] = value;
     } else {
@@ -281,6 +278,14 @@ const AddNewAddress = ({address}) => {
       item => item.isDefault,
     );
 
+    if (address?.index === selectedIndex) {
+      return {
+        username: user?.username,
+        deliveryAddress: deliveryAddresses,
+        deliveryAddressDefault,
+        selectedAddress: value,
+      };
+    }
     return {
       username: user?.username,
       deliveryAddress: deliveryAddresses,
@@ -297,7 +302,6 @@ const AddNewAddress = ({address}) => {
       return;
     }
     const payload = handlePayload();
-
     setIsLoading(true);
     const result = await dispatch(updateUser(payload));
     setIsLoading(false);
@@ -414,7 +418,14 @@ const AddNewAddress = ({address}) => {
   };
 
   const onSelectAddress = item => {
-    setStreetName(item['ADDRESS']);
+    const itemKey = ['BLK_NO', 'ROAD_NAME', 'BUILDING'];
+    let myAddress = '';
+    Object.keys(item).forEach(key => {
+      if (itemKey.includes(key) && item[key] !== 'NIL') {
+        myAddress += item[key] + ' ';
+      }
+    });
+    setStreetName(myAddress);
     setPostalCode(item['POSTAL']);
   };
 
