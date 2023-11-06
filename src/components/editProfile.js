@@ -42,7 +42,7 @@ import GlobalInputText from './globalInputText';
 import CalendarSvg from '../assets/svg/CalendareSvg';
 import withHooksComponent from './HOC';
 import NavbarBack from './navbar/navbarBack';
-import {Body} from './layout';
+import {Body, Header} from './layout';
 import appConfig from '../config/appConfig';
 import GlobalText from './globalText';
 import FieldPhoneNumberInput from './fieldPhoneNumberInput/FieldPhoneNumberInput';
@@ -927,7 +927,7 @@ class AccountEditProfil extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <LoaderDarker />}
-        <NavbarBack title={intlData.messages.editProfile} />
+        <Header title="Edit Profile" />
 
         <KeyboardAvoidingView
           keyboardVerticalOffset={2}
