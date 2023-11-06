@@ -247,11 +247,11 @@ const AddNewAddress = ({address}) => {
         value.isDefault = false;
       });
     }
-
+    const newStreetName = `${streetName} ${unitNumber} SG ${postalCode}`;
     const value = {
       isSelected,
       tagAddress,
-      streetName,
+      streetName: newStreetName,
       postalCode,
       unitNo: unitNumber,
       coordinate: {
@@ -266,7 +266,7 @@ const AddNewAddress = ({address}) => {
       },
       isDefault: deliveryAddresses?.length === 0 || isDefault,
     };
-
+    console.log({value}, 'pahat 4');
     if (typeof address?.index === 'number') {
       deliveryAddresses[address.index] = value;
     } else {
@@ -414,7 +414,15 @@ const AddNewAddress = ({address}) => {
   };
 
   const onSelectAddress = item => {
-    setStreetName(item['ADDRESS']);
+    const itemKey = ['BLK_NO', 'ROAD_NAME', 'BUILDING'];
+    let myAddress = '';
+    Object.keys(item).forEach(key => {
+      if (itemKey.includes(key) && item[key] !== 'NIL') {
+        myAddress += item[key] + ' ';
+      }
+    });
+
+    setStreetName(myAddress);
     setPostalCode(item['POSTAL']);
   };
 
