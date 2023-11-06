@@ -160,7 +160,7 @@ const useStyles = () => {
   return styles;
 };
 
-const AddNewAddress = ({address}) => {
+const AddNewAddress = ({address, selectedIndex, user: userParent}) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
@@ -189,7 +189,6 @@ const AddNewAddress = ({address}) => {
   const update = !isEmptyObject(address);
 
   const titleHeader = update ? 'Edit Address' : 'Add New Address';
-
   useEffect(() => {
     const result = getUserDetail();
     setUser(result);
@@ -266,7 +265,6 @@ const AddNewAddress = ({address}) => {
       },
       isDefault: deliveryAddresses?.length === 0 || isDefault,
     };
-    console.log({value}, 'pahat 4');
     if (typeof address?.index === 'number') {
       deliveryAddresses[address.index] = value;
     } else {
@@ -281,6 +279,14 @@ const AddNewAddress = ({address}) => {
       item => item.isDefault,
     );
 
+    if (address?.index === selectedIndex) {
+      return {
+        username: user?.username,
+        deliveryAddress: deliveryAddresses,
+        deliveryAddressDefault,
+        selectedAddress: value,
+      };
+    }
     return {
       username: user?.username,
       deliveryAddress: deliveryAddresses,
@@ -297,7 +303,6 @@ const AddNewAddress = ({address}) => {
       return;
     }
     const payload = handlePayload();
-
     setIsLoading(true);
     const result = await dispatch(updateUser(payload));
     setIsLoading(false);

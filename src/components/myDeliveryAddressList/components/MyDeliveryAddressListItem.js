@@ -251,7 +251,6 @@ const MyDeliveryAddressItem = ({
     const selected = !isEmptyObject(result?.selectedAddress)
       ? result?.selectedAddress?.index
       : result?.deliveryAddressDefault?.index;
-
     setSelectedIndex(selected);
     setUser(result);
   }, [userDetail]);
@@ -263,7 +262,6 @@ const MyDeliveryAddressItem = ({
       phoneNumber: user.phoneNumber,
       deliveryAddress: result,
     };
-
     try {
       setIsLoading(true);
       await dispatch(updateUser(payload));
@@ -400,7 +398,7 @@ const MyDeliveryAddressItem = ({
           ]}
           title="Edit Address"
           onPress={() => {
-            Actions.addNewAddress({address: item});
+            Actions.addNewAddress({address: item, user, selectedIndex});
           }}
         />
         {item?.isDefault || !isFromProfileScene ? null : (
