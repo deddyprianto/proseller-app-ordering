@@ -188,6 +188,13 @@ const useStyles = () => {
     priceModifierStyle: {
       paddingHorizontal: 12,
     },
+    discountText: {
+      textDecorationLine: 'line-through',
+      color: theme.colors.greyScale5,
+    },
+    afterDiscountText: {
+      color: theme.colors.semanticColorError,
+    },
   });
   return {styles};
 };
@@ -229,6 +236,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
       {renderPreOrder()}
     </View>
   );
+  console.log({item}, 'cart2');
   const renderPrice = () => {
     return (
       <View style={styles.totalPrice}>
@@ -264,7 +272,15 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
       );
     }
   };
+  const isProductDiscount =
+    item?.isPromotionApplied && item?.grossAmount > item?.amountAfterDisc;
 
+  const handleStyleDiscountProduct = () => {
+    if (isProductDiscount) {
+      return styles.discountText;
+    }
+    return {};
+  };
   return (
     <View style={[styles.cardContainer, containerStyle]}>
       <View>{renderLabel()}</View>
@@ -278,9 +294,24 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           </GlobalText>
         </View>
         <View style={styles.textPriceContainer}>
-          <GlobalText style={[styles.textModifierItemPrice, styles.mlAuto]}>
+          <GlobalText
+            style={[
+              styles.textModifierItemPrice,
+              styles.mlAuto,
+              handleStyleDiscountProduct(),
+            ]}>
             + {CurrencyFormatter(item?.product?.retailPrice * item?.quantity)}
           </GlobalText>
+          {isProductDiscount ? (
+            <GlobalText
+              style={[
+                styles.textModifierItemPrice,
+                styles.mlAuto,
+                styles.afterDiscountText,
+              ]}>
+              + {CurrencyFormatter(item?.amountAfterDisc)}
+            </GlobalText>
+          ) : null}
         </View>
       </View>
 

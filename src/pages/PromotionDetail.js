@@ -227,6 +227,7 @@ const PromotionDetail = ({handleClose, promotion}) => {
           outletId: defaultOutlet.id,
         }),
       );
+      console.log({response}, 'siput');
       setProductsRelated(response);
       setIsLoading(false);
     };
@@ -321,7 +322,6 @@ const PromotionDetail = ({handleClose, promotion}) => {
       });
     }
   };
-
   const renderDateValidity = () => {
     const startDate = moment(promotion?.startDate).format('DD MMM YYYY');
     const endData = moment(promotion?.endDate).format('DD MMM YYYY');
@@ -375,12 +375,12 @@ const PromotionDetail = ({handleClose, promotion}) => {
             fontSize: theme.fontSize[16],
             fontFamily: theme.fontFamily.poppinsSemiBold,
           }}>
-          {promotion?.remark} asd
+          {promotion?.description}
         </Text>
       </View>
     );
   };
-
+  console.log({promotion}, 'sena');
   const renderRelatedItems = () => {
     if (!isEmptyArray(productsRelated)) {
       return (
