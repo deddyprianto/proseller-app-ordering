@@ -700,7 +700,7 @@ const Profile = props => {
     return component;
   };
 
-  const rennderInfoMessage = () => {
+  const renderInfoMessage = () => {
     let type = '';
     let message = '';
     let showActionButton = false;
@@ -722,7 +722,10 @@ const Profile = props => {
       mode = 'Mobile Number';
       address = user.phoneNumber;
     }
-    if (isConfirmVerified && (visitNumber && visitNumber > 1)) return null;
+    if (isConfirmVerified && (visitNumber && visitNumber > 1)) {
+      return null;
+    }
+
     return (
       <View style={styles.titleSettingContainer}>
         <InfoMessage
@@ -735,6 +738,7 @@ const Profile = props => {
       </View>
     );
   };
+
   const verifyOtp = (address, mode) => {
     Actions.changeCredentialsOTP({
       address,
@@ -760,7 +764,7 @@ const Profile = props => {
     <View style={styles.viewSettings}>
       {renderMembershipQRCode()}
       {renderDivider()}
-      {rennderInfoMessage()}
+      {renderInfoMessage()}
       {renderTitleSettingV2('General')}
       {renderEditProfile()}
       {renderMyDeliveryAddress()}
