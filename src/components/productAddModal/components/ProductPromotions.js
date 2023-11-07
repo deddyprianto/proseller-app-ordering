@@ -20,6 +20,7 @@ import Theme from '../../../theme';
 import PromotionSvg from '../../../assets/svg/PromotionSvg';
 
 import {Actions} from 'react-native-router-flux';
+import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -85,7 +86,30 @@ const ProductPromotions = ({productPromotions, disabled}) => {
   };
 
   const renderProductPromotionItemName = value => {
-    const promotionName = value?.promoDisplayName || value?.name;
+    const item = value?.items[0];
+    const type = item?.discType;
+    const discValue = Number(item?.discValue);
+
+    const qty = item?.quantity;
+    const promoPrice =
+      type === 'DISC_PERCENTAGE'
+        ? `${discValue}% OFF`
+        : type === 'DISC_AMOUNT'
+        ? `${CurrencyFormatter(discValue)} OFF`
+        : `${CurrencyFormatter(discValue)}`;
+
+    const mapObj = {
+      '{qty}': qty,
+      '{promoPrice}': promoPrice,
+    };
+
+    const promoDisplayName = value?.promoDisplayName.replace(
+      /({qty}|{promoPrice})/gi,
+      matched => mapObj[matched],
+    );
+
+    const promotionName = promoDisplayName || value?.name;
+
     return (
       <View style={styles.viewProductPromotionItemName}>
         <Text style={styles.textProductPromotionItemNameTitle}>
