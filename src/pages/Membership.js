@@ -8,6 +8,7 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 
 import {useSelector} from 'react-redux';
@@ -19,7 +20,6 @@ import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
 import additionalSetting from '../config/additionalSettings';
-import {ImageBackground} from 'react-native';
 
 const useStyles = () => {
   const {fontFamily, fontSize, colors} = Theme();
