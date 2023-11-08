@@ -380,7 +380,6 @@ const PromotionDetail = ({handleClose, promotion}) => {
       </View>
     );
   };
-  console.log({promotion}, 'sena');
   const renderRelatedItems = () => {
     if (!isEmptyArray(productsRelated)) {
       return (
