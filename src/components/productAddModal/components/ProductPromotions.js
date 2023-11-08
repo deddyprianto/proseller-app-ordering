@@ -103,7 +103,7 @@ const ProductPromotions = ({productPromotions, disabled}) => {
       '{promoPrice}': promoPrice,
     };
 
-    const promoDisplayName = value?.promoDisplayName.replace(
+    const promoDisplayName = value?.promoDisplayName?.replace(
       /({qty}|{promoPrice})/gi,
       matched => mapObj[matched],
     );
