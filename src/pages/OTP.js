@@ -127,6 +127,7 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [sendCounter, setSendCounter] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
+  const [disable, setDisableBtn] = useState(false);
   const [isWrongOtp, setIsWrongOtp] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openCancelVerification, setOpenCancelVerification] = React.useState(
@@ -134,8 +135,8 @@ const OTP = ({isLogin, method, methodValue}) => {
   );
   const [myOtp, setMyOtp] = React.useState('');
   const countdown = () => {
-    let minuteCount = sendCounter >= 2 ? 2 : 1;
-
+    let minuteCount = sendCounter + 1;
+    console.log({sendCounter, minuteCount}, 'send counter');
     const then = moment()
       .add(minuteCount, 'minutes')
       .format('MM/DD/YYYY HH:mm:ss');
@@ -153,13 +154,16 @@ const OTP = ({isLogin, method, methodValue}) => {
       if (second <= 0 && minute <= 0) {
         setSeconds(0);
         setMinutes(0);
+        setDisableBtn(false);
         clearInterval(result);
       }
     }, 1);
   };
 
   useEffect(() => {
+    setDisableBtn(true);
     countdown();
+    setSendCounter(1);
 
     const backAction = () => {
       Actions.popTo('pageIndex');
@@ -238,13 +242,14 @@ const OTP = ({isLogin, method, methodValue}) => {
     }
     setSendCounter(sendCounter + 1);
     setIsLoading(true);
+    setDisableBtn(true);
     await countdown();
     await dispatch(sendOTP(value));
     setIsLoading(false);
   };
 
   const renderResendOTP = () => {
-    const disabled = minutes || seconds;
+    const disabled = minutes || seconds || disable;
     const time = moment(`${minutes}:${seconds}`, 'mm:ss').format('mm:ss');
     const text = disabled ? `Resend OTP in ${time}` : 'Resend OTP';
 

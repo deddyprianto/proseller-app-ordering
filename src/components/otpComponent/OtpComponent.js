@@ -14,7 +14,6 @@ import moment from 'moment';
 import GlobalText from '../globalText';
 import {useDispatch} from 'react-redux';
 import {sendOTP} from '../../actions/auth.actions';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import GlobalButton from '../button/GlobalButton';
 
 const useStyles = () => {
@@ -98,6 +97,7 @@ const OtpComponent = props => {
   const [otp, setOtp] = React.useState('');
   const dispatch = useDispatch();
   const {countdownStart, minutes, seconds} = useCountdownV2();
+  const [disable, setDisableBtn] = React.useState(false);
 
   const renderTextHeader = () => {
     let text = '';
@@ -139,15 +139,19 @@ const OtpComponent = props => {
     );
   };
   const startCountDown = () => {
-    const minuteCount = sendCounter >= 2 ? 4 : 1;
+    const minuteCount = sendCounter + 1;
     const expiredData = moment()
       .add(minuteCount, 'minutes')
       .format();
-    countdownStart(expiredData);
+    countdownStart(expiredData, finishCountdown);
   };
 
+  const finishCountdown = () => setDisableBtn(false);
+
   React.useEffect(() => {
+    setDisableBtn(true);
     startCountDown();
+    setSendCounter(1);
     handleResendOtp();
   }, []);
 
@@ -159,15 +163,16 @@ const OtpComponent = props => {
     } else {
       value.phoneNumber = methodValue;
     }
-    setSendCounter(sendCounter + 1);
+    setDisableBtn(true);
     setIsLoading(true);
     startCountDown();
+    setSendCounter(sendCounter + 1);
     await dispatch(sendOTP(value));
     setIsLoading(false);
   };
 
   const renderResendOTP = () => {
-    const disabled = minutes || seconds;
+    const disabled = minutes || seconds || disable;
     const time = moment(`${minutes}:${seconds}`, 'mm:ss').format('mm:ss');
     const text = disabled ? `Resend OTP in ${time}` : 'Resend OTP';
 
