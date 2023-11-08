@@ -146,6 +146,16 @@ const useStyles = () => {
       width: '100%',
       flex: 1,
     },
+    discountText: {
+      textDecorationLine: 'line-through',
+      color: theme.colors.greyScale5,
+    },
+    afterDiscountText: {
+      color: theme.colors.semanticColorError,
+    },
+    ml4: {
+      marginLeft: 4,
+    },
   });
   return styles;
 };
@@ -247,8 +257,6 @@ const useProductCartList = ({isProductUnavailable}) => {
     const styleTextName = isProductUnavailable
       ? styles.textProductHeaderNameUnavailable
       : styles.textProductHeaderName;
-    const isPromotionApplied =
-      item?.isPromotionApplied && item.amountAfterDisc < item.grossAmount;
 
     return (
       <View style={[styles.viewProductHeader]}>
@@ -271,8 +279,21 @@ const useProductCartList = ({isProductUnavailable}) => {
       return (
         <View style={[styles.viewTotalPrice]}>
           <Text
-            style={[styles.textPriceSmall, {width: '100%'}, styles.mediumFont]}>
+            style={[
+              styles.textPriceSmall,
+              styles.mediumFont,
+              styles.discountText,
+            ]}>
             + {CurrencyFormatter(item?.retailPrice * item?.quantity)}
+          </Text>
+          <Text
+            style={[
+              styles.textPriceSmall,
+              styles.mediumFont,
+              styles.afterDiscountText,
+              styles.ml4,
+            ]}>
+            + {CurrencyFormatter(item?.amountAfterDisc)}
           </Text>
         </View>
       );

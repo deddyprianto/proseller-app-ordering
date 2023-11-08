@@ -625,6 +625,8 @@ class StoreDetailPromotion extends Component {
   };
 
   renderMainList = () => {
+    const {bannerSize} = this.props;
+
     let {products} = this.state;
     if (products && !isEmptyArray(products)) {
       products = products;
@@ -635,14 +637,21 @@ class StoreDetailPromotion extends Component {
     }
 
     const arrayTemplate = [{data: 1}];
+
+    const sizes = bannerSize?.split('x') || [];
+    const bannerHeight = sizes[1] || '480';
+
+    const styleImage =
+      bannerHeight === '720' ? styles.imageLarge : styles.imageSmall;
+
     return (
       <FlatList
         ListHeaderComponent={
           <>
             <View style={styles.card}>
               <ProgressiveImage
-                resizeMode="contain"
-                style={styles.imageStamp}
+                resizeMode="stretch"
+                style={styleImage}
                 source={{uri: this.props.dataPromotion.defaultImageURL}}
               />
               <View style={styles.detail}>
@@ -1047,7 +1056,8 @@ class StoreDetailPromotion extends Component {
   };
 
   render() {
-    const {intlData, item, outletSelectionMode} = this.props;
+    const {intlData, item} = this.props;
+
     return (
       <SafeAreaView style={styles.container}>
         <Body>
@@ -1085,6 +1095,7 @@ class StoreDetailPromotion extends Component {
 mapStateToProps = state => ({
   products: state.orderReducer.productsOutlet.products,
   dataBasket: state.orderReducer.dataBasket.product,
+  bannerSize: state.settingReducer?.bannerSizeSettings?.bannerSize,
   orderType: state.userReducer.orderType.orderType,
   dataStores: state.storesReducer.dataStores.stores,
   oneOutlet: state.storesReducer.oneOutlet.oneOutlet,
@@ -1593,5 +1604,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Italic',
     fontSize: 9,
     color: colorConfig.store.secondaryColor,
+  },
+  imageSmall: {
+    height: 132,
+  },
+  imageLarge: {
+    height: 222,
   },
 });
