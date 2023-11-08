@@ -7,7 +7,6 @@ import {
   Text,
   Image,
   Dimensions,
-  ImageBackground,
   TouchableOpacity,
 } from 'react-native';
 import CryptoJS from 'react-native-crypto-js';
@@ -42,10 +41,8 @@ const useStyles = () => {
       elevation: 2,
       borderRadius: 16,
       margin: 1,
-      backgroundColor: theme.colors.background,
-    },
-    body: {
       padding: 16,
+      backgroundColor: theme.colors.background,
     },
     primaryColor: {
       color: theme.colors.brandPrimary,
@@ -134,11 +131,6 @@ const useStyles = () => {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    viewImage: {
-      width: '100%',
-      maxWidth: '100%',
-      borderRadius: 8,
-    },
     viewProgressBar: {
       flex: 1,
       justifyContent: 'center',
@@ -195,9 +187,6 @@ const useStyles = () => {
       width: '100%',
       height: 1,
       backgroundColor: theme.colors.greyScale3,
-    },
-    image: {
-      borderRadius: 8,
     },
   });
 
@@ -424,17 +413,9 @@ const MembershipInfo = () => {
       onPress={() => {
         Actions.membership();
       }}>
-      <ImageBackground
-        style={styles.viewImage}
-        imageStyle={styles.image}
-        resizeMode="cover"
-        source={{uri: progressBarCampaign?.backgroundImage || ''}}>
-        <View style={styles.body}>
-          {renderWelcomeAndPoint()}
-          {renderDivider()}
-          {renderType()}
-        </View>
-      </ImageBackground>
+      {renderWelcomeAndPoint()}
+      {renderDivider()}
+      {renderType()}
     </TouchableOpacity>
   );
 };
