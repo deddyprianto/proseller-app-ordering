@@ -8,6 +8,7 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 
 import {useSelector} from 'react-redux';
@@ -37,6 +38,12 @@ const useStyles = () => {
     },
     viewMembershipDetail: {
       margin: 16,
+    },
+    viewImage: {
+      borderRadius: 8,
+      margin: 16,
+      padding: 16,
+      backgroundColor: colors.brandTertiary,
     },
     textMembershipDetail: {
       marginBottom: 16,
@@ -79,6 +86,9 @@ const useStyles = () => {
       height: 1,
       marginHorizontal: 16,
       backgroundColor: colors.greyScale3,
+    },
+    image: {
+      borderRadius: 8,
     },
   });
   return styles;
@@ -129,10 +139,14 @@ const Membership = () => {
 
   const renderMembershipCard = () => {
     return (
-      <View style={styles.viewMembershipCard}>
+      <ImageBackground
+        style={styles.viewImage}
+        imageStyle={styles.image}
+        resizeMode="cover"
+        source={{uri: myProgress?.backgroundImage}}>
         {renderMembershipTitle()}
         {renderSeaAllTier()}
-      </View>
+      </ImageBackground>
     );
   };
 
