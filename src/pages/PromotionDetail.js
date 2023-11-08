@@ -227,7 +227,6 @@ const PromotionDetail = ({handleClose, promotion}) => {
           outletId: defaultOutlet.id,
         }),
       );
-      console.log({response}, 'siput');
       setProductsRelated(response);
       setIsLoading(false);
     };
