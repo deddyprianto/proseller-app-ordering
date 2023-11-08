@@ -43,7 +43,7 @@ const useStyles = () => {
       borderRadius: 8,
       margin: 16,
       padding: 16,
-      backgroundColor: 'green',
+      backgroundColor: colors.brandTertiary,
     },
     textMembershipDetail: {
       marginBottom: 16,
