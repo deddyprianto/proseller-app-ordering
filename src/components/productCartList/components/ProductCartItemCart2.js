@@ -236,7 +236,6 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
       {renderPreOrder()}
     </View>
   );
-  console.log({item}, 'cart2');
   const renderPrice = () => {
     return (
       <View style={styles.totalPrice}>
