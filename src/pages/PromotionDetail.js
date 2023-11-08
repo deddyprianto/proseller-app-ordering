@@ -321,7 +321,6 @@ const PromotionDetail = ({handleClose, promotion}) => {
       });
     }
   };
-
   const renderDateValidity = () => {
     const startDate = moment(promotion?.startDate).format('DD MMM YYYY');
     const endData = moment(promotion?.endDate).format('DD MMM YYYY');
@@ -375,12 +374,11 @@ const PromotionDetail = ({handleClose, promotion}) => {
             fontSize: theme.fontSize[16],
             fontFamily: theme.fontFamily.poppinsSemiBold,
           }}>
-          {promotion?.remark} asd
+          {promotion?.description}
         </Text>
       </View>
     );
   };
-
   const renderRelatedItems = () => {
     if (!isEmptyArray(productsRelated)) {
       return (

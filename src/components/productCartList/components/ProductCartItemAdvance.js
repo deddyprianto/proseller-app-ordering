@@ -252,6 +252,7 @@ const useStyles = () => {
     viewNonDiscountAble: {
       display: 'flex',
       flexDirection: 'row',
+      marginVertical: 8,
     },
     viewTransparentImage: {
       flex: 1,
@@ -397,6 +398,9 @@ const useStyles = () => {
     },
     ml8: {
       marginLeft: 8,
+    },
+    mb16: {
+      marginBottom: 16,
     },
   });
   return styles;
@@ -594,7 +598,9 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
           styles.ml8,
           styles.textPriceModifier,
         )}
-        <View style={styles.rowContainer}>{renderPromoIcon()}</View>
+        <View style={[styles.rowContainer, styles.mb16]}>
+          {renderPromoIcon()}
+        </View>
         {renderDivider()}
         {renderNotes()}
         {renderNonDiscountAbleText()}
