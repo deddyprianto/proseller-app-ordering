@@ -89,7 +89,7 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
   };
 
   const onAutomaticOpenKeyboard = () => {
-    ref.otp0.focus();
+    ref.otp0?.focus();
   };
 
   const renderTextInput = (index, length) => {
