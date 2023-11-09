@@ -136,7 +136,6 @@ const OTP = ({isLogin, method, methodValue}) => {
   const [myOtp, setMyOtp] = React.useState('');
   const countdown = () => {
     let minuteCount = sendCounter + 1;
-    console.log({sendCounter, minuteCount}, 'send counter');
     const then = moment()
       .add(minuteCount, 'minutes')
       .format('MM/DD/YYYY HH:mm:ss');
