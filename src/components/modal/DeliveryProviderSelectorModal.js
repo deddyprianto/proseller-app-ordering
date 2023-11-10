@@ -28,6 +28,7 @@ import appConfig from '../../config/appConfig';
 import {isEmptyObject} from '../../helper/CheckEmpty';
 import usePayment from '../../hooks/payment/usePayment';
 import useDate from '../../hooks/formatDate/useDate';
+import additionalSetting from '../../config/additionalSettings';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -207,6 +208,8 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     autoSelectDeliveryType,
     isLoading: isLoadingAutoSelect,
   } = usePayment();
+
+  console.log('mas agita', isLoadingAutoSelect);
   const {convertOrderActionDate} = useDate();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const userDetail = useSelector(
@@ -471,7 +474,9 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
   };
   return (
     <>
-      <LoadingScreen loading={isLoadingAutoSelect} />
+      {additionalSetting()?.isAutoSelectDeliveryProviderType && (
+        <LoadingScreen loading={isLoadingAutoSelect} />
+      )}
       <Modal transparent visible={open} onDismiss={handleClose}>
         <Provider>
           <Portal>

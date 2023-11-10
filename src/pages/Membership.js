@@ -96,7 +96,9 @@ const useStyles = () => {
 
 const Membership = () => {
   const styles = useStyles();
+
   useBackHandler();
+
   const myProgress = useSelector(
     state => state.accountsReducer?.myProgressBarCampaign.myProgress,
   );
