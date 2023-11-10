@@ -98,8 +98,14 @@ const usePayment = () => {
     return payload;
   };
 
-  const getDeliveryProviderFee = async (orderActionDate, adjustedPayload) => {
-    setIsLoading(true);
+  const getDeliveryProviderFee = async (
+    orderActionDate,
+    adjustedPayload,
+    hideLoading,
+  ) => {
+    if (!hideLoading) {
+      setIsLoading(true);
+    }
     try {
       const payload = payloadDelivery(orderActionDate, adjustedPayload);
       const result = await dispatch(getDeliveryProviderAndFee(payload));

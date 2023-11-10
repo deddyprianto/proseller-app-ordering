@@ -238,7 +238,7 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
       cartID: cartId,
     };
     let dateConvert = convertOrderActionDate(orderingDate);
-    const result = await getDeliveryProviderFee(dateConvert, payload);
+    const result = await getDeliveryProviderFee(dateConvert, payload, true);
     if (result?.data) {
       setDeliveryProviders(result?.data?.dataProvider);
     }
