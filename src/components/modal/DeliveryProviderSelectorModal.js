@@ -209,7 +209,6 @@ const DeliveryProviderSelectorModal = ({open, handleClose, value}) => {
     isLoading: isLoadingAutoSelect,
   } = usePayment();
 
-  console.log('mas agita', isLoadingAutoSelect);
   const {convertOrderActionDate} = useDate();
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const userDetail = useSelector(
