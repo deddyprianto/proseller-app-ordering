@@ -384,7 +384,6 @@ export const refreshToken = () => {
         });
       }
     } catch (error) {
-      console.log('MARTIN', 'TEST');
       console.log(error);
       // dispatch({
       //   type: 'USER_LOGGED_OUT_SUCCESS',
