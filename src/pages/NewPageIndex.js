@@ -33,6 +33,8 @@ import awsConfig from '../config/awsConfig';
 import {dataInbox} from '../actions/inbox.action';
 import MessageCounter from '../components/MessageCounter';
 import additionalSetting from '../config/additionalSettings';
+import {HistoryNotificationModal} from '../components/modal';
+import {GET_TRANSACTION_BY_REFERENCE_NO} from '../constant/order';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -134,7 +136,7 @@ const useStyles = () => {
   return styles;
 };
 
-const NewPageIndex = () => {
+const NewPageIndex = parentProps => {
   const dispatch = useDispatch();
   const styles = useStyles();
   const [isOpenNotification, setIsOpenNotification] = useState(false);
@@ -144,7 +146,7 @@ const NewPageIndex = () => {
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
-
+  console.log({parentProps}, 'parent');
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getColorSettings());
@@ -193,6 +195,10 @@ const NewPageIndex = () => {
     }
   };
 
+  React.useEffect(() => {
+    handleGetNotification();
+  }, []);
+
   const renderNavbarDefault = ({props, name, index}) => {
     const isActive = props?.navigation?.state?.index === index;
 
@@ -205,18 +211,52 @@ const NewPageIndex = () => {
       : styles.iconNavbarItem;
 
     return (
-      <TouchableOpacity
-        style={styles.viewNavbarItem}
-        activeOpacity={1}
-        onPress={() => {
-          props.navigation.navigate(name);
-        }}>
-        <Image source={handleImage(name)} style={imageStyle} />
-        <Text numberOfLines={1} style={textStyle}>
-          {name}
-        </Text>
-        {name === 'Inbox' ? <MessageCounter /> : null}
-      </TouchableOpacity>
+      <>
+        <TouchableOpacity
+          style={styles.viewNavbarItem}
+          activeOpacity={1}
+          onPress={() => {
+            props.navigation.navigate(name);
+          }}>
+          <Image source={handleImage(name)} style={imageStyle} />
+          <Text numberOfLines={1} style={textStyle}>
+            {name}
+          </Text>
+          {name === 'Inbox' ? <MessageCounter /> : null}
+        </TouchableOpacity>
+      </>
+    );
+  };
+
+  const handleGetNotification = () => {
+    OneSignal.setNotificationWillShowInForegroundHandler(
+      notificationReceivedEvent => {
+        const getNotification = notificationReceivedEvent.getNotification();
+        setNotification(getNotification);
+        setIsOpenNotification(true);
+        notificationReceivedEvent.complete(getNotification);
+      },
+    );
+  };
+
+  const renderHistoryNotificationModal = props => {
+    return (
+      <HistoryNotificationModal
+        value={notification}
+        open={isOpenNotification}
+        handleClose={() => {
+          if (
+            notification?.additionalData?.action ===
+            GET_TRANSACTION_BY_REFERENCE_NO
+          ) {
+            console.log({notification}, 'himan');
+            parentProps?.navigation?.push('pendingOrderDetail', {
+              order: notification.additionalData,
+            });
+          }
+          setIsOpenNotification(false);
+        }}
+      />
     );
   };
 
@@ -275,6 +315,8 @@ const NewPageIndex = () => {
   } else if (isLoggedIn) {
     return (
       <SafeAreaView style={styles.root}>
+        {renderHistoryNotificationModal()}
+
         <Tabs />
       </SafeAreaView>
     );

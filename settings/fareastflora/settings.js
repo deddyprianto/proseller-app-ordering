@@ -37,7 +37,6 @@ const additionalSetting = () => {
   const enableUpcaScanner = false;
   const maxVoucherInOneTransaction = 1;
   const enableScannerButton = false;
-  const showPopupOnTheRootPage = false;
   const isAutoSelectDeliveryProviderType = true;
 
   return {
@@ -58,7 +57,6 @@ const additionalSetting = () => {
     enableUpcaScanner,
     maxVoucherInOneTransaction,
     enableScannerButton,
-    showPopupOnTheRootPage,
     isAutoSelectDeliveryProviderType,
   };
 };

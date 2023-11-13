@@ -17,7 +17,6 @@ import MobileRegister from '../pages/MobileRegister';
 import MobileRegisterWithPassword from '../pages/MobileRegisterWithPassword';
 import EmailRegister from '../pages/EmailRegister';
 import EmailRegisterWithPassword from '../pages/EmailRegisterWithPassword';
-import PageIndex from '../pages/pageIndex';
 import VerifyOtpAfterRegister from '../pages/VerifyOtpAfterRegister';
 import VerifyOtpAfterRegisterEmail from '../pages/VerifyOtpAfterRegisterEmail';
 import VerifyRegister from '../pages/VerifyRegister';
@@ -25,7 +24,6 @@ import Store from '../pages/store';
 import ScanBarcode from '../pages/ScanBarcode';
 
 import Pay from '../components/rewardsPay';
-import Rewards from '../components/rewardsRewards';
 import RewardsQRmenu from '../components/rewardsQRmenu';
 import RewardsQRscan from '../components/rewardsQRscan';
 // import VoucherDetail from '../components/voucherDetail';
@@ -37,7 +35,6 @@ import StoreDetailPromotion from '../components/storeDetailPromotion';
 import StoresMap from '../components/storesMap';
 import MyVouchers from '../components/vouchers/MyVouchers';
 import RedeemVoucher from '../components/vouchers/RedeemVouchers';
-import AllVouchers from '../components/vouchers/AllVouchers';
 import AccountEditProfil from '../components/accountEditProfil';
 import EditProfile from '../components/editProfile';
 import PaymentDetail from '../components/paymentDetail';
@@ -53,8 +50,6 @@ import Notifications from '../components/notifications/Notifications';
 // order
 import Order from '../pages/order';
 import CategoryProducts from '../components/order/CategoryProducts';
-import Products2 from '../components/order/Products2';
-import Products from '../components/order/Products';
 import Basket from '../components/order/Basket';
 // import Cart from '../components/order/Cart';
 import ScanQRTable from '../components/order/ScanQRTable';
@@ -149,15 +144,7 @@ import ProfilePaymentMethod from '../pages/ProfilePaymentMethod/PaymentMethod';
 import CreditCardDetail from '../pages/CreditCardDetail';
 import TermsAndConditions from '../pages/TermsAndConditions';
 import Outlets from '../pages/Outlets';
-import OneSignal from 'react-native-onesignal';
-import {HistoryNotificationModal} from '../components/modal';
 import {connect} from 'react-redux';
-import {
-  openPopupNotification,
-  setNotificationData,
-} from '../actions/order.action';
-import additionalSetting from './additionalSettings';
-import {GET_TRANSACTION_BY_REFERENCE_NO} from '../constant/order';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -236,79 +223,8 @@ class Routes extends Component {
   }
 
   componentDidMount() {
-    this.handleGetNotification();
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
-
-  renderHistoryNotificationModal = () => {
-    return (
-      <HistoryNotificationModal
-        value={this.state.notification}
-        open={this.state.openNotification}
-        handleClose={this.handleCloseNotification}
-      />
-    );
-  };
-
-  handleCloseNotification = () => {
-    if (
-      this.state.notification.additionalData?.action ===
-      GET_TRANSACTION_BY_REFERENCE_NO
-    ) {
-      return this.setState({openNotification: false}, () => {
-        Actions.pendingOrderDetail({
-          order: this.state.notification.additionalData,
-        });
-      });
-    }
-    this.setState({openNotification: false});
-  };
-
-  handleOpenNotification = notification => {
-    if (
-      notification.additionalData?.action === GET_TRANSACTION_BY_REFERENCE_NO
-    ) {
-      setTimeout(() => {
-        Actions.pendingOrderDetail({
-          order: notification.additionalData,
-        });
-        this.setState({openNotification: false});
-      }, 1000);
-    }
-  };
-
-  handleGetNotification = () => {
-    try {
-      OneSignal.setNotificationOpenedHandler(notification => {
-        this.handleOpenNotification(notification.notification);
-      });
-      OneSignal.setNotificationWillShowInForegroundHandler(
-        async notificationReceivedEvent => {
-          const getNotification = notificationReceivedEvent.getNotification();
-          await this.props.dispatch(setNotificationData(getNotification));
-          if (additionalSetting().showPopupOnTheRootPage) {
-            this.setState(
-              {
-                notification: getNotification,
-              },
-              () => {
-                this.setState({
-                  openNotification: true,
-                });
-              },
-            );
-          } else {
-            this.props.dispatch(openPopupNotification(true));
-          }
-          notificationReceivedEvent.complete(getNotification);
-        },
-      );
-    } catch (e) {
-      if (__DEV__) {
-        console.log(e, 'error one signal');
-      }
-    }
-  };
 
   handleBackButton = () => {
     if (
@@ -515,7 +431,7 @@ class Routes extends Component {
             </Scene>
           </Scene>
         </Router>
-        {this.renderHistoryNotificationModal()}
+        {/* {this.renderHistoryNotificationModal()} */}
       </>
     );
   }

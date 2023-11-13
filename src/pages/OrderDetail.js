@@ -412,14 +412,6 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   const ready_items = 'Ready Items';
   const completeOrder = 'COMPLETED';
   const RETAIL = 'RETAIL';
-  const {handleGetOrderDetail} = useOrder();
-  const showPopupNotification = useSelector(
-    state => state.orderReducer?.popupNotification?.openPopup,
-  );
-  const dispatch = useDispatch();
-  const notificationData = useSelector(
-    state => state.orderReducer?.notificationData?.notificationData,
-  );
   const [refreshingData, setRefreshingData] = React.useState(false);
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
@@ -445,20 +437,20 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
     );
   };
 
-  const closePopup = async () => {
-    if (
-      notificationData?.additionalData?.action ===
-      GET_TRANSACTION_BY_REFERENCE_NO
-    ) {
-      setRefreshingData(true);
-      const response = await handleGetOrderDetail(
-        notificationData?.additionalData,
-      );
-      setData(response);
-      setRefreshingData(false);
-    }
-    dispatch(openPopupNotification(false));
-  };
+  // const closePopup = async () => {
+  //   if (
+  //     notificationData?.additionalData?.action ===
+  //     GET_TRANSACTION_BY_REFERENCE_NO
+  //   ) {
+  //     setRefreshingData(true);
+  //     const response = await handleGetOrderDetail(
+  //       notificationData?.additionalData,
+  //     );
+  //     setData(response);
+  //     setRefreshingData(false);
+  //   }
+  //   dispatch(openPopupNotification(false));
+  // };
 
   const backToHome = () => {
     Actions.reset('app', {fromPayment: true});
@@ -1179,12 +1171,12 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
         feeBreakDown={data?.provider?.feeBreakDown}
         providerData={data?.provider}
       />
-      <HistoryNotificationModal
+      {/* <HistoryNotificationModal
         value={notificationData}
         open={showPopupNotification}
         handleClose={closePopup}
-      />
-      <LoadingScreen loading={refreshingData} />
+      /> */}
+      {/* <LoadingScreen loading={refreshingData} /> */}
     </Body>
   );
 };
