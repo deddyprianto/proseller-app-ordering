@@ -48,6 +48,11 @@ import ThreeDotCircle from '../assets/svg/ThreeDotCircle';
 import awsConfig from '../config/awsConfig';
 import {Actions} from 'react-native-router-flux';
 import TruckSvg from '../assets/svg/TruckSvg';
+import {useDispatch, useSelector} from 'react-redux';
+import {HistoryNotificationModal} from '../components/modal';
+import {openPopupNotification} from '../actions/order.action';
+import {GET_TRANSACTION_BY_REFERENCE_NO} from '../constant/order';
+import LoadingScreen from '../components/loadingScreen';
 
 const useStyles = () => {
   const {colors, fontFamily, fontSize} = Theme();
@@ -377,9 +382,10 @@ const useStyles = () => {
   return {styles, colors};
 };
 
-const OrderDetail = ({data, isFromPaymentPage, step}) => {
+const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   const {styles} = useStyles();
-  const {minutes, seconds, isTimeEnd} = useCountdownV2(data);
+  const [data, setData] = React.useState(dataParent);
+  const {minutes, seconds, isTimeEnd} = useCountdownV2(dataParent);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
   const {
@@ -406,6 +412,7 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
   const ready_items = 'Ready Items';
   const completeOrder = 'COMPLETED';
   const RETAIL = 'RETAIL';
+  const [refreshingData, setRefreshingData] = React.useState(false);
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
@@ -429,6 +436,21 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
       <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
+
+  // const closePopup = async () => {
+  //   if (
+  //     notificationData?.additionalData?.action ===
+  //     GET_TRANSACTION_BY_REFERENCE_NO
+  //   ) {
+  //     setRefreshingData(true);
+  //     const response = await handleGetOrderDetail(
+  //       notificationData?.additionalData,
+  //     );
+  //     setData(response);
+  //     setRefreshingData(false);
+  //   }
+  //   dispatch(openPopupNotification(false));
+  // };
 
   const backToHome = () => {
     Actions.reset('app', {fromPayment: true});
@@ -1149,6 +1171,12 @@ const OrderDetail = ({data, isFromPaymentPage, step}) => {
         feeBreakDown={data?.provider?.feeBreakDown}
         providerData={data?.provider}
       />
+      {/* <HistoryNotificationModal
+        value={notificationData}
+        open={showPopupNotification}
+        handleClose={closePopup}
+      /> */}
+      {/* <LoadingScreen loading={refreshingData} /> */}
     </Body>
   );
 };

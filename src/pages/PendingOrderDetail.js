@@ -204,7 +204,7 @@ const PendingOrderDetail = ({order}) => {
   const [isLoading, setIsLoading] = React.useState(true);
   const dispatch = useDispatch();
   const fetchOrderDetail = async () => {
-    if (order?.transactionRefNo && order?.action) {
+    if (order?.transactionRefNo) {
       setIsLoading(true);
       const response = await dispatch(getOrderDetail(order?.transactionRefNo));
       setDataOrder(response);
