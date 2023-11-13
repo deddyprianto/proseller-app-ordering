@@ -15,7 +15,7 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 
-import {logoutUser, refreshToken} from '../actions/auth.actions';
+import {logoutUser} from '../actions/auth.actions';
 import AccountUserDetail from '../components/accountUserDetail';
 import AccountMenuList from '../components/accountMenuList';
 import colorConfig from '../config/colorConfig';

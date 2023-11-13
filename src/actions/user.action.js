@@ -66,7 +66,6 @@ export const getUserProfile = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           authData: {token},
