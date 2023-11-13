@@ -34,7 +34,7 @@ const useSettings = () => {
 
   const checkMinimumAge = () => {
     if (orderSetting && Array.isArray(orderSetting)) {
-      const minimumAge = orderSetting.find(
+      const minimumAge = orderSetting?.find(
         setting => setting.settingKey === 'MinimumAge',
       );
       console.log({minimumAge}, 'hebat');

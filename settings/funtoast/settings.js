@@ -19,6 +19,7 @@ const additionalSetting = () => {
   const maxVoucherInOneTransaction = null;
   const enableScannerButton = true;
   const showPopupOnTheRootPage = true;
+  const isAutoSelectDeliveryProviderType = false;
 
   return {
     additionalPolicy,
@@ -39,6 +40,7 @@ const additionalSetting = () => {
     maxVoucherInOneTransaction,
     enableScannerButton,
     showPopupOnTheRootPage,
+    isAutoSelectDeliveryProviderType,
   };
 };
 
