@@ -1,6 +1,5 @@
 import {fetchApi} from '../service/api';
 import {isEmptyArray} from '../helper/CheckEmpty';
-// import {refreshToken} from './auth.actions';
 // import * as _ from 'lodash';
 import format from 'date-fns/format';
 import {fetchApiMasterData} from '../service/apiMasterData';
@@ -10,7 +9,6 @@ export const myVoucers = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           tokenUser: {token},
@@ -147,7 +145,6 @@ export const myVouchers = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           tokenUser: {token},

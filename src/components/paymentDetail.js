@@ -50,7 +50,6 @@ import UUIDGenerator from 'react-native-uuid-generator';
 import {defaultPaymentAccount} from '../actions/user.action';
 import LoaderDarker from '../components/LoaderDarker';
 import {getOutletById} from '../actions/stores.action';
-import {refreshToken} from '../actions/auth.actions';
 import {afterPayment, myVoucers} from '../actions/account.action';
 import {Dialog} from 'react-native-paper';
 import {sendPayment} from '../actions/sales.action';
@@ -169,7 +168,6 @@ class PaymentDetail extends Component {
   componentDidMount = async () => {
     const {defaultAccount, pembayaran} = this.props;
     await this.setState({loading: true});
-    // await this.props.dispatch(refreshToken());
     await this.setDataPayment(false);
 
     await this.resetAppliedVouchers();

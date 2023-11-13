@@ -180,7 +180,6 @@ export const dataStores = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           tokenUser: {token},

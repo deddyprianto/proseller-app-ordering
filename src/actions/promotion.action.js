@@ -1,5 +1,4 @@
 import {fetchApiMasterData} from '../service/apiMasterData';
-import {refreshToken} from './auth.actions';
 
 export const dataPromotion = () => {
   return async (dispatch, getState) => {
