@@ -163,6 +163,18 @@ const notificationData = (state = {}, action) => {
   }
 };
 
+const popupNotification = (state = {}, action) => {
+  switch (action.type) {
+    case 'OPEN_POPUP_NOTIFICATION':
+      return {
+        openPopup: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const deliveryCustomField = (state = {}, action) => {
   switch (action.type) {
     case 'SAVE_DELIVERY_CUSTOM_FIELD':
@@ -210,4 +222,5 @@ export default combineReducers({
   notificationData,
   deliveryCustomField,
   latestTimeSlotDate,
+  popupNotification,
 });

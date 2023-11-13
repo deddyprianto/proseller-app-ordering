@@ -37,6 +37,7 @@ const additionalSetting = () => {
   const enableUpcaScanner = false;
   const maxVoucherInOneTransaction = 1;
   const enableScannerButton = false;
+  const showPopupOnTheRootPage = false;
 
   return {
     additionalPolicy,
@@ -56,6 +57,7 @@ const additionalSetting = () => {
     enableUpcaScanner,
     maxVoucherInOneTransaction,
     enableScannerButton,
+    showPopupOnTheRootPage,
   };
 };
 

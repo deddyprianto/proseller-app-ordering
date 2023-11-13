@@ -1,11 +1,14 @@
 import React from 'react';
+import {useDispatch} from 'react-redux';
+import {getOrderDetail} from '../../actions/order.action';
+
 const useOrder = () => {
   const [listPreorder, setListPreorder] = React.useState([]);
   const [defaultOrder, setDefaultOrder] = React.useState([]);
   const [availDate, setAvailDate] = React.useState(null);
   const [listSelfSelection, setListSelfSlection] = React.useState([]);
   const PRODUCT_ROUNDING = 'R0001';
-
+  const dispatch = useDispatch();
   const groupingeOrder = items => {
     const isNotPreorder = items.filter(item => !item.isPreOrderItem);
     const isPreOrder = items.filter(item => item.isPreOrderItem);
@@ -46,6 +49,17 @@ const useOrder = () => {
     return filterData;
   };
 
+  const handleGetOrderDetail = async order => {
+    if (order?.transactionRefNo) {
+      try {
+        const response = await dispatch(
+          getOrderDetail(order?.transactionRefNo),
+        );
+        return response;
+      } catch (e) {}
+    }
+  };
+
   return {
     groupingeOrder,
     listPreorder,
@@ -54,6 +68,7 @@ const useOrder = () => {
     listSelfSelection,
     calculateRoundingItem,
     itemListWithoutRounding,
+    handleGetOrderDetail,
   };
 };
 

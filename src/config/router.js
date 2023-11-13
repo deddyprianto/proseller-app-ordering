@@ -152,7 +152,12 @@ import Outlets from '../pages/Outlets';
 import OneSignal from 'react-native-onesignal';
 import {HistoryNotificationModal} from '../components/modal';
 import {connect} from 'react-redux';
-import {setNotificationData} from '../actions/order.action';
+import {
+  openPopupNotification,
+  setNotificationData,
+} from '../actions/order.action';
+import additionalSetting from './additionalSettings';
+import {GET_TRANSACTION_BY_REFERENCE_NO} from '../constant/order';
 
 const MyTransitionSpec = {
   duration: 200,
@@ -248,7 +253,7 @@ class Routes extends Component {
   handleCloseNotification = () => {
     if (
       this.state.notification.additionalData?.action ===
-      'GET_TRANSACTION_BY_REFERENCE_NO'
+      GET_TRANSACTION_BY_REFERENCE_NO
     ) {
       return this.setState({openNotification: false}, () => {
         Actions.pendingOrderDetail({
@@ -261,7 +266,7 @@ class Routes extends Component {
 
   handleOpenNotification = notification => {
     if (
-      notification.additionalData?.action === 'GET_TRANSACTION_BY_REFERENCE_NO'
+      notification.additionalData?.action === GET_TRANSACTION_BY_REFERENCE_NO
     ) {
       setTimeout(() => {
         Actions.pendingOrderDetail({
@@ -278,14 +283,23 @@ class Routes extends Component {
         this.handleOpenNotification(notification.notification);
       });
       OneSignal.setNotificationWillShowInForegroundHandler(
-        notificationReceivedEvent => {
+        async notificationReceivedEvent => {
           const getNotification = notificationReceivedEvent.getNotification();
-          this.setState({
-            notification: getNotification,
-          });
-          this.props.dispatch(setNotificationData(getNotification));
-
-          this.setState({openNotification: true});
+          await this.props.dispatch(setNotificationData(getNotification));
+          if (additionalSetting().showPopupOnTheRootPage) {
+            this.setState(
+              {
+                notification: getNotification,
+              },
+              () => {
+                this.setState({
+                  openNotification: true,
+                });
+              },
+            );
+          } else {
+            this.props.dispatch(openPopupNotification(true));
+          }
           notificationReceivedEvent.complete(getNotification);
         },
       );

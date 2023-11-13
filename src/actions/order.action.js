@@ -2211,6 +2211,15 @@ export const setNotificationData = payload => {
   };
 };
 
+export const openPopupNotification = payload => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'OPEN_POPUP_NOTIFICATION',
+      payload,
+    });
+  };
+};
+
 export const resetProvider = () => {
   return async (dispatch, getState) => {
     const state = getState();
