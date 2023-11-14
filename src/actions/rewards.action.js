@@ -1,6 +1,5 @@
 import {fetchApi} from '../service/api';
 import * as _ from 'lodash';
-import {refreshToken} from './auth.actions';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {isEmptyArray} from '../helper/CheckEmpty';
@@ -10,7 +9,6 @@ export const campaign = () => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
-      // await dispatch(refreshToken());
       const {
         authReducer: {
           tokenUser: {token},
