@@ -431,7 +431,6 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   React.useEffect(() => {
     handleOrderingType();
   }, []);
-  console.log({data}, 'nanik');
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
