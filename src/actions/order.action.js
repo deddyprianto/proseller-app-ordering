@@ -2220,6 +2220,15 @@ export const openPopupNotification = payload => {
   };
 };
 
+export const refreshOrderDetail = payload => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'REFRESH_ORDER_DETAIL',
+      payload,
+    });
+  };
+};
+
 export const resetProvider = () => {
   return async (dispatch, getState) => {
     const state = getState();

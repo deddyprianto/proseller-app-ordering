@@ -34,7 +34,10 @@ import {dataInbox} from '../actions/inbox.action';
 import MessageCounter from '../components/MessageCounter';
 import additionalSetting from '../config/additionalSettings';
 import {HistoryNotificationModal} from '../components/modal';
-import {GET_TRANSACTION_BY_REFERENCE_NO} from '../constant/order';
+import {
+  openPopupNotification,
+  setNotificationData,
+} from '../actions/order.action';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -227,13 +230,21 @@ const NewPageIndex = parentProps => {
       </>
     );
   };
-
   const handleGetNotification = () => {
     OneSignal.setNotificationWillShowInForegroundHandler(
       notificationReceivedEvent => {
+        const currentPage = Actions.currentScene;
         const getNotification = notificationReceivedEvent.getNotification();
-        setNotification(getNotification);
-        setIsOpenNotification(true);
+        if (
+          currentPage === 'paymentSuccess' ||
+          currentPage === 'pendingOrderDetail'
+        ) {
+          dispatch(setNotificationData(getNotification));
+          dispatch(openPopupNotification(true));
+        } else {
+          setNotification(getNotification);
+          setIsOpenNotification(true);
+        }
         notificationReceivedEvent.complete(getNotification);
       },
     );
@@ -245,15 +256,6 @@ const NewPageIndex = parentProps => {
         value={notification}
         open={isOpenNotification}
         handleClose={() => {
-          if (
-            notification?.additionalData?.action ===
-            GET_TRANSACTION_BY_REFERENCE_NO
-          ) {
-            console.log({notification}, 'himan');
-            parentProps?.navigation?.push('pendingOrderDetail', {
-              order: notification.additionalData,
-            });
-          }
           setIsOpenNotification(false);
         }}
       />

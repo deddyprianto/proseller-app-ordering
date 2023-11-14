@@ -431,7 +431,6 @@ class Routes extends Component {
             </Scene>
           </Scene>
         </Router>
-        {/* {this.renderHistoryNotificationModal()} */}
       </>
     );
   }

@@ -216,7 +216,6 @@ const PendingOrderDetail = ({order}) => {
   useEffect(() => {
     fetchOrderDetail();
   }, []);
-
   return (
     <SafeAreaView style={styles.root}>
       <Header title="Order Detail" />
