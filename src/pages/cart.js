@@ -799,13 +799,16 @@ const Cart = props => {
         !!orderingDateTimeSelected?.date;
 
     const isActivePickUp = isEmptyArray(availableTimes)
-      ? !orderingDateTimeSelected?.date
+      ? orderingDateTimeSelected?.date
       : !!orderingDateTimeSelected?.date;
 
     const isActiveTakeAway = isEmptyArray(availableTimes)
-      ? !orderingDateTimeSelected
-      : !!orderingDateTimeSelected;
-
+      ? orderingDateTimeSelected?.date
+      : !!orderingDateTimeSelected?.date;
+    console.log(
+      {availableTimes, isActivePickUp, empty: isEmptyArray(availableTimes)},
+      'pahat1',
+    );
     switch (value) {
       case 'DELIVERY':
         if (isActiveDeliveryMinAmount && isActiveDeliveryTime) {
