@@ -794,11 +794,13 @@ const Cart = props => {
 
     const isActiveDeliveryTime = isEmptyArray(availableTimes)
       ? !!deliveryAddress && isBasketProvider
-      : !!deliveryAddress && isBasketProvider && !!orderingDateTimeSelected;
+      : !!deliveryAddress &&
+        isBasketProvider &&
+        !!orderingDateTimeSelected?.date;
 
     const isActivePickUp = isEmptyArray(availableTimes)
-      ? !orderingDateTimeSelected
-      : !!orderingDateTimeSelected;
+      ? !orderingDateTimeSelected?.date
+      : !!orderingDateTimeSelected?.date;
 
     const isActiveTakeAway = isEmptyArray(availableTimes)
       ? !orderingDateTimeSelected
@@ -1545,7 +1547,6 @@ const Cart = props => {
   const newFooter = () => {
     const disabled =
       handleDisabledPaymentButton(basket?.orderingMode) || checkCustomField();
-
     if (additionalSetting().cartVersion === 'basic') {
       return renderFooter();
     }
