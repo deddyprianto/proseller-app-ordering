@@ -175,6 +175,18 @@ const popupNotification = (state = {}, action) => {
   }
 };
 
+const refreshOrder = (state = {}, action) => {
+  switch (action.type) {
+    case 'REFRESH_ORDER_DETAIL':
+      return {
+        refresh: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 const deliveryCustomField = (state = {}, action) => {
   switch (action.type) {
     case 'SAVE_DELIVERY_CUSTOM_FIELD':
@@ -223,4 +235,5 @@ export default combineReducers({
   deliveryCustomField,
   latestTimeSlotDate,
   popupNotification,
+  refreshOrder,
 });

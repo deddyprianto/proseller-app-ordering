@@ -403,7 +403,9 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
     listSelfSelection,
     itemListWithoutRounding,
     calculateRoundingItem,
+    handleGetOrderDetail,
   } = useOrder();
+  const [updateData, setUpdatData] = React.useState(false);
   const [showDetailDelivery, setShowDetailDelivery] = React.useState(false);
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
   const togglePreOrder = () => setShowAllPreOrder(prevState => !prevState);
@@ -412,7 +414,14 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   const ready_items = 'Ready Items';
   const completeOrder = 'COMPLETED';
   const RETAIL = 'RETAIL';
-  const [refreshingData, setRefreshingData] = React.useState(false);
+  const showPopup = useSelector(
+    state => state?.orderReducer?.popupNotification?.openPopup,
+  );
+  const dispatch = useDispatch();
+  const notificationData = useSelector(
+    state => state?.orderReducer?.notificationData?.notificationData,
+  );
+
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
       title: 'Imaged Saved',
@@ -422,7 +431,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   React.useEffect(() => {
     handleOrderingType();
   }, []);
-
+  console.log({data}, 'nanik');
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
@@ -437,20 +446,13 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
     );
   };
 
-  // const closePopup = async () => {
-  //   if (
-  //     notificationData?.additionalData?.action ===
-  //     GET_TRANSACTION_BY_REFERENCE_NO
-  //   ) {
-  //     setRefreshingData(true);
-  //     const response = await handleGetOrderDetail(
-  //       notificationData?.additionalData,
-  //     );
-  //     setData(response);
-  //     setRefreshingData(false);
-  //   }
-  //   dispatch(openPopupNotification(false));
-  // };
+  const closePopup = async () => {
+    if (notificationData?.additionalData) {
+      getOrderDetail();
+    }
+
+    dispatch(openPopupNotification(false));
+  };
 
   const backToHome = () => {
     Actions.reset('app', {fromPayment: true});
@@ -465,6 +467,13 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
       BackHandler.removeEventListener('hardwareBackPress', backToHome);
     };
   }, []);
+
+  const getOrderDetail = async () => {
+    setUpdatData(true);
+    const response = await handleGetOrderDetail(data);
+    setData(response);
+    setUpdatData(false);
+  };
 
   const toggleDeliveryDetail = () =>
     setShowDetailDelivery(prevState => !prevState);
@@ -1171,12 +1180,12 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
         feeBreakDown={data?.provider?.feeBreakDown}
         providerData={data?.provider}
       />
-      {/* <HistoryNotificationModal
+      <HistoryNotificationModal
         value={notificationData}
-        open={showPopupNotification}
+        open={showPopup}
         handleClose={closePopup}
-      /> */}
-      {/* <LoadingScreen loading={refreshingData} /> */}
+      />
+      <LoadingScreen loading={updateData} />
     </Body>
   );
 };
