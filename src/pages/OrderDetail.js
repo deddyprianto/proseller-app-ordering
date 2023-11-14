@@ -445,7 +445,6 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
       <ProductCartItemCart2 containerStyle={styles.containerItem} item={item} />
     );
   };
-  console.log({notificationData}, 'sisan');
 
   const closePopup = async () => {
     if (notificationData?.additionalData) {
@@ -472,7 +471,6 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   const getOrderDetail = async () => {
     setUpdatData(true);
     const response = await handleGetOrderDetail(data);
-    console.log({response});
     setData(response);
     setUpdatData(false);
   };
