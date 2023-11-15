@@ -411,7 +411,6 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   const orderingMode = useSelector(
     state => state.orderReducer?.dataBasket?.product?.orderingMode,
   );
-
   const imageSettings = useSelector(
     state => state.settingReducer.imageSettings,
   );

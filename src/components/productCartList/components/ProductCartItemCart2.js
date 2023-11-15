@@ -8,6 +8,7 @@ import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 import {isEmptyArray} from '../../../helper/CheckEmpty';
 import appConfig from '../../../config/appConfig';
 import useProductCartList from './hooks/useProductCartList';
+import useCalculation from '../../../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -210,6 +211,7 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
     }
     return null;
   };
+  const {calculationModifierPrice} = useCalculation();
   const isDiscount = item.amountAfterDisc < item.grossAmount;
   const renderAllowSelection = () => {
     if (item.product?.allowSelfSelection) {
@@ -308,7 +310,11 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
                 styles.mlAuto,
                 styles.afterDiscountText,
               ]}>
-              + {CurrencyFormatter(item?.amountAfterDisc)}
+              +{' '}
+              {CurrencyFormatter(
+                item?.amountAfterDisc -
+                  calculationModifierPrice(item?.modifiers, item?.quantity),
+              )}
             </GlobalText>
           ) : null}
         </View>

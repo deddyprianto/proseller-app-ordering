@@ -3,6 +3,7 @@ import {Text, StyleSheet, View} from 'react-native';
 import {isEmptyArray} from '../../../../helper/CheckEmpty';
 import Theme from '../../../../theme/Theme';
 import CurrencyFormatter from '../../../../helper/CurrencyFormatter';
+import useCalculation from '../../../../hooks/calculation/useCalculation';
 
 const useStyles = () => {
   const theme = Theme();
@@ -162,6 +163,7 @@ const useStyles = () => {
 
 const useProductCartList = ({isProductUnavailable}) => {
   const styles = useStyles();
+  const {calculationModifierPrice} = useCalculation();
   const renderProductModifierItem = ({
     qty,
     name,
@@ -271,7 +273,8 @@ const useProductCartList = ({isProductUnavailable}) => {
   };
 
   const renderPrice = item => {
-    console.log({item}, 'item produk');
+    const discountAmont =
+      calculationModifierPrice(item.modifiers, item.quantity) || 0;
     const styleTextPrice = isProductUnavailable
       ? [styles.textPriceUnavailable]
       : [styles.textPriceSmall];
@@ -293,7 +296,7 @@ const useProductCartList = ({isProductUnavailable}) => {
               styles.afterDiscountText,
               styles.ml4,
             ]}>
-            + {CurrencyFormatter(item?.amountAfterDisc)}
+            + {CurrencyFormatter(item?.amountAfterDisc - discountAmont)}
           </Text>
         </View>
       );
@@ -305,7 +308,6 @@ const useProductCartList = ({isProductUnavailable}) => {
       </Text>
     );
   };
-
   return {
     renderProductModifier,
     renderProductHeader,

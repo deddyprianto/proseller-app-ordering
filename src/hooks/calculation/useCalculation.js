@@ -125,6 +125,21 @@ const useCalculation = () => {
     return dateUnix <= maxDateUnix;
   };
 
+  const calculationModifierPrice = (modifiers = [], qty) => {
+    const mappingPrice = modifiers.map(price => {
+      return mappingChildren(price?.modifier?.details, qty);
+    });
+    if (mappingPrice.length > 0) {
+      return mappingPrice?.reduce((a, b) => a + b);
+    }
+  };
+
+  const mappingChildren = (modifier = [], qty) => {
+    const mapModifier = modifier.map(data => data.price);
+    const amountPrice = mapModifier?.reduce((a, b) => a + b);
+    return amountPrice * qty;
+  };
+
   return {
     calculateVoucher,
     calculateVoucherPoint,
@@ -136,6 +151,7 @@ const useCalculation = () => {
     checkTaxInclusive,
     checkTaxExclusive,
     isDeliveryAvailable,
+    calculationModifierPrice,
   };
 };
 
