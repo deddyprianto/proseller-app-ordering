@@ -139,7 +139,7 @@ const useStyles = () => {
   return styles;
 };
 
-const NewPageIndex = parentProps => {
+const NewPageIndex = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
   const [isOpenNotification, setIsOpenNotification] = useState(false);
@@ -149,7 +149,6 @@ const NewPageIndex = parentProps => {
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
-  console.log({parentProps}, 'parent');
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getColorSettings());
@@ -237,7 +236,8 @@ const NewPageIndex = parentProps => {
         const getNotification = notificationReceivedEvent.getNotification();
         if (
           currentPage === 'paymentSuccess' ||
-          currentPage === 'pendingOrderDetail'
+          currentPage === 'pendingOrderDetail' ||
+          currentPage === 'pageIndex'
         ) {
           dispatch(setNotificationData(getNotification));
           dispatch(openPopupNotification(true));
@@ -296,6 +296,8 @@ const NewPageIndex = parentProps => {
 
     return (
       <View style={styles.viewNavbar}>
+        {renderHistoryNotificationModal()}
+
         <View style={styles.viewNavbarContent}>{result}</View>
       </View>
     );
@@ -317,8 +319,6 @@ const NewPageIndex = parentProps => {
   } else if (isLoggedIn) {
     return (
       <SafeAreaView style={styles.root}>
-        {renderHistoryNotificationModal()}
-
         <Tabs />
       </SafeAreaView>
     );
