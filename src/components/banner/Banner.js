@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 
 import {dataPromotion} from '../../actions/promotion.action';
@@ -76,11 +77,20 @@ const Banner = ({bottom = 0}) => {
     loadData();
   }, [dispatch]);
 
-  const handleBannerClick = item => {
-    return Actions.storeDetailPromotion({
-      dataPromotion: item,
-      item: defaultOutlet,
-    });
+  const handleBannerClick = async item => {
+    const isOpenUrl = item?.linkBanner && item?.url && item?.linkType === 'URL';
+
+    if (isOpenUrl) {
+      const isHTTPS = item?.url?.search('https://') !== -1;
+      const url = isHTTPS ? item?.url : `https://${item?.url}`;
+
+      return await Linking.openURL(url);
+    } else {
+      return Actions.storeDetailPromotion({
+        dataPromotion: item,
+        item: defaultOutlet,
+      });
+    }
   };
 
   const renderImages = () => {
