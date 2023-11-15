@@ -47,6 +47,8 @@ import {
 import CheckListGreenSvg from '../assets/svg/ChecklistGreenSvg';
 import useSettings from '../hooks/settings/useSettings';
 import MembershipInfo from '../components/membershipInfo';
+import {openPopupNotification} from '../actions/order.action';
+import {HistoryNotificationModal} from '../components/modal';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -334,6 +336,12 @@ const Profile = props => {
   const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] = useState(
     false,
   );
+  const showPopup = useSelector(
+    state => state?.orderReducer?.popupNotification?.openPopup,
+  );
+  const notificationData = useSelector(
+    state => state?.orderReducer?.notificationData?.notificationData,
+  );
   const [visitNumber, setVisitNumber] = useState(null);
   const [currentBrightness, setCurrentBrightness] = useState(null);
   const [user, setUser] = useState({});
@@ -387,6 +395,10 @@ const Profile = props => {
       checkNumberUserVistiProfilePage();
     }
     checkUserVerified();
+  };
+
+  const closePopup = () => {
+    dispatch(openPopupNotification(false));
   };
 
   const checkNumberUserVistiProfilePage = async () => {
@@ -888,6 +900,11 @@ const Profile = props => {
           {renderMyECardModal()}
         </ScrollView>
       </Body>
+      <HistoryNotificationModal
+        value={notificationData}
+        open={showPopup}
+        handleClose={closePopup}
+      />
     </SafeAreaView>
   );
 };

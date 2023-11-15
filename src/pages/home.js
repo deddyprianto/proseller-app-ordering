@@ -4,14 +4,12 @@
  * PT Edgeworks
  */
 
-import React, {Component, useCallback} from 'react';
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Store from './store';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 // import ProductsRetail from '../components/order/ProductsRetail';
-import Banner from '../components/banner/Banner';
-import Menu from '../components/menu/Menu';
 import {campaign, dataPoint} from '../actions/rewards.action';
 
 import {getAccountPayment} from '../actions/payment.actions';
@@ -22,18 +20,16 @@ import {
   userPosition,
 } from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
-import {
-  Alert,
-  Linking,
-  RefreshControl,
-  Dimensions,
-  ScrollView,
-} from 'react-native';
+import {Alert, Linking} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {Actions} from 'react-native-router-flux';
-import {getCartHomePage, getPendingCart} from '../actions/order.action';
+import {
+  getCartHomePage,
+  getPendingCart,
+  openPopupNotification,
+} from '../actions/order.action';
 import OneSignal from 'react-native-onesignal';
 import {dataPromotion} from '../actions/promotion.action';
 import {getSVCCard} from '../actions/SVC.action';
@@ -41,6 +37,7 @@ import LoadingScreen from '../components/loadingScreen';
 import HomeRetail from './HomeRetail';
 import HomeFnB from './HomeFnB';
 import {getAllowedOrder, getLoginSettings} from '../actions/setting.action';
+import {HistoryNotificationModal} from '../components/modal';
 
 class Home extends Component {
   constructor(props) {
@@ -273,9 +270,12 @@ class Home extends Component {
     } catch (e) {}
   };
 
+  closePopup = () => {
+    this.props.dispatch(openPopupNotification(false));
+  };
+
   render() {
     const {outletSelectionMode, defaultOutlet} = this.props;
-
     return (
       <>
         <LoadingScreen loading={this.state.isLoading} />
@@ -291,6 +291,11 @@ class Home extends Component {
             handleOnRefresh={this._onRefresh}
           />
         )}
+        <HistoryNotificationModal
+          value={this.props.dataNotification}
+          open={this.props.popupNotification}
+          handleClose={this.closePopup}
+        />
       </>
     );
   }
@@ -301,6 +306,8 @@ const mapStateToProps = state => ({
     state.orderReducer.outletSelectionMode.outletSelectionMode,
   defaultOutlet: state.storesReducer.defaultOutlet.defaultOutlet,
   paymentRefNo: state.accountsReducer.paymentRefNo.paymentRefNo,
+  popupNotification: state.orderReducer?.popupNotification?.openPopup,
+  dataNotification: state?.orderReducer?.notificationData?.notificationData,
 });
 
 const mapDispatchToProps = dispatch => ({

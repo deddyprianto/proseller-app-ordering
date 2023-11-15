@@ -22,6 +22,8 @@ import {Body} from '../components/layout';
 import withHooksComponent from '../components/HOC';
 import ListInbox from '../components/inbox/ListInbox';
 import InboxLoading from '../components/shimmerLoading/InboxLoading';
+import {HistoryNotificationModal} from '../components/modal';
+import {openPopupNotification} from '../actions/order.action';
 
 class Inbox extends Component {
   constructor(props) {
@@ -191,6 +193,10 @@ class Inbox extends Component {
     );
   };
 
+  closePopup = () => {
+    this.props.dispatch(openPopupNotification(false));
+  };
+
   render() {
     let {dataInbox} = this.props;
     return (
@@ -219,6 +225,11 @@ class Inbox extends Component {
 
           <DetailInbox ref={this.detailInbox} />
         </Body>
+        <HistoryNotificationModal
+          value={this.props.dataNotification}
+          open={this.props.popupNotification}
+          handleClose={this.closePopup}
+        />
       </SafeAreaView>
     );
   }
@@ -252,6 +263,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   dataInbox: state.inboxReducer.dataInbox.broadcast,
   isLoading: state.inboxReducer?.dataInbox?.isLoading,
+  popupNotification: state.orderReducer?.popupNotification?.openPopup,
+  dataNotification: state?.orderReducer?.notificationData?.notificationData,
 });
 
 const mapDispatchToProps = dispatch => ({

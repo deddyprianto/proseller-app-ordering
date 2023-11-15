@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import HistoryPayment from './historyPayment';
 import HistoryPendingOrders from './HistoryPendingOrders';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import {openPopupNotification} from '../../actions/order.action';
+import {HistoryNotificationModal} from '../modal';
 
 class HistoryMenuTab extends Component {
   constructor(props) {
@@ -20,6 +22,10 @@ class HistoryMenuTab extends Component {
       isLoading: false,
     };
   }
+
+  closePopup = () => {
+    this.props.dispatch(openPopupNotification(false));
+  };
 
   render() {
     const {intlData, dataBasket} = this.props;
@@ -100,6 +106,11 @@ class HistoryMenuTab extends Component {
         {this.state.togglePending ? (
           <HistoryPendingOrders intlData={intlData} />
         ) : null}
+        <HistoryNotificationModal
+          value={this.props.dataNotification}
+          open={this.props.popupNotification}
+          handleClose={this.closePopup}
+        />
       </>
     );
   }
@@ -126,6 +137,8 @@ mapStateToProps = state => ({
   afterPayment: state.accountsReducer.afterPayment.afterPayment,
   dataBasket: state.orderReducer.dataCart.cart,
   intlData: state.intlData,
+  popupNotification: state.orderReducer?.popupNotification?.openPopup,
+  dataNotification: state?.orderReducer?.notificationData?.notificationData,
 });
 
 mapDispatchToProps = dispatch => ({
