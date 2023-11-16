@@ -3,6 +3,7 @@ import {Text, TouchableOpacity, View, Modal, StyleSheet} from 'react-native';
 import {Dialog, Portal, Provider} from 'react-native-paper';
 
 import Theme from '../../theme';
+import additionalSetting from '../../config/additionalSettings';
 
 const useStyles = () => {
   const theme = Theme();
@@ -11,21 +12,17 @@ const useStyles = () => {
       borderRadius: 8,
     },
     header: {
-      paddingVertical: 24,
+      paddingVertical: 16,
       paddingHorizontal: 16,
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     body: {
       paddingHorizontal: 16,
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     footer: {
-      paddingTop: 24,
       padding: 16,
+      marginTop: 16,
     },
     textHeader: {
       color: theme.colors.textPrimary,
@@ -33,10 +30,9 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsSemiBold,
     },
     textBody: {
-      textAlign: 'center',
-      color: theme.colors.textTertiary,
-      fontSize: theme.fontSize[16],
-      fontFamily: theme.fontFamily.poppinsSemiBold,
+      color: theme.colors.greyScale5,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
     },
     textClose: {
       fontSize: theme.fontSize[14],
@@ -44,11 +40,11 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     touchableClose: {
-      paddingVertical: 10,
       backgroundColor: theme.colors.textQuaternary,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 8,
+      height: 36,
     },
   });
   return styles;
@@ -56,11 +52,13 @@ const useStyles = () => {
 
 const HistoryNotificationModal = ({open, handleClose, value}) => {
   const styles = useStyles();
-  console.log({value}, 'bahay');
+  const aligntText = additionalSetting().popupNotificationTextAlign || 'left';
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        <Text style={styles.textHeader}>{value.title}</Text>
+        <Text style={[styles.textHeader, {textAlign: aligntText}]}>
+          {value.title}
+        </Text>
       </View>
     );
   };
@@ -68,7 +66,9 @@ const HistoryNotificationModal = ({open, handleClose, value}) => {
   const renderBody = () => {
     return (
       <View style={styles.body}>
-        <Text style={styles.textBody}>{value.body}</Text>
+        <Text style={[styles.textBody, {textAlign: aligntText}]}>
+          {value.body}
+        </Text>
       </View>
     );
   };

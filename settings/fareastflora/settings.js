@@ -38,6 +38,7 @@ const additionalSetting = () => {
   const maxVoucherInOneTransaction = 1;
   const enableScannerButton = false;
   const isAutoSelectDeliveryProviderType = true;
+  const popupNotificationTextAlign = 'left';
 
   return {
     additionalPolicy,
@@ -58,6 +59,7 @@ const additionalSetting = () => {
     maxVoucherInOneTransaction,
     enableScannerButton,
     isAutoSelectDeliveryProviderType,
+    popupNotificationTextAlign,
   };
 };
 
