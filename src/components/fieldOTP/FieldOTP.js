@@ -57,7 +57,7 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
   };
   const {styles} = useStyles();
   const [otp, setOtp] = useState('');
-
+  const [onOtpFocus, setOnOtpFocus] = React.useState(false);
   useEffect(() => {
     if (otp[3]) {
       const value = otp.join('');
@@ -88,9 +88,17 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
     }
   };
 
-  const onAutomaticOpenKeyboard = () => {
-    ref.otp0?.focus();
+  const onAutomaticOpenKeyboard = async () => {
+    setTimeout(() => {
+      setOnOtpFocus(true);
+    }, 500);
   };
+
+  React.useEffect(() => {
+    if (onOtpFocus) {
+      ref.otp0?.focus();
+    }
+  }, [onOtpFocus]);
 
   const renderTextInput = (index, length) => {
     if (index === length - 1) {
@@ -101,7 +109,6 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
           }}
           maxLength={1}
           value={otp[index]}
-          autoFocus={index === 0}
           keyboardType="numeric"
           style={styles.textInputOtp(isWrongOtp)}
           selection={{start: otp[index]?.length || 0}}
@@ -124,7 +131,6 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
           ref[`otp${index}`] = r;
         }}
         value={otp[index]}
-        autoFocus={index === 0}
         keyboardType="numeric"
         style={styles.textInputOtp(isWrongOtp)}
         selection={{start: otp[index]?.length || 0}}
