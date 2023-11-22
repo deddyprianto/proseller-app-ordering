@@ -3,7 +3,7 @@
   "version": "1.1",
   "private": true,
   "scripts": {
-    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'",
+    "build:ios": "react-native bundle --minify --entry-file index.js --platform ios --dev false --bundle-output ./ios/main.jsbundle --assets-dest ./ios",
     "android-dev": "export ENVFILE=.env.dev && npx react-native run-android --variant=devDebug --appIdSuffix=dev",
     "android-demo": "export ENVFILE=.env.demo && npx react-native run-android --variant=demoDebug --appIdSuffix=demo",
     "android-demo-rel": "export ENVFILE=.env.demo && npx react-native run-android --variant=demoRelease --appIdSuffix=demo",
@@ -182,5 +182,10 @@
       }
     },
     "test-runner": "jest"
+  },
+  "rnpm": {
+    "assets": [
+      "./src/assets"
+    ]
   }
 }

@@ -57,6 +57,7 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+/ios/assets/
 /native/acemart/ios/Pods
 /native/automaxima/ios/Pods
 /native/funtoast/ios/Pods

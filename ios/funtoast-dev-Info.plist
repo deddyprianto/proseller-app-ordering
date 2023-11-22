@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to save the PayNow QR code on your device, ensuring a swift and convenient payment experience for you.We need access to save the PayNow QR code on your device, ensuring a swift and convenient payment experience for you.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -62,8 +64,6 @@
 	<string>Permission to access your location which is used to display the distance of the closest outlet from your position.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Permission to access the microphone for barcode scanning purpose.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to save the PayNow QR code on your device, ensuring a swift and convenient payment experience for you.We need access to save the PayNow QR code on your device, ensuring a swift and convenient payment experience for you.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-SemiBold.ttf</string>
