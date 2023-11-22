@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {Dimensions, FlatList, StyleSheet} from 'react-native';
+import {Dimensions, FlatList, StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {myVouchers} from '../../actions/account.action';
 import ListVoucher from './components/ListVoucher';
 import EmptyVoucher from './components/EmptyVoucher';
 import {uniqBy} from 'lodash';
+import SearchVoucherCode from './SearchVoucherCode';
 
 const styles = StyleSheet.create({
   scrollContainer: {
@@ -61,28 +62,24 @@ const MyVoucher = () => {
   }, [voucherList]);
 
   return (
-    <>
-      <FlatList
-        contentContainerStyle={[
-          styles.scrollContainer,
-          styles.contentContainer,
-        ]}
-        style={styles.flatStyle}
-        data={uniqVoucher}
-        renderItem={renderList}
-        onRefresh={onRefreshLoading}
-        refreshing={loading}
-        ListEmptyComponent={
-          !loading && (
-            <EmptyVoucher
-              text={
-                'Your voucher collection is waiting to be filled! Begin placing orders and earning points to unlock redeemable vouchers.'
-              }
-            />
-          )
-        }
-      />
-    </>
+    <FlatList
+      contentContainerStyle={[styles.scrollContainer, styles.contentContainer]}
+      style={styles.flatStyle}
+      data={uniqVoucher}
+      renderItem={renderList}
+      onRefresh={onRefreshLoading}
+      refreshing={loading}
+      ListHeaderComponent={<SearchVoucherCode />}
+      ListEmptyComponent={
+        !loading && (
+          <EmptyVoucher
+            text={
+              'Your voucher collection is waiting to be filled! Begin placing orders and earning points to unlock redeemable vouchers.'
+            }
+          />
+        )
+      }
+    />
   );
 };
 
