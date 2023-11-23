@@ -5,17 +5,18 @@ import {showSnackbar} from '../../actions/setting.action';
 
 const useVouchers = () => {
   const dispatch = useDispatch();
-  const checkVoucher = async voucherCode => {
+  const checkVoucher = async (voucherCode, showErrorSnackbar) => {
     const checkPromoResponse = await dispatch(checkPromo(voucherCode));
-
     if (!checkPromoResponse.status) {
       let errorMessage = 'Invalid promo code.';
-      dispatch(
-        showSnackbar({
-          message: checkPromoResponse?.message || errorMessage,
-        }),
-      );
-      return undefined;
+      if (showErrorSnackbar) {
+        dispatch(
+          showSnackbar({
+            message: checkPromoResponse?.message || errorMessage,
+          }),
+        );
+      }
+      return checkPromoResponse;
     }
     dispatch(
       showSnackbar({

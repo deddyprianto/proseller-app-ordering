@@ -2,7 +2,7 @@
 import React from 'react';
 import {Dimensions, FlatList, StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {myVouchers} from '../../actions/account.action';
+import {myVouchers, updateMyVoucher} from '../../actions/account.action';
 import ListVoucher from './components/ListVoucher';
 import EmptyVoucher from './components/EmptyVoucher';
 import {uniqBy} from 'lodash';
@@ -30,6 +30,7 @@ const MyVoucher = () => {
   const voucherList = useSelector(
     state => state.accountsReducer.myVouchers?.vouchers,
   );
+  const [errorMessage, setErrorMessage] = React.useState(null);
   const [loadingRedeem, setLoadingRedeem] = React.useState(false);
   const {checkVoucher} = useVouchers();
   const renderList = ({item, index}) => (
@@ -40,7 +41,6 @@ const MyVoucher = () => {
       key={index}
     />
   );
-
   const onRefresh = async useLoading => {
     if (useLoading) {
       setLoading(true);
@@ -55,18 +55,28 @@ const MyVoucher = () => {
   };
 
   const onTypeCode = text => {
+    setErrorMessage(null);
     setSerialCode(text);
   };
 
   const onRedeemVoucher = async () => {
     setLoadingRedeem(true);
     const response = await checkVoucher(serialCode);
-    if (response) {
+    if (response?.serialNumber) {
       onRefreshLoading();
+      setSerialCode('');
     } else {
+      if (response.status) {
+        dispatch(updateMyVoucher(response));
+      } else {
+        setErrorMessage(response.message);
+      }
       setLoadingRedeem(false);
+      setSerialCode('');
     }
   };
+
+  const removeCode = () => setSerialCode('');
 
   React.useEffect(() => {
     onRefresh();
@@ -77,7 +87,7 @@ const MyVoucher = () => {
       const uniq = uniqBy(voucherList, 'id');
       setUniqVoucher(uniq);
     }
-  }, [voucherList]);
+  }, [JSON.stringify(voucherList)]);
 
   return (
     <FlatList
@@ -87,12 +97,15 @@ const MyVoucher = () => {
       renderItem={renderList}
       onRefresh={onRefreshLoading}
       refreshing={loading}
+      keyboardShouldPersistTaps="handled"
       ListHeaderComponent={
         <SearchVoucherCode
           onSearchCode={onTypeCode}
           onRedeem={onRedeemVoucher}
           loading={loadingRedeem}
           codeValue={serialCode}
+          onRemoveCode={removeCode}
+          isError={errorMessage}
         />
       }
       ListEmptyComponent={

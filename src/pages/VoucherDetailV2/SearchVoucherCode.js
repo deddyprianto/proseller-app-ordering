@@ -1,9 +1,15 @@
 import React from 'react';
-import {View, StyleSheet, ActivityIndicator} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../../components/globalText';
 import GlobalInputText from '../../components/globalInputText';
 import GlobalButton from '../../components/button/GlobalButton';
+import RoundedCloseSvg from '../../assets/svg/RoundedCloseSvg';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -33,11 +39,26 @@ const useStyles = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
       color: 'white',
     },
+    textMain: {
+      color: theme.colors.primary,
+      fontFamily: theme.fontFamily.poppinsSemiBold,
+      fontSize: 16,
+    },
+    textContainer: {
+      marginBottom: 16,
+    },
   });
   return {styles};
 };
 
-const SearchVoucherCode = ({onRedeem, onSearchCode, codeValue, loading}) => {
+const SearchVoucherCode = ({
+  onRedeem,
+  onSearchCode,
+  codeValue,
+  loading,
+  onRemoveCode,
+  isError,
+}) => {
   const {styles} = useStyles();
   return (
     <>
@@ -50,6 +71,18 @@ const SearchVoucherCode = ({onRedeem, onSearchCode, codeValue, loading}) => {
           placeholder="Enter Voucher Code"
           inputParentContainerCustom={styles.parentStyle}
           onChangeText={onSearchCode}
+          value={codeValue}
+          isError={isError}
+          errorMessage={isError}
+          rightIcon={
+            <>
+              {codeValue?.length > 0 ? (
+                <TouchableOpacity onPress={onRemoveCode}>
+                  <RoundedCloseSvg />
+                </TouchableOpacity>
+              ) : null}
+            </>
+          }
         />
         <GlobalButton disabled={loading || codeValue === ''} onPress={onRedeem}>
           {!loading ? (
@@ -60,6 +93,9 @@ const SearchVoucherCode = ({onRedeem, onSearchCode, codeValue, loading}) => {
         </GlobalButton>
       </View>
       <View style={styles.gap} />
+      <View style={styles.textContainer}>
+        <GlobalText style={styles.textMain}>Your Vouchers</GlobalText>
+      </View>
     </>
   );
 };
