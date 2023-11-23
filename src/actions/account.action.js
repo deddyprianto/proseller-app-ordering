@@ -189,6 +189,23 @@ export const myVouchers = () => {
   };
 };
 
+export const updateMyVoucher = voucher => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const myNewVouchers = state.accountsReducer?.myVouchers?.vouchers || [];
+    const findExistingVoucher = myNewVouchers?.find(
+      dataVoucher => dataVoucher?.code === voucher?.code,
+    );
+    if (!findExistingVoucher) {
+      myNewVouchers?.push(voucher);
+      dispatch({
+        type: 'DATA_MY_VOUCHERS',
+        data: myNewVouchers,
+      });
+    }
+  };
+};
+
 export const myProgressBarCampaign = () => {
   return async (dispatch, getState) => {
     const state = getState();
