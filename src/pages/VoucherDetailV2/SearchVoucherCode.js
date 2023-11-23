@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../../components/globalText';
 import GlobalInputText from '../../components/globalInputText';
@@ -28,11 +28,16 @@ const useStyles = () => {
       marginTop: 0,
       padding: 0,
     },
+    redeemText: {
+      fontSize: 14,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      color: 'white',
+    },
   });
   return {styles};
 };
 
-const SearchVoucherCode = () => {
+const SearchVoucherCode = ({onRedeem, onSearchCode, codeValue, loading}) => {
   const {styles} = useStyles();
   return (
     <>
@@ -44,8 +49,15 @@ const SearchVoucherCode = () => {
         <GlobalInputText
           placeholder="Enter Voucher Code"
           inputParentContainerCustom={styles.parentStyle}
+          onChangeText={onSearchCode}
         />
-        <GlobalButton title="Redeem" />
+        <GlobalButton disabled={loading || codeValue === ''} onPress={onRedeem}>
+          {!loading ? (
+            <GlobalText style={styles.redeemText}>Redeem</GlobalText>
+          ) : (
+            <ActivityIndicator color="white" />
+          )}
+        </GlobalButton>
       </View>
       <View style={styles.gap} />
     </>

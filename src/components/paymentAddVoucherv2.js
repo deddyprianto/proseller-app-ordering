@@ -33,6 +33,7 @@ import useCalculation from '../hooks/calculation/useCalculation';
 import appConfig from '../config/appConfig';
 import additionalSetting from '../config/additionalSettings';
 import InformationRedeem from './informationMessage/InformationRedeem';
+import useVouchers from '../hooks/vouchers/useVouchers';
 
 const PaymentAddVouchersV2 = props => {
   const [usedVoucher, setUsedVoucher] = React.useState(props?.dataVoucer || []);
@@ -56,6 +57,7 @@ const PaymentAddVouchersV2 = props => {
   const selectedAccount = useSelector(
     state => state.cardReducer.selectedAccount.selectedAccount,
   );
+  const {checkVoucher: checkVoucherHooks} = useVouchers();
   const dispatch = useDispatch();
   const {removePointAmount} = useCalculation();
   const voucherPointUsedCalculation = (vouchers = []) => {
@@ -182,9 +184,11 @@ const PaymentAddVouchersV2 = props => {
           ),
         );
       } else {
-        setNewAvailableVoucher(prevState =>
-          prevState.filter(voucher => voucher.code !== item.code),
-        );
+        if (!item?.serialNumber) {
+          setNewAvailableVoucher(prevState =>
+            prevState.filter(voucher => voucher.code !== item.code),
+          );
+        }
       }
     }
   };
@@ -199,16 +203,8 @@ const PaymentAddVouchersV2 = props => {
 
   const checkVoucher = async voucherCode => {
     setLoadingCheckVoucher(true);
-    const checkPromoResponse = await dispatch(checkPromo(voucherCode));
-
-    if (!checkPromoResponse.status) {
-      let errorMessage = 'Invalid promo code.';
-      dispatch(
-        showSnackbar({
-          message: checkPromoResponse?.message || errorMessage,
-        }),
-      );
-    } else {
+    const checkPromoResponse = await checkVoucherHooks(voucherCode);
+    if (checkPromoResponse) {
       handleAddVoucher(checkPromoResponse, true);
     }
     setLoadingCheckVoucher(false);

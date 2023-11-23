@@ -7,6 +7,7 @@ import ListVoucher from './components/ListVoucher';
 import EmptyVoucher from './components/EmptyVoucher';
 import {uniqBy} from 'lodash';
 import SearchVoucherCode from './SearchVoucherCode';
+import useVouchers from '../../hooks/vouchers/useVouchers';
 
 const styles = StyleSheet.create({
   scrollContainer: {
@@ -25,10 +26,12 @@ const MyVoucher = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(true);
   const [uniqVoucher, setUniqVoucher] = React.useState([]);
+  const [serialCode, setSerialCode] = React.useState('');
   const voucherList = useSelector(
     state => state.accountsReducer.myVouchers?.vouchers,
   );
-
+  const [loadingRedeem, setLoadingRedeem] = React.useState(false);
+  const {checkVoucher} = useVouchers();
   const renderList = ({item, index}) => (
     <ListVoucher
       isMyVoucher={true}
@@ -44,10 +47,25 @@ const MyVoucher = () => {
     }
     await dispatch(myVouchers());
     setLoading(false);
+    setLoadingRedeem(false);
   };
 
   const onRefreshLoading = () => {
     onRefresh(true);
+  };
+
+  const onTypeCode = text => {
+    setSerialCode(text);
+  };
+
+  const onRedeemVoucher = async () => {
+    setLoadingRedeem(true);
+    const response = await checkVoucher(serialCode);
+    if (response) {
+      onRefreshLoading();
+    } else {
+      setLoadingRedeem(false);
+    }
   };
 
   React.useEffect(() => {
@@ -69,7 +87,14 @@ const MyVoucher = () => {
       renderItem={renderList}
       onRefresh={onRefreshLoading}
       refreshing={loading}
-      ListHeaderComponent={<SearchVoucherCode />}
+      ListHeaderComponent={
+        <SearchVoucherCode
+          onSearchCode={onTypeCode}
+          onRedeem={onRedeemVoucher}
+          loading={loadingRedeem}
+          codeValue={serialCode}
+        />
+      }
       ListEmptyComponent={
         !loading && (
           <EmptyVoucher
