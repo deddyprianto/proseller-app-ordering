@@ -1,26 +1,22 @@
 import React from 'react';
-import {View, StyleSheet, TextInput} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import GlobalButton from '../button/GlobalButton';
 import Theme from '../../theme/Theme';
+import GlobalInputText from '../globalInputText';
 
 const useStyles = () => {
   const {colors} = Theme();
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'space-evenly',
     },
     inputContainer: {
       width: '65%',
-      borderWidth: 1,
-      height: 48,
-      justifyContent: 'center',
-      borderRadius: 8,
-      borderColor: colors.greyScale5,
     },
     buttonContainer: {
       width: '25%',
+      marginTop: 4,
     },
     inputStyle: {
       width: '100%',
@@ -32,11 +28,26 @@ const useStyles = () => {
       width: '90%',
       marginLeft: 'auto',
     },
+    inputText: {
+      width: '65%',
+      height: 48,
+      marginTop: 0,
+      paddingTop: 0,
+      color: 'black',
+    },
+    containerButton: {
+      marginTop: 4,
+    },
+    inputStyleGlobal: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 0,
+    },
   });
   return {styles};
 };
 
-const InputVoucher = ({onPressVoucher}) => {
+const InputVoucher = ({onPressVoucher, isError}) => {
   const {styles} = useStyles();
   const [voucherNumber, setVoucherNumber] = React.useState('');
 
@@ -47,13 +58,15 @@ const InputVoucher = ({onPressVoucher}) => {
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <TextInput
+        <GlobalInputText
+          inputParentContainerCustom={styles.inputStyleGlobal}
           onChangeText={onChangeVoucherNumber}
           placeholder="Enter Voucher Code"
-          style={styles.inputStyle}
+          isError={isError}
+          errorMessage={isError}
         />
       </View>
-      <View style={styles.buttonContainer}>
+      <View style={[styles.buttonContainer]}>
         <GlobalButton
           onPress={() => onPressVoucher(voucherNumber)}
           buttonStyle={styles.buttonStyle}

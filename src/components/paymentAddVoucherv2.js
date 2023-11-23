@@ -57,6 +57,7 @@ const PaymentAddVouchersV2 = props => {
   const selectedAccount = useSelector(
     state => state.cardReducer.selectedAccount.selectedAccount,
   );
+  const [errorMessage, setErrorMessage] = React.useState(null);
   const {checkVoucher: checkVoucherHooks} = useVouchers();
   const dispatch = useDispatch();
   const {removePointAmount} = useCalculation();
@@ -203,9 +204,12 @@ const PaymentAddVouchersV2 = props => {
 
   const checkVoucher = async voucherCode => {
     setLoadingCheckVoucher(true);
+    setErrorMessage(null);
     const checkPromoResponse = await checkVoucherHooks(voucherCode);
-    if (checkPromoResponse) {
+    if (checkPromoResponse && checkPromoResponse.status) {
       handleAddVoucher(checkPromoResponse, true);
+    } else {
+      setErrorMessage(checkPromoResponse?.message);
     }
     setLoadingCheckVoucher(false);
   };
@@ -303,7 +307,7 @@ const PaymentAddVouchersV2 = props => {
         </View>
         {renderTitle('USE VOUCHER CODE')}
         <View style={styles.searchContainer}>
-          <InputVoucher onPressVoucher={checkVoucher} />
+          <InputVoucher isError={errorMessage} onPressVoucher={checkVoucher} />
         </View>
         {filterOnlyVoucher()?.length > 0 ? (
           <View>

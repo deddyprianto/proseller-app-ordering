@@ -234,12 +234,15 @@ const GlobalInputText = React.forwardRef((props, ref) => {
     <View
       style={[styles.inputParentContainer, props.inputParentContainerCustom]}>
       <View style={styles.row}>
-        <GlobalText style={[styles.labelStyle, props.customLabelStyle]}>
-          {props.label}{' '}
-          {props.isMandatory ? (
-            <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
-          ) : null}
-        </GlobalText>
+        {props?.label ? (
+          <GlobalText style={[styles.labelStyle, props.customLabelStyle]}>
+            {props.label}{' '}
+            {props.isMandatory ? (
+              <GlobalText style={styles.mandatoryStyle}>*</GlobalText>
+            ) : null}
+          </GlobalText>
+        ) : null}
+
         {props?.childrenLabel ? props.childrenLabel : null}
       </View>
       <View
