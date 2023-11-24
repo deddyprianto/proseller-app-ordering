@@ -292,6 +292,9 @@ const useStyles = () => {
     mv6: {
       marginVertical: 6,
     },
+    pv6: {
+      paddingVertical: 6,
+    },
     darkGrey: {
       color: '#737373',
     },
@@ -486,7 +489,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   const renderPaymentDetail = ({item}) => (
     <View>
       {item?.paymentType === 'point' ? (
-        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
+        <View style={[styles.listOrderDetailContainer, styles.pv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <PointSvg />
@@ -503,7 +506,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
         </View>
       ) : null}
       {item?.paymentType === 'voucher' || item?.paymentType === 'promocode' ? (
-        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
+        <View style={[styles.listOrderDetailContainer, styles.pv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <VoucherSvg />
@@ -524,7 +527,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
       item?.paymentType !== 'promocode' &&
       item?.item?.paymentType !== 'promocode' &&
       item?.paymentAmount > 0 ? (
-        <View style={[styles.listOrderDetailContainer, styles.mv6]}>
+        <View style={[styles.listOrderDetailContainer, styles.pv6]}>
           <View style={styles.orderStatusContainer}>
             <View style={styles.paymentDetailsCard}>
               <CreditCard />
