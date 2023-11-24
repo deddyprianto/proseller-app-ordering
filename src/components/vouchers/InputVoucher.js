@@ -52,7 +52,7 @@ const InputVoucher = ({onPressVoucher, isError}) => {
   const [voucherNumber, setVoucherNumber] = React.useState('');
 
   const onChangeVoucherNumber = text => {
-    setVoucherNumber(text);
+    setVoucherNumber(text.toUpperCase());
   };
 
   return (
@@ -64,6 +64,7 @@ const InputVoucher = ({onPressVoucher, isError}) => {
           placeholder="Enter Voucher Code"
           isError={isError}
           errorMessage={isError}
+          autoCapitalize="characters"
         />
       </View>
       <View style={[styles.buttonContainer]}>
