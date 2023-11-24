@@ -56,7 +56,7 @@ const MyVoucher = () => {
 
   const onTypeCode = text => {
     setErrorMessage(null);
-    setSerialCode(text);
+    setSerialCode(text.toUpperCase());
   };
 
   const onRedeemVoucher = async () => {
