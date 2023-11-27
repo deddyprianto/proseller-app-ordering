@@ -2,7 +2,7 @@ const ENV = {
   APP: 'Far East Flora',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://api-fareastflora.proseller-demo.com/', //DEMO
+  API_HOST: 'https://api-salesdemo.proseller.io/', //DEMO
 
   base_url_payment: 'https://payment.proseller-demo.com/api/', //DEMO COM
 
