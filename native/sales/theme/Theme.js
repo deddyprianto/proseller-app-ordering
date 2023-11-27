@@ -13,7 +13,7 @@ const Theme = () => {
 
   const colors = {
     //old version
-    primary: '#003F24',
+    primary: '#381D72',
     secondary: '#F9F9F9',
     thirdColor: '#FFEBEB',
     forthColor: '#F9F9F9',
@@ -51,7 +51,7 @@ const Theme = () => {
 
     footer: '',
 
-    badge: '#CE1111',
+    badge: '#BD2D22',
 
     accent: '#9CD48F',
 
@@ -61,16 +61,16 @@ const Theme = () => {
     textSecondary: '#FFFFFF',
     textTertiary: '#B7B7B7',
     textQuaternary: '#003F24',
-    textError: '#CE1111',
+    textError: '#B82E2A',
     textBrand: '#438E49',
-    semanticError: '#CE1111',
+    semanticError: '#B82E2A',
     semanticSuccess: '#5CD523',
     semanticColorError: '#C81720',
     semanticColorSuccess: '#1A883C',
 
     brandPrimary: '#003F24',
     brandSecondary: '#FFFFFF',
-    brandTertiary: '#438E49',
+    brandTertiary: '#EC9B00',
 
     greyScale1: '#000000',
     greyScale2: '#B7B7B7',
@@ -86,7 +86,7 @@ const Theme = () => {
     backgroundTransparent2: '#B7B7B7CC',
     backgroundTransparent3: '#00000099',
     inactiveDot: '#D6D6D6',
-    errorColor: '#CE1111',
+    errorColor: '#B82E2A',
     successColor: '#438E49',
     colorPointPlus: '#4EBE19',
   };
