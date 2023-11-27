@@ -71,6 +71,25 @@
 		881C82692AD53C0B00DD1C92 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881C82682AD53C0B00DD1C92 /* NotificationService.swift */; };
 		881C826D2AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 881C82662AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		881D49852A1B3DDE009E45B9 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
+		88813BA92B145B980027E05E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
+		88813BAA2B145B980027E05E /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
+		88813BAC2B145B980027E05E /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
+		88813BAD2B145B980027E05E /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		88813BAE2B145B980027E05E /* libPods-Automaxima-fareastfloranew.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B4F41188A016E44FD47821BA /* libPods-Automaxima-fareastfloranew.a */; };
+		88813BB02B145B980027E05E /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
+		88813BB12B145B980027E05E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
+		88813BB22B145B980027E05E /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
+		88813BB32B145B980027E05E /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */; };
+		88813BB42B145B980027E05E /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
+		88813BB52B145B980027E05E /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
+		88813BB62B145B980027E05E /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
+		88813BB72B145B980027E05E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		88813BB82B145B980027E05E /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+		88813BB92B145B980027E05E /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
+		88813BBA2B145B980027E05E /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
+		88813BBB2B145B980027E05E /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
+		88813BBC2B145B980027E05E /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
+		88813BBD2B145B980027E05E /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		88A12C412AB183F0003936F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		88A12C422AB183F0003936F8 /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
 		88A12C442AB183F0003936F8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
@@ -260,6 +279,8 @@
 		881C82682AD53C0B00DD1C92 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		881C826A2AD53C0B00DD1C92 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-SemiBold.ttf"; path = "assets/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		88813BC52B145B980027E05E /* sales.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sales.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		88813BC62B145B9A0027E05E /* sales-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "sales-Info.plist"; path = "/Volumes/ssdeksternal/Kantor/proseller-new/ios/sales-Info.plist"; sourceTree = "<absolute>"; };
 		88A12C5C2AB183F0003936F8 /* fareastflora.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fareastflora.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88A12C5D2AB183F3003936F8 /* fareastflora-live.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fareastflora-live.plist"; path = "/Volumes/ssdeksternal/Kantor/proseller-new/ios/fareastflora-live.plist"; sourceTree = "<absolute>"; };
 		88D1A7182A40301B00C00653 /* fareastfloranew.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fareastfloranew.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -336,6 +357,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		88813BAB2B145B980027E05E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				88813BAC2B145B980027E05E /* libz.tbd in Frameworks */,
+				88813BAD2B145B980027E05E /* (null) in Frameworks */,
+				88813BAE2B145B980027E05E /* libPods-Automaxima-fareastfloranew.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,6 +535,7 @@
 				88D1A7192A40301C00C00653 /* fareastflora-info.plist */,
 				88072E152A4BEBB700E3D5A4 /* fareastfloranew-dev.plist */,
 				88A12C5D2AB183F3003936F8 /* fareastflora-live.plist */,
+				88813BC62B145B9A0027E05E /* sales-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -521,6 +553,7 @@
 				88A12C5C2AB183F0003936F8 /* fareastflora.app */,
 				881C82662AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex */,
 				5B83B43C2B05EF3C00720BF1 /* funtoast-dev.app */,
+				88813BC52B145B980027E05E /* sales.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -698,6 +731,29 @@
 			productReference = 881C82662AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		88813BA52B145B980027E05E /* sales */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 88813BC22B145B980027E05E /* Build configuration list for PBXNativeTarget "sales" */;
+			buildPhases = (
+				88813BA62B145B980027E05E /* [CP] Check Pods Manifest.lock */,
+				88813BA72B145B980027E05E /* Start Packager */,
+				88813BA82B145B980027E05E /* Sources */,
+				88813BAB2B145B980027E05E /* Frameworks */,
+				88813BAF2B145B980027E05E /* Resources */,
+				88813BBE2B145B980027E05E /* Bundle React Native code and images */,
+				88813BBF2B145B980027E05E /* Upload Debug Symbols to Sentry */,
+				88813BC02B145B980027E05E /* [CP] Copy Pods Resources */,
+				88813BC12B145B980027E05E /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = sales;
+			productName = Automaxima;
+			productReference = 88813BC52B145B980027E05E /* sales.app */;
+			productType = "com.apple.product-type.application";
+		};
 		88A12C3D2AB183F0003936F8 /* fareastflora */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 88A12C592AB183F0003936F8 /* Build configuration list for PBXNativeTarget "fareastflora" */;
@@ -817,6 +873,9 @@
 						DevelopmentTeam = YSZ34Z59CY;
 						ProvisioningStyle = Automatic;
 					};
+					88813BA52B145B980027E05E = {
+						DevelopmentTeam = YSZ34Z59CY;
+					};
 					88A12C3D2AB183F0003936F8 = {
 						DevelopmentTeam = YSZ34Z59CY;
 					};
@@ -853,6 +912,7 @@
 				88072DF52A4BEBB600E3D5A4 /* fareastfloranew-dev */,
 				88A12C3D2AB183F0003936F8 /* fareastflora */,
 				881C82652AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension */,
+				88813BA52B145B980027E05E /* sales */,
 			);
 		};
 /* End PBXProject section */
@@ -932,6 +992,27 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		88813BAF2B145B980027E05E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				88813BB02B145B980027E05E /* Poppins-SemiBold.ttf in Resources */,
+				88813BB12B145B980027E05E /* GoogleService-Info.plist in Resources */,
+				88813BB22B145B980027E05E /* Poppins-Black.ttf in Resources */,
+				88813BB32B145B980027E05E /* Poppins-Bold.ttf in Resources */,
+				88813BB42B145B980027E05E /* Poppins-Italic.ttf in Resources */,
+				88813BB52B145B980027E05E /* Poppins-Medium.ttf in Resources */,
+				88813BB62B145B980027E05E /* Poppins-Regular.ttf in Resources */,
+				88813BB72B145B980027E05E /* Images.xcassets in Resources */,
+				88813BB82B145B980027E05E /* LaunchScreen.xib in Resources */,
+				88813BB92B145B980027E05E /* Lato-Bold.ttf in Resources */,
+				88813BBA2B145B980027E05E /* Lato-Heavy.ttf in Resources */,
+				88813BBB2B145B980027E05E /* Lato-Italic.ttf in Resources */,
+				88813BBC2B145B980027E05E /* Lato-Medium.ttf in Resources */,
+				88813BBD2B145B980027E05E /* Lato-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1375,6 +1456,153 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		88813BA62B145B980027E05E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Automaxima-fareastfloranew-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		88813BA72B145B980027E05E /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		88813BBE2B145B980027E05E /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		88813BBF2B145B980027E05E /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
+		};
+		88813BC02B145B980027E05E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew/Pods-Automaxima-fareastfloranew-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionFaceModel/GoogleMVFaceDetectorResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionTextModel/GoogleMVTextDetectorResources.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVFaceDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew/Pods-Automaxima-fareastfloranew-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		88813BC12B145B980027E05E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew/Pods-Automaxima-fareastfloranew-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignal.framework/OneSignal",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalCore/OneSignalCore.framework/OneSignalCore",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalExtension/OneSignalExtension.framework/OneSignalExtension",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalOutcomes/OneSignalOutcomes.framework/OneSignalOutcomes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignal.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalExtension.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalOutcomes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-fareastfloranew/Pods-Automaxima-fareastfloranew-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		88A12C3E2AB183F0003936F8 /* [CP] Check Pods Manifest.lock */ = {
@@ -1992,6 +2220,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		88813BA82B145B980027E05E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				88813BA92B145B980027E05E /* AppDelegate.swift in Sources */,
+				88813BAA2B145B980027E05E /* Automaxima.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		88A12C402AB183F0003936F8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2445,6 +2682,80 @@
 			};
 			name = Release;
 		};
+		88813BC32B145B980027E05E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8E48F14F0994DF109BD765F5 /* Pods-Automaxima-fareastfloranew.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
+				CURRENT_PROJECT_VERSION = 8;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
+				);
+				INFOPLIST_FILE = "sales-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		88813BC42B145B980027E05E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9EB9FC6D5979E29C1AA02CA0 /* Pods-Automaxima-fareastfloranew.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
+				CURRENT_PROJECT_VERSION = 8;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..\node_modules\neact-native-device-brightnessRNDeviceBrightness",
+				);
+				INFOPLIST_FILE = "sales-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.fareastflora-demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
 		88A12C5A2AB183F0003936F8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F7EC34CA2ECC8DEE4128C639 /* Pods-Automaxima-fareastflora.debug.xcconfig */;
@@ -2787,6 +3098,15 @@
 			buildConfigurations = (
 				881C826F2AD53C0B00DD1C92 /* Debug */,
 				881C82702AD53C0B00DD1C92 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		88813BC22B145B980027E05E /* Build configuration list for PBXNativeTarget "sales" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88813BC32B145B980027E05E /* Debug */,
+				88813BC42B145B980027E05E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
