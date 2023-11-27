@@ -4,7 +4,7 @@ const ENV = {
 
   API_HOST: 'https://api-salesdemo.proseller.io/', //DEMO
 
-  base_url_payment: 'https://payment.proseller-demo.com/api/', //DEMO COM
+  base_url_payment: 'https://payment.proseller.io/api/', //DEMO COM
 
   ONESIGNAL_ID: 'c90d9017-0d2c-4e7f-9e28-391cb13b2d6d',
   ONE_SIGNAL_IOS_ID: 'c90d9017-0d2c-4e7f-9e28-391cb13b2d6d',
