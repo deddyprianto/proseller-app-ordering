@@ -59,8 +59,8 @@ const Theme = () => {
 
     textPrimary: '#000000',
     textSecondary: '#FFFFFF',
-    textTertiary: '#B7B7B7',
-    textQuaternary: '#003F24',
+    textTertiary: '#888787',
+    textQuaternary: '#381D72',
     textError: '#B82E2A',
     textBrand: '#438E49',
     semanticError: '#B82E2A',
@@ -78,7 +78,7 @@ const Theme = () => {
     greyScale4: '#F9F9F9',
     greyScale5: '#888787',
 
-    buttonActive: '#003F24',
+    buttonActive: '#381D72',
     buttonStandBy: '#FFFFFF',
     buttonDisabled: '#B7B7B7',
 
