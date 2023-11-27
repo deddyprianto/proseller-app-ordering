@@ -2686,7 +2686,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8E48F14F0994DF109BD765F5 /* Pods-Automaxima-fareastfloranew.debug.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Sales;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
 				CURRENT_PROJECT_VERSION = 8;
@@ -2723,7 +2723,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9EB9FC6D5979E29C1AA02CA0 /* Pods-Automaxima-fareastfloranew.release.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Sales;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
 				CURRENT_PROJECT_VERSION = 8;
