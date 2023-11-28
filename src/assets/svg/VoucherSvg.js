@@ -3,11 +3,11 @@ import Svg, {Path} from 'react-native-svg';
 import Theme from '../../theme/Theme';
 const VoucherSvg = props => {
   const {colors} = Theme();
-  const {color} = props;
+  const {color, height} = props;
   return (
     <Svg
-      width={22}
-      height={22}
+      width={height || 22}
+      height={height || 22}
       viewBox="0 0 22 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

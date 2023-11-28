@@ -47,6 +47,9 @@ import {
 import {dataStores} from '../actions/stores.action';
 import BannerFnB from '../components/bannerFnB';
 import additionalSetting from '../config/additionalSettings';
+import PointSvg from '../assets/svg/PointSvg';
+import VoucherSvg from '../assets/svg/VoucherSvg';
+import SvcSvg from '../assets/svg/SvcSvg';
 
 const useStyles = () => {
   const theme = Theme();
@@ -193,6 +196,7 @@ const HomeRetail = () => {
   const [selectedSubCategory, setSelectedSubCategory] = useState({});
   const [isShowFloatingButton, setIsShowFloatingButton] = useState(false);
   const [productListPosition, setProductListPosition] = useState(0);
+  const theme = Theme();
   const bannerSize = useSelector(
     state => state.settingReducer?.bannerSizeSettings?.bannerSize,
   );
@@ -375,7 +379,7 @@ const HomeRetail = () => {
           Actions.detailPoint({intlData});
         }}>
         <View style={styles.viewMenuBarChildImage}>
-          <Image source={appConfig.iconPoint} style={styles.iconMenuBarChild} />
+          <PointSvg height={24} color={theme.colors.brandTertiary} />
         </View>
         <Text style={styles.textMenuBarChildTitle}>My Points</Text>
         <Text style={styles.textMenuBarChildValue}>{point} PTS</Text>
@@ -392,10 +396,7 @@ const HomeRetail = () => {
           Actions.voucherV2();
         }}>
         <View style={styles.viewMenuBarChildImage}>
-          <Image
-            source={appConfig.iconVoucher}
-            style={styles.iconMenuBarChild}
-          />
+          <VoucherSvg height={24} color={theme.colors.brandTertiary} />
         </View>
         <Text style={styles.textMenuBarChildTitle}>My Vouchers</Text>
         <Text style={styles.textMenuBarChildValue}>{vouchersLength}</Text>
@@ -418,7 +419,7 @@ const HomeRetail = () => {
           Actions.summary();
         }}>
         <View style={styles.viewMenuBarChildImage}>
-          <Image source={appConfig.iconSVC} style={styles.iconMenuBarChild} />
+          <SvcSvg color={theme.colors.brandTertiary} height={24} />
         </View>
         <Text style={styles.textMenuBarChildTitle}>SVC Balance</Text>
         <Text style={styles.textMenuBarChildValue}>{balance}</Text>
