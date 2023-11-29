@@ -13,6 +13,7 @@ import {useSelector} from 'react-redux';
 import {emailValidation} from '../helper/Validation';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput/FieldPhoneNumberInput';
 import useSettings from '../hooks/settings/useSettings';
+import additionalSetting from '../config/additionalSettings';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -264,9 +265,9 @@ const RegisterV2 = props => {
             />
           </View>
           <GlobalText>
-            I consent to Far East Flora and its service providers, sending me
-            marketing information and materials of Far East Flora and its
-            partners’ products, services and events.
+            I consent to {additionalSetting().applicationName} and its service
+            providers, sending me marketing information and materials of Far
+            East Flora and its partners’ products, services and events.
           </GlobalText>
         </View>
         <View>
