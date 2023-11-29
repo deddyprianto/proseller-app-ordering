@@ -8,7 +8,7 @@ import EmptyVoucher from './components/EmptyVoucher';
 import {uniqBy} from 'lodash';
 import SearchVoucherCode from './SearchVoucherCode';
 import useVouchers from '../../hooks/vouchers/useVouchers';
-
+import {debounce} from 'lodash';
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
