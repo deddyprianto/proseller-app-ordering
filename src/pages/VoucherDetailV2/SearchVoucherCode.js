@@ -73,7 +73,6 @@ const SearchVoucherCode = ({
           placeholder="Enter Voucher Code"
           inputParentContainerCustom={styles.parentStyle}
           onChangeText={onSearchCode}
-          autoCapitalize="characters"
           value={codeValue}
           isError={isError}
           errorMessage={isError}
