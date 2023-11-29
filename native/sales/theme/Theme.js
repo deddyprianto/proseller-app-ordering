@@ -53,7 +53,7 @@ const Theme = () => {
 
     badge: '#BD2D22',
 
-    accent: '#9CD48F',
+    accent: '#FFDA93',
 
     background: 'white',
 
