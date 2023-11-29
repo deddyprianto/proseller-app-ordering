@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import Theme from '../../theme/Theme';
 import GlobalText from '../../components/globalText';
@@ -59,6 +60,7 @@ const SearchVoucherCode = ({
   onRemoveCode,
   isError,
 }) => {
+  const isAndroid = Platform.OS === 'android';
   const {styles} = useStyles();
   return (
     <>
@@ -71,10 +73,10 @@ const SearchVoucherCode = ({
           placeholder="Enter Voucher Code"
           inputParentContainerCustom={styles.parentStyle}
           onChangeText={onSearchCode}
-          autoCapitalize="characters"
           value={codeValue}
           isError={isError}
           errorMessage={isError}
+          keyboardType={isAndroid ? 'visible-password' : 'default'}
           rightIcon={
             <>
               {codeValue?.length > 0 ? (
