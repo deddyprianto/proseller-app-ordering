@@ -266,8 +266,9 @@ const RegisterV2 = props => {
           </View>
           <GlobalText>
             I consent to {additionalSetting().applicationName} and its service
-            providers, sending me marketing information and materials of Far
-            East Flora and its partners’ products, services and events.
+            providers, sending me marketing information and materials of{' '}
+            {additionalSetting().applicationName} and its partners’ products,
+            services and events.
           </GlobalText>
         </View>
         <View>

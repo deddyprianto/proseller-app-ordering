@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Platform} from 'react-native';
 import GlobalButton from '../button/GlobalButton';
 import Theme from '../../theme/Theme';
 import GlobalInputText from '../globalInputText';
@@ -50,9 +50,9 @@ const useStyles = () => {
 const InputVoucher = ({onPressVoucher, isError}) => {
   const {styles} = useStyles();
   const [voucherNumber, setVoucherNumber] = React.useState('');
-
+  const isAndorid = Platform.OS === 'android';
   const onChangeVoucherNumber = text => {
-    setVoucherNumber(text);
+    setVoucherNumber(text.toUpperCase());
   };
 
   return (
@@ -63,7 +63,9 @@ const InputVoucher = ({onPressVoucher, isError}) => {
           onChangeText={onChangeVoucherNumber}
           placeholder="Enter Voucher Code"
           isError={isError}
+          value={voucherNumber}
           errorMessage={isError}
+          keyboardType={isAndorid ? 'visible-password' : 'default'}
         />
       </View>
       <View style={[styles.buttonContainer]}>
