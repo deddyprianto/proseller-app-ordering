@@ -87,7 +87,7 @@ const Theme = () => {
     backgroundTransparent3: '#00000099',
     inactiveDot: '#D6D6D6',
     errorColor: '#B82E2A',
-    successColor: '#438E49',
+    successColor: '#1A883C',
     colorPointPlus: '#4EBE19',
   };
 
