@@ -173,8 +173,6 @@ PODS:
     - OneSignalXCFramework/OneSignalOutcomes
   - OneSignalXCFramework/OneSignalOutcomes (3.12.3):
     - OneSignalXCFramework/OneSignalCore
-  - Permission-Camera (2.0.9):
-    - RNPermissions
   - PromisesObjC (1.2.12)
   - Protobuf (3.24.4)
   - RCTRequired (0.63.2)
@@ -471,8 +469,8 @@ PODS:
     - React-Core
   - RNGestureHandler (1.5.3):
     - React
-  - RNPermissions (2.0.9):
-    - React
+  - RNPermissions (3.10.1):
+    - React-Core
   - RNReactNativeHapticFeedback (1.10.0):
     - React
   - RNReanimated (1.7.0):
@@ -534,7 +532,6 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - lottie-ios (from `../node_modules/lottie-ios`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
-  - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -657,8 +654,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/lottie-ios"
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
-  Permission-Camera:
-    :path: "../node_modules/react-native-permissions/ios/Camera.podspec"
   RCTRequired:
     :path: "../node_modules/react-native/Libraries/RCTRequired"
   RCTTypeSafety:
@@ -817,7 +812,6 @@ SPEC CHECKSUMS:
   lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   OneSignalXCFramework: 75844c29607ca95e6176f6f21257b4382c7fdbfb
-  Permission-Camera: 8fe4753b02396489b11c5089e4f57bab7fe1ef42
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   Protobuf: 351e9022fe13a6e2af00e9aefc22077cb88520f8
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
@@ -861,7 +855,7 @@ SPEC CHECKSUMS:
   RNCCheckbox: 357578d3b42652c78ee9a1bb9bcfc3195af6e161
   RNDeviceInfo: 475a4c447168d0ad4c807e48ef5e0963a0f4eb1b
   RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
-  RNPermissions: 2f74237e97b08beda01e914301e12524ddddf5b8
+  RNPermissions: a446c2ce1f3bf54383c283798307cca5f50d70e4
   RNReactNativeHapticFeedback: 22c5ecf474428766c6b148f96f2ff6155cd7225e
   RNReanimated: 031fe8d9ea93c2bd689a40f05320ef9d96f74d7f
   RNSentry: 6458ba85aa3f8ae291abed4f72abbd7080839c71
@@ -886,6 +880,6 @@ SPEC CHECKSUMS:
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: 40e1fc7d38a82d1ee0029e5280972be8f5b8c5a9
+PODFILE CHECKSUM: 4aa8ddaa0c97e9e7df4492fcb55403e504b94c59
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.14.3

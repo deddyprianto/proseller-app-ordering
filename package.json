@@ -1,6 +1,6 @@
 {
   "name": "auto-maxima",
-  "version": "1.1",
+  "version": "1.1.31",
   "private": true,
   "scripts": {
     "build:ios": "react-native bundle --minify --entry-file index.js --platform ios --dev false --bundle-output ./ios/main.jsbundle --assets-dest ./ios",
@@ -113,7 +113,7 @@
     "react-native-onesignal": "4.5.0",
     "react-native-open-maps": "^0.3.4",
     "react-native-paper": "^3.6.0",
-    "react-native-permissions": "^2.0.8",
+    "react-native-permissions": "^3.10.1",
     "react-native-phone-input": "^0.2.4",
     "react-native-popup-dialog": "^0.18.3",
     "react-native-qrcode-scanner": "1.5.5",
@@ -187,5 +187,13 @@
     "assets": [
       "./src/assets"
     ]
+  },
+  "resolutions": {
+    "react-native-permissions": "^3.10.1"
+  },
+  "overrides": {
+    "react-native-qrcode-scanner": {
+      "react-native-permissions": "^3.10.1"
+    }
   }
 }

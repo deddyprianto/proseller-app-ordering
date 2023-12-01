@@ -1,6 +1,7 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
+require_relative '../node_modules/react-native-permissions/scripts/setup'
 
 platform :ios, '11.0'
 
@@ -15,9 +16,31 @@ target 'Automaxima' do
     :hermes_enabled => false
   )
 
-  permissions_path = '../node_modules/react-native-permissions/ios'
+  # permissions_path = '../node_modules/react-native-permissions/ios'
 
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
+  # pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
+
+  setup_permissions([
+  # 'AppTrackingTransparency',
+  # 'BluetoothPeripheral',
+  # 'Calendars',
+  'Camera',
+  # 'Contacts',
+  # 'FaceID',
+  # 'LocationAccuracy',
+  # 'LocationAlways',
+  # 'LocationWhenInUse',
+  # 'MediaLibrary',
+  # 'Microphone',
+  # 'Motion',
+  # 'Notifications',
+  # 'PhotoLibrary',
+  # 'PhotoLibraryAddOnly',
+  # 'Reminders',
+  # 'Siri',
+  # 'SpeechRecognition',
+  # 'StoreKit',
+])
 
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
