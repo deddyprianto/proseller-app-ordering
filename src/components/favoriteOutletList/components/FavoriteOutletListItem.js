@@ -163,8 +163,6 @@ const FavoriteOutletListItem = ({item, disabled}) => {
     state => state.userReducer?.userPosition.userPosition,
   );
 
-  const {handleOpenStore} = useTime();
-
   const isOpen = CheckOutletStatus(item) === 'OPEN';
   const isUnavailable = CheckOutletStatus(item) === 'UNAVAILABLE';
 
@@ -275,10 +273,8 @@ const FavoriteOutletListItem = ({item, disabled}) => {
   };
 
   const renderStatus = () => {
-    const textAvailable = handleOpenStore(item, isOpen) ? 'OPEN' : 'CLOSED';
-    const styleView = handleOpenStore(item, isOpen)
-      ? styles.viewOpen
-      : styles.viewClose;
+    const textAvailable = isOpen ? 'OPEN' : 'CLOSED';
+    const styleView = isOpen ? styles.viewOpen : styles.viewClose;
     return (
       <View style={styleView}>
         <Text style={styles.textStatus}>{textAvailable}</Text>
