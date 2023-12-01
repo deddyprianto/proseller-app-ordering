@@ -26,6 +26,7 @@ import OneSignal from 'react-native-onesignal';
 import {deviceUserInfo} from './actions/user.action';
 import OfflineNotice from './components/OfflineNotice';
 import {
+  dataStores,
   generateOneMapToken,
   getCompanyInfo,
   getDefaultOutlet,
@@ -66,6 +67,7 @@ class Main extends Component {
     } catch (e) {}
 
     try {
+      await this.props.dispatch(dataStores());
       await this.props.dispatch(getTermsConditions());
       await this.props.dispatch(getColorSettings());
       await this.props.dispatch(getDefaultOutlet());

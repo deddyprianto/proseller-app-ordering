@@ -32,6 +32,13 @@ export const getCompanyInfo = () => {
   };
 };
 
+const findAvailableStore = (stores = []) => {
+  const availableStore = stores.filter(
+    store => store.orderingStatus === 'AVAILABLE',
+  );
+  return availableStore;
+};
+
 export const getDefaultOutlet = () => {
   return async (dispatch, getState) => {
     const state = getState();
@@ -85,7 +92,6 @@ export const getDefaultOutlet = () => {
           token,
         );
       } else if (outletSelectionMode === 'NEAREST') {
-        console.log(payload, 'payload');
         response = await fetchApiMasterData(
           '/outlets/nearestoutlet',
           'POST',
@@ -94,17 +100,31 @@ export const getDefaultOutlet = () => {
           token,
         );
       }
-      console.log(response, 'response default outlets');
       dispatch({
         type: 'OUTLET_SELECTION_MODE',
         outletSelectionMode: outletSelectionMode,
       });
-
       if (response.success) {
-        dispatch({
-          type: 'DATA_DEFAULT_OUTLET',
-          data: response.response.data,
-        });
+        if (response.response?.data?.orderingStatus === 'AVAILABLE') {
+          dispatch({
+            type: 'DATA_DEFAULT_OUTLET',
+            data: response.response.data,
+          });
+        } else {
+          const stores = state.storesReducer?.dataStores?.stores;
+          const availableStore = findAvailableStore(stores);
+          if (availableStore.length > 0) {
+            dispatch({
+              type: 'DATA_DEFAULT_OUTLET',
+              data: availableStore[0],
+            });
+          } else {
+            dispatch({
+              type: 'DATA_DEFAULT_OUTLET',
+              data: response.response.data,
+            });
+          }
+        }
       } else {
         dispatch({
           type: 'DATA_DEFAULT_OUTLET',
