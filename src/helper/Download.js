@@ -4,10 +4,15 @@ import {Alert, Platform} from 'react-native';
 import CameraRoll from '@react-native-community/cameraroll';
 
 export const permissionDownloadFile = (url, name, mimeType, message) => {
-  check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(result => {
+  const storagePermission =
+    Platform.OS === 'android'
+      ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE
+      : PERMISSIONS.IOS.PHOTO_LIBRARY;
+
+  check(storagePermission).then(result => {
     switch (result) {
       case RESULTS.DENIED:
-        request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(res =>
+        request(storagePermission).then(res =>
           downloadFile(url, name, mimeType, message),
         );
         break;

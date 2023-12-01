@@ -383,7 +383,7 @@ const Payment = () => {
   }, [onRefresh]);
 
   const handleDownloadQrCode = async qr => {
-    permissionDownloadFile(qr, 'qrcode', 'image/png', {
+    permissionDownloadFile(qr, `qrcode${order?.id}`, 'image/png', {
       title: 'Imaged Saved',
       description: 'Successfully saved image to your gallery.',
     });
