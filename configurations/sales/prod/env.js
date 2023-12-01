@@ -1,5 +1,5 @@
 const ENV = {
-  APP: 'Far East Flora',
+  APP: 'Sales Edgeworks',
   IS_DEVELOP: true,
 
   API_HOST: 'https://api-fareastflora.proseller.io/',
@@ -17,11 +17,11 @@ const ENV = {
 
   COUNTRY: 'Singapore',
 
-  COMPANY_NAME: 'Far East Flora',
+  COMPANY_NAME: 'Sales Edgeworks',
 
   COMPANY_TYPE: 'Retail',
 
-  COMPANY_POLICY_URL: 'https://fareastflora.proseller.io',
+  COMPANY_POLICY_URL: '',
 
   CURRENCY: 'SGD',
 
@@ -35,7 +35,7 @@ const ENV = {
 
   appUrl: 'https://ordering-fareastflora.proseller.io/',
 
-  appID: 'com.fareastflora.app',
+  appID: 'com.sales',
 
   retailerInfo: '',
 
