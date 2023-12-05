@@ -168,6 +168,7 @@ const ProductPresetList = ({products, basket}) => {
       <FlatList
         ref={productRef}
         data={products}
+        initialNumToRender={products?.length}
         showsVerticalScrollIndicator={false}
         viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
         renderItem={({item, index}) => renderProductItem(item, index)}

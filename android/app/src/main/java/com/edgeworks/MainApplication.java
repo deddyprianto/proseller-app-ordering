@@ -11,7 +11,7 @@ import com.BV.LinearGradient.LinearGradientPackage;
 // import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
-import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
+import com.zoontek.rnpermissions.RNPermissionsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.heanoria.library.reactnative.locationenabler.RNAndroidLocationEnablerPackage;
