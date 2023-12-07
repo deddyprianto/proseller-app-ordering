@@ -1,7 +1,6 @@
 import RNFetchBlob from 'rn-fetch-blob';
 import {PERMISSIONS, check, RESULTS, request} from 'react-native-permissions';
 import {Alert, Platform} from 'react-native';
-import CameraRoll from '@react-native-community/cameraroll';
 
 export const permissionDownloadFile = (url, name, mimeType, message) => {
   const storagePermission =
@@ -58,13 +57,6 @@ export const downloadFile = (url, name, mimeType, message) => {
   })
     .fetch('GET', url)
     .then(res => {
-      if (Platform.OS === 'ios') {
-        CameraRoll.saveToCameraRoll(url);
-        alertMessage(message, res.path(), mimeType);
-      } else {
-        CameraRoll.saveToCameraRoll(res.path()).then(() =>
-          alertMessage(message, res.path(), mimeType),
-        );
-      }
+      alertMessage(message, res.path(), mimeType);
     });
 };
