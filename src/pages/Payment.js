@@ -384,8 +384,9 @@ const Payment = () => {
 
   const handleDownloadQrCode = async qr => {
     permissionDownloadFile(qr, `qrcode${order?.id}`, 'image/png', {
-      title: 'Imaged Saved',
-      description: 'Successfully saved image to your gallery.',
+      title: 'QR Code Saved Successfully',
+      description:
+        'You can finalize the payment by uploading the QR Code to the payment platform.',
     });
   };
 

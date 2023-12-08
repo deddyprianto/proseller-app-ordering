@@ -427,8 +427,9 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
 
   const downloadQrCode = async () => {
     permissionDownloadFile(data?.action?.url, `qrcode${data.id}`, 'image/png', {
-      title: 'Imaged Saved',
-      description: 'Successfully saved image to your gallery.',
+      title: 'QR Code Saved Successfully',
+      description:
+        'You can finalize the payment by uploading the QR Code to the payment platform.',
     });
   };
   React.useEffect(() => {

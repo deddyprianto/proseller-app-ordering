@@ -1,40 +1,30 @@
 import RNFetchBlob from 'rn-fetch-blob';
 import {PERMISSIONS, check, RESULTS, request} from 'react-native-permissions';
 import {Alert, Platform} from 'react-native';
+import CameraRoll from '@react-native-community/cameraroll';
+import RNFS from 'react-native-fs';
 
 export const permissionDownloadFile = (url, name, mimeType, message) => {
-  const storagePermission =
-    Platform.OS === 'android'
-      ? PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE
-      : PERMISSIONS.IOS.PHOTO_LIBRARY;
-
-  check(storagePermission).then(result => {
-    switch (result) {
-      case RESULTS.DENIED:
-        request(storagePermission).then(res =>
-          downloadFile(url, name, mimeType, message),
-        );
-        break;
-      case RESULTS.GRANTED:
-        downloadFile(url, name, mimeType, message);
-    }
-  });
-};
-
-const onOpenFile = (url, type) => {
-  if (Platform.OS === 'ios') {
-    RNFetchBlob.ios.previewDocument(url);
+  if (Platform.OS === 'android') {
+    check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(result => {
+      switch (result) {
+        case RESULTS.DENIED:
+          request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE).then(res =>
+            downloadFile(url, name, mimeType, message),
+          );
+          break;
+        case RESULTS.GRANTED:
+          downloadFile(url, name, mimeType, message);
+          break;
+      }
+    });
   } else {
-    RNFetchBlob.android.actionViewIntent(url, type);
+    downloadFile(url, name, mimeType, message);
   }
 };
 
 const alertMessage = (message, url, type) => {
   Alert.alert(message.title, message.description, [
-    {
-      text: 'Open',
-      onPress: () => onOpenFile(url, type),
-    },
     {
       text: 'Close',
     },
@@ -42,21 +32,42 @@ const alertMessage = (message, url, type) => {
 };
 
 export const downloadFile = (url, name, mimeType, message) => {
+  const currentDate = new Date();
+  const timestamp = currentDate.getTime();
+  const filePath = `${RNFS.DocumentDirectoryPath}/${name}_${timestamp}.png`;
+
   let dirs = RNFetchBlob.fs.dirs;
-  const path = dirs.DownloadDir;
-  RNFetchBlob.config({
-    fileCache: true,
-    path,
-    addAndroidDownloads: {
-      useDownloadManager: true,
-      notification: true,
-      title: name,
-      path: `${path}/${name}.png`,
-      mime: mimeType,
-    },
-  })
-    .fetch('GET', url)
-    .then(res => {
-      alertMessage(message, res.path(), mimeType);
-    });
+  const pathAndroid = dirs.DownloadDir;
+
+  if (Platform.OS === 'android') {
+    RNFetchBlob.config({
+      fileCache: true,
+      path: pathAndroid,
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        title: name,
+        path: `${pathAndroid}/${name}_${timestamp}.png`,
+        mime: mimeType,
+      },
+    })
+      .fetch('GET', url)
+      .then(res => {
+        alertMessage(message, res.path(), mimeType);
+      });
+  } else {
+    RNFS.downloadFile({
+      fromUrl: url,
+      toFile: filePath,
+    })
+      .promise.then(response => {
+        CameraRoll.saveToCameraRoll(url);
+        setTimeout(() => {
+          alertMessage(message, filePath, mimeType);
+        }, 500);
+      })
+      .catch(err => {
+        console.log('Download error:', err);
+      });
+  }
 };
