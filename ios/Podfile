@@ -85,6 +85,7 @@ target 'Automaxima' do
 
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
 
 
 
