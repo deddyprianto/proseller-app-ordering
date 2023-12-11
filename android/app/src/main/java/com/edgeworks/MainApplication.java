@@ -23,6 +23,7 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.reactnativecommunity.cameraroll.CameraRollPackage;
+import com.rnfs.RNFSPackage;
 
 // react native unimodules
 import java.util.Arrays;

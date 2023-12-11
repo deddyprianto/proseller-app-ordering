@@ -231,6 +231,7 @@ android {
 
 dependencies {
     compile project(':@react-native-community_cameraroll')
+    implementation project(':react-native-fs')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-sms-retriever')
     // implementation project(':react-native-device-brightness')
