@@ -595,6 +595,7 @@ const Cart = props => {
     };
     loadData();
   }, [dispatch, basket, outlet, availablePreorderDate]);
+
   useEffect(() => {
     const userDecrypt = CryptoJS.AES.decrypt(
       userDetail,
@@ -613,8 +614,6 @@ const Cart = props => {
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true);
-
       const orderingModesFieldFiltered = orderingModesField.filter(mode => {
         if (outlet[mode.isEnabledFieldName]) {
           return mode;
@@ -632,8 +631,6 @@ const Cart = props => {
           }),
         );
       }
-
-      setIsLoading(false);
     };
 
     loadData();
@@ -663,6 +660,7 @@ const Cart = props => {
       ? subTotalAfterDiscount
       : totalGrossAmount;
     setSubTotal(result);
+
     setIsLoading(false);
   }, [basket]);
 
@@ -948,6 +946,7 @@ const Cart = props => {
   };
 
   const handleClickButtonPayment = async () => {
+    setIsLoading(true);
     try {
       const currentOutlet = await dispatch(getOutletById(outlet.id));
       await dispatch(sendNotes(notes));
@@ -1084,16 +1083,19 @@ const Cart = props => {
         );
         findMinimumDate = findMinimumDate?.latestSelfSelectionDate;
       }
-      Actions.settleOrder({
+
+      await Actions.settleOrder({
         pembayaran: pembayaran,
         url: url,
         outlet: outlet,
         step: 3,
         latestSelfSelectionDate: findMinimumDate,
       });
+      setIsLoading(false);
     } catch (e) {
       reportSentry('submitAndPay', outlet, e);
       await dispatch(showSnackbar({message: 'Please try again'}));
+      setIsLoading(false);
     }
   };
 
@@ -1738,16 +1740,15 @@ const Cart = props => {
       return <View style={styles.viewBackgroundTransparent} />;
     }
   };
-
   return (
     <SafeAreaView style={styles.root}>
+      <LoadingScreen loading={isLoading} />
       <View style={styles.container}>
         <Body>
           <Header
             customRightIcon={renderStep}
             title={props.step ? 'Order Details' : 'Cart'}
           />
-          <LoadingScreen loading={isLoading} />
           <KeyboardAvoidingView
             enabled={isIos}
             keyboardVerticalOffset={120}
