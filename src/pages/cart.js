@@ -1528,7 +1528,7 @@ const Cart = props => {
     return (
       <TouchableOpacity
         style={styleDisabled}
-        disabled={disabled}
+        disabled={disabled || isLoading}
         onPress={() => {
           handleClickButtonPayment();
         }}>
