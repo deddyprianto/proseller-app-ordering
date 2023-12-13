@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
+  Dimensions,
 } from 'react-native';
 
 import {useSelector} from 'react-redux';
@@ -40,9 +41,11 @@ const useStyles = () => {
       margin: 16,
     },
     viewImage: {
-      borderRadius: 8,
+      borderRadius: 12,
       margin: 16,
       padding: 16,
+      width: Dimensions.get('window').width - 32,
+      aspectRatio: 2 / 1,
       backgroundColor: colors.brandTertiary,
     },
     textMembershipDetail: {
