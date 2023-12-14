@@ -381,6 +381,13 @@ const useStyles = () => {
     taxIncl: {
       color: colors.textTertiary,
     },
+    scanThisCode: {
+      marginTop: 16,
+      marginBottom: 6,
+      fontWeight: '500',
+      fontSize: 16,
+      textAlign: 'center',
+    },
   });
   return {styles, colors};
 };
@@ -849,8 +856,11 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
         data?.orderingMode === store_checkout ? (
           <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
             <View style={styles.mt12}>
-              <QRCode size={200} value={data.transactionRefNo} />
+              <QRCode size={128} value={data.transactionRefNo} />
             </View>
+            <GlobalText style={styles.scanThisCode}>
+              Scan this QR Code in Exit Verification Counter
+            </GlobalText>
             <GlobalText style={[styles.mt8, styles.paymentSuccessText]}>
               Payment Success
             </GlobalText>
@@ -858,7 +868,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
         ) : null}
 
         {data?.queueNo &&
-          data?.orderingMode !== 'STORECHECKOUT' &&
+          data?.orderingMode !== store_checkout &&
           data?.outlet?.outletType !== RETAIL && (
             <View style={styles.viewQueueNumber}>
               <Text style={styles.textQueueNumber1}>Queue No.</Text>
@@ -877,9 +887,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
               <View style={styles.orderStatus}>
                 <GlobalText style={[styles.boldFont, styles.grayColor]}>
                   {handlePaymentStatus(data?.status)}{' '}
-                  {additionalSetting().enableScanAndGo
-                    ? handleVerified()
-                    : null}
+                  {additionalSetting().enableScanAndGo && handleVerified()}
                 </GlobalText>
               </View>
             </View>
@@ -1043,8 +1051,18 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
               Ordering Type Details
             </GlobalText>
           </View>
-          {renderIsItemSelection()}
-          {renderAddress()}
+          {data?.orderingMode === store_checkout ? (
+            <View style={[styles.shadowBox, styles.boxMain, styles.p12]}>
+              <GlobalText style={styles.deliveryText}>
+                {handleDisplayName(data?.orderingMode)}{' '}
+              </GlobalText>
+            </View>
+          ) : (
+            <>
+              {renderIsItemSelection()}
+              {renderAddress()}
+            </>
+          )}
           <View style={styles.orderDetailWrapCOntainer}>
             <GlobalText style={styles.oredrDetailText}>
               Payment Details
