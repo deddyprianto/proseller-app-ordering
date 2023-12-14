@@ -209,6 +209,7 @@ const ScannerBarcode = () => {
       handleCloseSearchProductByBarcodeModal();
       Actions.productDetail({
         productId: response?.data?.id,
+        isFromScanBarcode: true,
       });
     } else {
       setIsLoading(false);
