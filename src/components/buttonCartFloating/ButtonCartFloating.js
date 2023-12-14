@@ -51,7 +51,6 @@ const useStyles = () => {
       width: 24,
       height: 24,
       marginRight: 7,
-      color: theme.colors.textSecondary,
     },
     iconDot: {
       width: 10,

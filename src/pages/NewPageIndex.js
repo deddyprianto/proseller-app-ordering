@@ -280,7 +280,10 @@ const NewPageIndex = () => {
 
   const renderNavbarItem = ({props, name, index}) => {
     if (name === 'Scan') {
-      if (additionalSetting().enableScannerButton) {
+      if (
+        additionalSetting().enableScannerButton &&
+        defaultOutlet?.enableStoreCheckOut
+      ) {
         return renderNavbarScan();
       }
       return null;

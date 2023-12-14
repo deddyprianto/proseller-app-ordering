@@ -36,7 +36,7 @@ const additionalSetting = () => {
   const isUsingValidityDays = false;
   const enableUpcaScanner = false;
   const maxVoucherInOneTransaction = 1;
-  const enableScannerButton = false;
+  const enableScannerButton = true;
   const isAutoSelectDeliveryProviderType = true;
   const popupNotificationTextAlign = 'left';
 
