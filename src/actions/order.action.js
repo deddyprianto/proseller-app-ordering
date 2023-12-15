@@ -1734,6 +1734,16 @@ export const addProductToBasket = ({
         type: 'OFFLINE_CART',
         product: response.response.data,
       });
+
+      if (response.response.status === 'FAILED') {
+        Alert.alert('FAILED', response.response.data.message, [
+          {
+            text: 'OK',
+            onPress: () => {},
+            style: 'ok',
+          },
+        ]);
+      }
       return response;
     } catch (error) {
       reportSentry('cart/additem', selectedProduct, error);

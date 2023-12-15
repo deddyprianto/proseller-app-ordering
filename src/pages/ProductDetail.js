@@ -30,7 +30,11 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 
 import {getProductById} from '../actions/product.action';
-import {addProductToBasket, updateProductBasket} from '../actions/order.action';
+import {
+  addProductToBasket,
+  resetOrderingMode,
+  updateProductBasket,
+} from '../actions/order.action';
 
 import appConfig from '../config/appConfig';
 
@@ -553,6 +557,7 @@ const ProductDetail = ({
 
   const handleAddOrUpdateProduct = async () => {
     setIsLoading(true);
+    await dispatch(resetOrderingMode());
     const showPopup = await checkProductScanGo(isFromScanBarcode);
     if (!showPopup) {
       handleAddUpdateProduct();
@@ -875,7 +880,9 @@ const ProductDetail = ({
         closeModal={closeAlert}
         onCancel={closeAlert}
         onApprove={handleAddUpdateProduct}
-        title="Proceed to Add Item to Cart?"
+        title={`Proceed to ${
+          !isEmptyObject(selectedProduct) ? 'Update' : 'Add'
+        } Item?`}
         description={`Your current cart is only eligible for ${
           defaultOutlet?.name
         } therefore it will be emptied. Do you still want to proceed?`}
