@@ -166,12 +166,12 @@ const ScannerBarcode = () => {
   };
 
   const goToProductDetail = response => {
+    setShowAlert(false);
     Actions.productDetail({
       productId: response?.data?.id,
       resetScanCode,
       isFromScanBarcode: true,
     });
-    setShowAlert(false);
   };
 
   const handleSuccess = async (response, oldBarcode, showError) => {
@@ -207,10 +207,8 @@ const ScannerBarcode = () => {
       setSearchCondition('success');
       setIsLoading(false);
       handleCloseSearchProductByBarcodeModal();
-      Actions.productDetail({
-        productId: response?.data?.id,
-        isFromScanBarcode: true,
-      });
+      setResponseBarcode(response);
+      handleSuccess(response, value.oldBarcode);
     } else {
       setIsLoading(false);
       setSearchCondition('error');
@@ -377,7 +375,8 @@ const ScannerBarcode = () => {
       {renderButtonCartFloating()}
       <ModalAction
         isVisible={showAlert}
-        title={`Proceed to ${defaultOutlet?.name}`}
+        title={`Proceed to ${defaultOutlet.storeCheckOutName ||
+          'Store Checkout'}`}
         description="Your current cart will be emptied.
 Do you still want to proceed?"
         approveTitle="Proceed"
