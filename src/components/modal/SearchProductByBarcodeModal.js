@@ -161,7 +161,7 @@ const SearchProductByBarcodeModal = ({
           setSearchTextInput(value);
         }}
         onSubmitEditing={value => {
-          onSubmit(value);
+          onSubmit(value.nativeEvent.text);
         }}
       />
     );
