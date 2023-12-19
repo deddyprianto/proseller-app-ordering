@@ -20,7 +20,7 @@ import {
   userPosition,
 } from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
-import {Alert, Linking} from 'react-native';
+import {Alert, Linking, PermissionsAndroid} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
@@ -190,11 +190,16 @@ class Home extends Component {
     try {
       await Geolocation.getCurrentPosition(
         async position => {
-          console.log(position, 'position');
           await this.props.dispatch(userPosition(position));
         },
         async error => {
-          console.log(error, 'position');
+          if (error.code === 1) {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            );
+            granted === PermissionsAndroid.RESULTS.GRANTED &&
+              this.getUserPosition();
+          }
         },
         {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
       );
