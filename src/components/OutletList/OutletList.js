@@ -8,6 +8,7 @@ import Theme from '../../theme';
 
 import {groupBy} from 'lodash';
 import {isEmptyObject} from '../../helper/CheckEmpty';
+import CheckOutletStatus from '../../helper/CheckOutletStatus';
 
 const useStyles = () => {
   const theme = Theme();
@@ -64,6 +65,13 @@ const OutletList = ({outlets, nearestOutlet, handleChange}) => {
   };
 
   const renderOutletList = data => {
+    data?.sort((a, b) => {
+      return CheckOutletStatus(a) === 'OPEN'
+        ? -1
+        : CheckOutletStatus(b) === 'OPEN'
+        ? 1
+        : 0;
+    });
     const result = data?.map(item => {
       return <OutletListItem item={item} handleChange={handleChange} />;
     });
