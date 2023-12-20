@@ -52,7 +52,6 @@ import ENV from '../../configurations/<%= name.toLowerCase() %>/<%= env %>/env';
 // import ENV from '../../env';
 // import ENV from '../../env-demo';
 import Base64 from 'Base64';
-import {Platform} from 'react-native';
 
 let Data = {};
 // if we build to android, then read .env file
@@ -67,8 +66,7 @@ const awsConfig = {
   // AWS CONFIG
   region: Data.REGION,
   endpoint: Data.ENDPOINT,
-  onesignalID:
-    Platform.OS === 'android' ? Data.ONESIGNAL_ID : Data.ONE_SIGNAL_IOS_ID,
+  onesignalID: Data.ONESIGNAL_ID,
 
   // BASE URL CRM
   base_url: `${Data.API_HOST}crm/api`,
