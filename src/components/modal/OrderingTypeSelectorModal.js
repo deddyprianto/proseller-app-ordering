@@ -193,6 +193,7 @@ const OrderingTypeSelectorModal = ({
   const orderSetting = useSelector(
     state => state.settingReducer?.allowedOrder?.settingValue,
   );
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
   //root cause of bug
   // useEffect(() => {
@@ -347,7 +348,11 @@ const OrderingTypeSelectorModal = ({
 
   const renderBody = () => {
     const result = orderingTypes.map(type => {
-      return renderOrderingTypeItem(type);
+      if (type?.key === 'STORECHECKOUT' && !basket?.isStoreCheckoutCart) {
+        return;
+      } else {
+        return renderOrderingTypeItem(type);
+      }
     });
 
     return <View style={styles.body}>{result}</View>;
