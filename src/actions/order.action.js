@@ -1735,8 +1735,10 @@ export const addProductToBasket = ({
         product: response.response.data,
       });
 
-      if (response.response.status === 'FAILED') {
-        Alert.alert('FAILED', response.response.data.message, [
+      if (response.success === false) {
+        const errMessage =
+          response.response?.data?.message || response.response?.message;
+        Alert.alert('FAILED', errMessage, [
           {
             text: 'OK',
             onPress: () => {},

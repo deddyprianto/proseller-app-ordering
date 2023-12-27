@@ -417,6 +417,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   } = useOrder();
   const [updateData, setUpdatData] = React.useState(false);
   const [showDetailDelivery, setShowDetailDelivery] = React.useState(false);
+  const [listItems, setListItems] = React.useState([]);
   const toggleOrder = () => setShowAllOrder(prevState => !prevState);
   const togglePreOrder = () => setShowAllPreOrder(prevState => !prevState);
   const preorder_item = 'Preorder Items';
@@ -442,6 +443,15 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   React.useEffect(() => {
     handleOrderingType();
   }, []);
+  React.useEffect(() => {
+    const filtered = defaultOrder.filter(
+      obj => obj.id !== 'VOUCHER_FORFEITED_AMOUNT',
+    );
+    const temp = additionalSetting().showForfeitedItemInTransaction
+      ? defaultOrder
+      : filtered;
+    setListItems(temp);
+  }, [defaultOrder]);
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
@@ -1099,7 +1109,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
               </View>
             </>
           ) : null}
-          {defaultOrder.length > 0 ? (
+          {listItems.length > 0 ? (
             <>
               {listPreorder.length > 0
                 ? renderHeader(ready_items, {marginBottom: 16})
@@ -1109,27 +1119,26 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
                 onPress={toggleOrder}
                 style={styles.orderDetailWrapCOntainer}>
                 <GlobalText style={styles.oredrDetailText}>
-                  Item Details ({defaultOrder.length}{' '}
-                  {handleItemText(defaultOrder)})
+                  Item Details ({listItems.length} {handleItemText(listItems)})
                 </GlobalText>
-                {defaultOrder.length > 1 && (
+                {listItems.length > 1 && (
                   <View style={[styles.notesProductContainer, styles.mlAuto]}>
                     <GlobalText style={[styles.moreItemText]}>
                       {showAllOrder ? (
                         'Hide Items'
                       ) : (
-                        <>{defaultOrder.length - 1} More Item</>
+                        <>{listItems.length - 1} More Item</>
                       )}
                     </GlobalText>
                     {showAllOrder ? <ArrowUpSvg /> : <ArrowBottom />}
                   </View>
                 )}
               </TouchableOpacity>
-              {defaultOrder.length > 0 ? (
+              {listItems.length > 0 ? (
                 <View style={styles.productContainer}>
                   <FlatList
                     keyExtractor={(item, index) => index.toString()}
-                    data={defaultOrder || []}
+                    data={listItems || []}
                     renderItem={renderItemDetails}
                   />
                 </View>
