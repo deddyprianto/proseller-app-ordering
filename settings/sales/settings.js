@@ -18,6 +18,7 @@ const additionalSetting = () => {
   const enableScannerButton = true;
   const isAutoSelectDeliveryProviderType = true;
   const popupNotificationTextAlign = 'left';
+  const showForfeitedItemInTransaction = false;
 
   return {
     additionalPolicy,
@@ -39,6 +40,7 @@ const additionalSetting = () => {
     enableScannerButton,
     isAutoSelectDeliveryProviderType,
     popupNotificationTextAlign,
+    showForfeitedItemInTransaction,
   };
 };
 
