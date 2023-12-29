@@ -18,6 +18,7 @@ import awsConfig from '../config/awsConfig';
 import {Body, Header} from '../components/layout';
 
 import {useSelector} from 'react-redux';
+import {navigate} from '../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -159,7 +160,7 @@ const ECard = () => {
           <Text
             onPress={() => {
               Actions.pop();
-              Actions.push('redeem');
+              navigate('redeem');
             }}
             style={styles.textHere}>
             here

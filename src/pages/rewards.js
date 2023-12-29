@@ -48,6 +48,7 @@ import VersionCheck from 'react-native-version-check';
 import RewardsSVC from '../components/rewardsSVC';
 import {getSVCBalance, getSVCCard} from '../actions/SVC.action';
 import {Body} from '../components/layout';
+import {navigate} from '../utils/navigation.utils';
 // import {dataPromotion} from '../actions/promotion.action';
 
 class Rewards extends Component {
@@ -129,7 +130,7 @@ class Rewards extends Component {
           '',
         );
         // await this.props.dispatch(paymentRefNo(refNo));
-        Actions.scan({paymentRefNo: refNo});
+        navigate('scan', {paymentRefNo: refNo});
       }
     } catch (e) {}
   };
@@ -138,7 +139,7 @@ class Rewards extends Component {
     try {
       if (this.props.paymentRefNo != undefined) {
         if (Actions.currentScene === 'pageIndex') {
-          Actions.scan({paymentRefNo: this.props.paymentRefNo});
+          navigate('scan', {paymentRefNo: this.props.paymentRefNo});
         }
       }
     } catch (e) {}
@@ -322,7 +323,7 @@ class Rewards extends Component {
   };
 
   detailStamps() {
-    Actions.detailStamps();
+    navigate('detailStamps');
   }
 
   greetWelcomeUser = () => {
@@ -374,7 +375,7 @@ class Rewards extends Component {
     }
 
     var dataDiri = {dataDiri: userDetail};
-    Actions.editProfile(dataDiri);
+    navigate('editProfile', dataDiri);
   };
 
   render() {

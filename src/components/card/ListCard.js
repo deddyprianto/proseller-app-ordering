@@ -43,6 +43,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
 import AsyncStorage from '@react-native-community/async-storage';
 import {check, PERMISSIONS} from 'react-native-permissions';
+import {navigate} from '../../utils/navigation.utils';
 class ListCard extends Component {
   constructor(props) {
     super(props);
@@ -501,7 +502,7 @@ class ListCard extends Component {
       // await this.setState({loading: false});
 
       if (response.success == true) {
-        Actions.hostedPayment({
+        navigate('hostedPayment', {
           url: response.response.data.url,
           data: response.response.data,
           setLoader: this.setLoader,

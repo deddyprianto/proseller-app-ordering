@@ -17,7 +17,6 @@ import Fontisto from 'react-native-vector-icons/Feather';
 
 import {logoutUser} from '../actions/auth.actions';
 import colorConfig from '../config/colorConfig';
-import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -31,6 +30,7 @@ import {
 } from '../actions/payment.actions';
 import Loader from './loader';
 import {getTermsConditions} from '../actions/order.action';
+import {navigate} from '../utils/navigation.utils';
 
 class AccountMenuList extends Component {
   constructor(props) {
@@ -66,7 +66,7 @@ class AccountMenuList extends Component {
     }
 
     var dataDiri = {dataDiri: userDetail};
-    Actions.editProfile(dataDiri);
+    navigate('editProfile', dataDiri);
   };
 
   notifications = () => {
@@ -83,11 +83,11 @@ class AccountMenuList extends Component {
     }
 
     var dataDiri = {dataDiri: userDetail};
-    Actions.notifications(dataDiri);
+    navigate('notifications', dataDiri);
   };
 
   address = () => {
-    Actions.listAddress();
+    navigate('listAddress');
   };
 
   prompLogout = () => {
@@ -123,8 +123,8 @@ class AccountMenuList extends Component {
   gotoAccounts = async item => {
     const {intlData} = this.props;
     try {
-      if (item.isAccountRequired != false) {
-        Actions.listCard({intlData, item});
+      if (item.isAccountRequired !== false) {
+        navigate('listCard', {intlData, item});
       } else {
         await this.setState({selectedAccount: item});
         this.RBSheet.open();
@@ -362,7 +362,7 @@ class AccountMenuList extends Component {
 
   goToInbox = () => {
     try {
-      Actions.inbox();
+      navigate('inbox');
     } catch (e) {}
   };
 
@@ -536,7 +536,7 @@ class AccountMenuList extends Component {
           </TouchableOpacity>
           {referral != undefined && referral.capacity > 0 ? (
             <TouchableOpacity
-              onPress={() => Actions.listReferral()}
+              onPress={() => navigate('listReferral')}
               style={styles.cardMenu}>
               <View style={styles.itemMenu}>
                 <Fontisto
@@ -622,7 +622,7 @@ class AccountMenuList extends Component {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Actions.listLanguages()}
+            onPress={() => navigate('listLanguages')}
             style={styles.cardMenu}>
             <View style={styles.itemMenu}>
               <Fontisto
@@ -649,7 +649,7 @@ class AccountMenuList extends Component {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Actions.termsAndConditions()}
+            onPress={() => navigate('termsAndConditions')}
             style={styles.cardMenu}>
             <View style={styles.itemMenu}>
               <Fontisto

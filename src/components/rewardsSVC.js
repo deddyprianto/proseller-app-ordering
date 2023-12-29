@@ -9,10 +9,10 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
-import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import appConfig from '../config/appConfig';
+import {navigate} from '../utils/navigation.utils';
 
 class RewardsSVC extends Component {
   constructor(props) {
@@ -77,7 +77,7 @@ class RewardsSVC extends Component {
               alignItems: 'center',
             }}
             onPress={() => {
-              Actions.summary();
+              navigate('summary');
             }}>
             <Text
               style={{

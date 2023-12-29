@@ -7,7 +7,6 @@
 
 import React, {useEffect, useState} from 'react';
 
-import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import {useSelector} from 'react-redux';
 
@@ -28,6 +27,7 @@ import Theme from '../theme';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {Body} from '../components/layout';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -95,7 +95,7 @@ const MyDeliveryAddress = ({fromScene, handleResetProvider}) => {
         <TouchableOpacity
           style={styles.touchableAddNewAddressButton}
           onPress={() => {
-            Actions.addNewAddress();
+            navigate('addNewAddress');
           }}>
           <Text style={styles.textAddNewAddressButton}>Add New Address</Text>
         </TouchableOpacity>

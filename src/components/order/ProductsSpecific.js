@@ -55,6 +55,7 @@ import EmptySearch from '../atom/EmptySearch';
 import NewSearch from '../atom/NewSearch';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import CartIcon from './CartIcon';
+import {navigate} from '../../utils/navigation.utils';
 
 const ViewTypes = {
   FULL: 0,
@@ -1195,7 +1196,7 @@ class ProductsSpecific extends Component {
       cat.id = cat?.categoryID?.replace('category::', '');
     }
     cat.isProductPreset = true;
-    Actions.push('specificCategory', {
+    navigate('specificCategory', {
       categoryDetail: cat,
       item,
     });
@@ -2063,7 +2064,7 @@ class ProductsSpecific extends Component {
                       justifyContent: 'center',
                     }}
                     onPress={() =>
-                      Actions.scanBarcode({
+                      navigate('scanBarcode', {
                         setProductFromBarcode: this.toggleModal,
                       })
                     }>

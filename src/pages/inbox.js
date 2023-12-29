@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import {dataInbox, readMessage} from '../actions/inbox.action';
@@ -24,6 +23,7 @@ import ListInbox from '../components/inbox/ListInbox';
 import InboxLoading from '../components/shimmerLoading/InboxLoading';
 import {HistoryNotificationModal} from '../components/modal';
 import {openPopupNotification} from '../actions/order.action';
+import {navigate} from '../utils/navigation.utils';
 
 class Inbox extends Component {
   constructor(props) {
@@ -68,7 +68,7 @@ class Inbox extends Component {
   };
 
   openDetailMessage = (inbox, index) => {
-    Actions.inboxDetailMessage({data: inbox});
+    navigate('inboxDetailMessage', {data: inbox});
     setTimeout(() => {
       this.readMessage(inbox, index);
     }, 50);

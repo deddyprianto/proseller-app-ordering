@@ -20,6 +20,7 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
+import {navigate} from '../utils/navigation.utils';
 
 class StoreSeeMorePromotion extends Component {
   constructor(props) {
@@ -34,7 +35,7 @@ class StoreSeeMorePromotion extends Component {
   }
 
   storeDetailPromotion = item => {
-    Actions.storeDetailPromotion({dataPromotion: item});
+    navigate('storeDetailPromotion', {dataPromotion: item});
   };
 
   render() {

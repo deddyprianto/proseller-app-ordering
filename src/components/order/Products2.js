@@ -52,6 +52,7 @@ import {StatusBarHeight} from '../../helper/StatusBarChecker';
 import EmptySearch from '../atom/EmptySearch';
 import NewSearch from '../atom/NewSearch';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import {navigate} from '../../utils/navigation.utils';
 
 const ViewTypes = {
   FULL: 0,
@@ -2114,7 +2115,10 @@ class Products2 extends Component {
                     justifyContent: 'center',
                   }}
                   onPress={() =>
-                    Actions.storeDetailStores({item: this.state.item, intlData})
+                    navigate('storeDetailStores', {
+                      item: this.state.item,
+                      intlData,
+                    })
                   }>
                   <Text
                     style={{
@@ -2306,7 +2310,10 @@ class Products2 extends Component {
                   justifyContent: 'center',
                 }}
                 onPress={() =>
-                  Actions.storeDetailStores({item: this.state.item, intlData})
+                  navigate('storeDetailStores', {
+                    item: this.state.item,
+                    intlData,
+                  })
                 }>
                 <Text
                   style={{

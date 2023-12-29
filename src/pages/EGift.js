@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {Actions} from 'react-native-router-flux';
 
 import {
   StyleSheet,
@@ -18,7 +17,7 @@ import {getGiftCardCategories} from '../actions/gift.action';
 import LoadingScreen from '../components/loadingScreen';
 import {Body, Header} from '../components/layout';
 import {isEmptyArray} from '../helper/CheckEmpty';
-import theme from '../theme';
+import {navigate} from '../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -100,7 +99,7 @@ const EGift = () => {
           style={styles.viewImage}
           disabled={isEmptyArray(giftCardCategories)}
           onPress={() => {
-            Actions.sendEGift({categoryId: category.id});
+            navigate('sendEGift', {categoryId: category.id});
           }}>
           <Image
             key={index}

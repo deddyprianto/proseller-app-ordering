@@ -23,6 +23,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {isEmptyObject} from '../../helper/CheckEmpty';
 import calculateTAX from '../../helper/TaxCalculation';
 import {getBackupOutlet} from '../../actions/stores.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class SVCDetail extends Component {
   constructor(props) {
@@ -130,8 +131,7 @@ class SVCDetail extends Component {
     try {
       pembayaran.cartDetails = detailPurchase;
     } catch (e) {}
-
-    Actions.settleOrder({
+    navigate('settleOrder', {
       pembayaran: pembayaran,
       url: url,
       outlet: defaultOutlet,

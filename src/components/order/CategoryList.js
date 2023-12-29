@@ -12,6 +12,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {getAllCategory, isParentCategory} from '../../actions/order.action';
 import CategoryCard from './CategoryCard';
+import {navigate} from '../../utils/navigation.utils';
 
 class CategoryList extends Component {
   constructor(props) {
@@ -69,19 +70,19 @@ class CategoryList extends Component {
     try {
       let {outlet} = this.props;
       if (categoryDetail.type === 'all') {
-        Actions.push('menuCategory');
+        navigate('menuCategory');
       } else {
         const isParent = await this.props.dispatch(
           isParentCategory(categoryDetail.sortKey),
         );
 
         if (isParent === true) {
-          Actions.push('menuCategory', {
+          navigate('menuCategory', {
             parentCategoryID: categoryDetail.sortKey,
             categoryName: categoryDetail.name,
           });
         } else {
-          Actions.push('specificCategory', {categoryDetail, item: outlet});
+          navigate('specificCategory', {categoryDetail, item: outlet});
         }
       }
     } catch (e) {}

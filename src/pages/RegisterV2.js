@@ -7,13 +7,13 @@ import {normalizeLayoutSizeHeight} from '../helper/Layout';
 import CheckBox from '@react-native-community/checkbox';
 import GlobalButton from '../components/button/GlobalButton';
 import {TouchableOpacity} from 'react-native';
-import {Actions} from 'react-native-router-flux';
 import GlobalModal from '../components/modal/GlobalModal';
 import {useSelector} from 'react-redux';
 import {emailValidation} from '../helper/Validation';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput/FieldPhoneNumberInput';
 import useSettings from '../hooks/settings/useSettings';
 import additionalSetting from '../config/additionalSettings';
+import {navigate} from '../utils/navigation.utils';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -103,7 +103,7 @@ const RegisterV2 = props => {
 
   const [emailNotValid, setEmailNotValid] = React.useState(false);
   const openLoginPage = () => {
-    Actions.login();
+    navigate('login');
   };
 
   const priority_email = 'EMAIL';

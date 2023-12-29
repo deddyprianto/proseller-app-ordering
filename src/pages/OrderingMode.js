@@ -17,8 +17,8 @@ import OrderingModeList from '../components/orderingModeList/OrderingModeList';
 import {getAllowedOrder} from '../actions/setting.action';
 import appConfig from '../config/appConfig';
 import {changeOrderingMode} from '../actions/order.action';
-import {Actions} from 'react-native-router-flux';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
+import {navigate} from '../utils/navigation.utils';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -172,7 +172,7 @@ const OrderingMode = () => {
         orderingMode: orderingModeSelected,
       }),
     );
-    Actions.push('orderHere');
+    navigate('orderHere');
     setIsLoading(false);
   };
 

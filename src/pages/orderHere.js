@@ -6,7 +6,6 @@
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Actions} from 'react-native-router-flux';
 import {ScrollView} from 'react-native-gesture-handler';
 import {
   StyleSheet,
@@ -14,7 +13,6 @@ import {
   Text,
   TouchableOpacity,
   RefreshControl,
-  Image,
   SafeAreaView,
 } from 'react-native';
 
@@ -34,6 +32,7 @@ import ProductPresetList from '../components/productPresetList/ProductPresetList
 import {Body} from '../components/layout';
 import useSettings from '../hooks/settings/useSettings';
 import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloating';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -261,7 +260,7 @@ const OrderHere = () => {
       <TouchableOpacity
         disabled
         onPress={() => {
-          Actions.store();
+          navigate('store');
         }}>
         <Text style={styles.textHeader}>{defaultOutlet?.name}</Text>
       </TouchableOpacity>

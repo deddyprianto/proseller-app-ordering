@@ -38,6 +38,7 @@ import HomeRetail from './HomeRetail';
 import HomeFnB from './HomeFnB';
 import {getAllowedOrder, getLoginSettings} from '../actions/setting.action';
 import {HistoryNotificationModal} from '../components/modal';
+import {navigate} from '../utils/navigation.utils';
 
 class Home extends Component {
   constructor(props) {
@@ -144,7 +145,7 @@ class Home extends Component {
           '',
         );
         // await this.props.dispatch(paymentRefNo(refNo));
-        Actions.scan({paymentRefNo: refNo});
+        navigate('scan', {paymentRefNo: refNo});
       }
     } catch (e) {}
   };
@@ -153,7 +154,7 @@ class Home extends Component {
     try {
       if (this.props.paymentRefNo != undefined) {
         if (Actions.currentScene === 'pageIndex') {
-          Actions.scan({paymentRefNo: this.props.paymentRefNo});
+          navigate('scan', {paymentRefNo: this.props.paymentRefNo});
         }
       }
     } catch (e) {}

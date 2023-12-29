@@ -27,6 +27,7 @@ import appConfig from '../config/appConfig';
 import {format} from 'date-fns';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {navigate} from '../utils/navigation.utils';
 
 export default class PaymentAddVoucers extends Component {
   constructor(props) {
@@ -511,7 +512,7 @@ export default class PaymentAddVoucers extends Component {
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
-            Actions.redeemVoucher({
+            navigate('redeemVoucher', {
               setVouchers: this.setVouchers,
               dataVoucer: this.props.dataVoucer,
             });

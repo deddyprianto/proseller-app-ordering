@@ -31,6 +31,7 @@ import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import Loader from './../loader';
 import {getAccountPayment} from '../../actions/payment.actions';
+import {navigate} from '../../utils/navigation.utils';
 
 class DetailCard extends Component {
   constructor(props) {
@@ -100,7 +101,7 @@ class DetailCard extends Component {
             />
           }>
           <TouchableOpacity
-            onPress={() => Actions.detailCard({item})}
+            onPress={() => navigate('detailCard', {item})}
             style={[
               styles.card,
               {
@@ -140,7 +141,7 @@ class DetailCard extends Component {
         </ScrollView>
         <View>
           <TouchableOpacity
-            onPress={() => Actions.addCard()}
+            onPress={() => navigate('addCard')}
             onLongPress={() => Alert.alert('x', 'x')}
             style={styles.buttonBottomFixed}>
             <Icon
@@ -151,7 +152,7 @@ class DetailCard extends Component {
             <Text style={styles.textAddCard}>Set as Default</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => Actions.addCard()}
+            onPress={() => navigate('addCard')}
             style={styles.buttonBottomFixed}>
             <Icon
               size={25}

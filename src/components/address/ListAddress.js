@@ -36,6 +36,7 @@ import {
 import {isEmptyArray, isEmptyData} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import CryptoJS from 'react-native-crypto-js';
+import {navigate} from '../../utils/navigation.utils';
 
 class ListAddress extends Component {
   constructor(props) {
@@ -435,7 +436,7 @@ class ListAddress extends Component {
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    Actions.editAddress({
+                    navigate('editAddress', {
                       from: 'listAddress',
                       myAddress: item,
                       getDeliveryFee: this.props.getDeliveryFee,
@@ -523,7 +524,7 @@ class ListAddress extends Component {
   };
 
   addNewAddress = async () => {
-    Actions.push('pickCoordinate', {from: 'listAddress'});
+    navigate('pickCoordinate', {from: 'listAddress'});
   };
 
   render() {

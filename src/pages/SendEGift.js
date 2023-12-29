@@ -22,9 +22,9 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {Body, Header} from '../components/layout';
 import LoadingScreen from '../components/loadingScreen';
 
-import {Actions} from 'react-native-router-flux';
 import {showSnackbar} from '../actions/setting.action';
 import ConfirmationDialog from '../components/confirmationDialog';
+import {navigate} from '../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -479,7 +479,7 @@ const SendEGift = ({categoryId}) => {
       <TouchableOpacity
         style={styles.touchablePaymentMethod}
         onPress={() =>
-          Actions.paymentMethods({
+          navigate('paymentMethods', {
             page: 'sendEGift',
             paySVC: null,
           })

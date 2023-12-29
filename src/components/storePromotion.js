@@ -12,8 +12,8 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 
 import colorConfig from '../config/colorConfig';
-import {Actions} from 'react-native-router-flux';
 import {dataPromotion} from '../actions/promotion.action';
+import {navigate} from '../utils/navigation.utils';
 
 class StorePromotion extends Component {
   constructor(props) {
@@ -25,11 +25,11 @@ class StorePromotion extends Component {
     await this.props.dispatch(dataPromotion());
   };
   seeMorePromotion = () => {
-    Actions.seeMorePromotion();
+    navigate('seeMorePromotion');
   };
 
   storeDetailPromotion = item => {
-    Actions.storeDetailPromotion({
+    navigate('storeDetailPromotion', {
       dataPromotion: item,
       item: this.props.outlet,
     });

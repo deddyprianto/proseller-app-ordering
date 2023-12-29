@@ -39,6 +39,7 @@ import PhoneInput from 'react-native-phone-input';
 // import VersionCheck from 'react-native-version-check';
 import {getCompanyInfo} from '../actions/stores.action';
 import {getMandatoryFields} from '../actions/account.action';
+import {navigate} from '../utils/navigation.utils';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -235,9 +236,9 @@ class InputPhoneNumber extends Component {
 
           // check mode sign in ( by password or by OTP )
           if (enableRegisterWithPassword) {
-            Actions.signInPhoneNumberWithPassword(phoneNumber);
+            navigate('signInPhoneNumberWithPassword', phoneNumber);
           } else {
-            Actions.signInPhoneNumber(phoneNumber);
+            navigate('signInPhoneNumber', phoneNumber);
           }
         } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
@@ -250,9 +251,9 @@ class InputPhoneNumber extends Component {
           phoneNumber.email = response.data.email;
           // check mode sign in ( by password or by OTP )
           if (enableRegisterWithPassword) {
-            Actions.signInPhoneNumberWithPassword(phoneNumber);
+            navigate('signInPhoneNumberWithPassword', phoneNumber);
           } else {
-            Actions.signInPhoneNumber(phoneNumber);
+            navigate('signInPhoneNumber', phoneNumber);
           }
         }
         this.setState({
@@ -262,7 +263,7 @@ class InputPhoneNumber extends Component {
         this.setState({
           loading: false,
         });
-        Actions.mobileRegister(phoneNumber);
+        navigate('mobileRegister', phoneNumber);
       }
     } catch (error) {
       Alert.alert('Opss..', this.intlData.messages.somethingWentWrong);
@@ -440,7 +441,7 @@ class InputPhoneNumber extends Component {
               </View>
               {loginByEmail === true ? (
                 <View style={{marginTop: 30}}>
-                  <TouchableOpacity onPress={() => Actions.inputEmail()}>
+                  <TouchableOpacity onPress={() => navigate('inputEmail')}>
                     <Text
                       style={{
                         textDecorationLine: 'underline',

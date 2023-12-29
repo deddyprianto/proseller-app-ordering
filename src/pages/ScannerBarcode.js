@@ -29,10 +29,10 @@ import {
   normalizeLayoutSizeHeight,
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
-import {Actions} from 'react-native-router-flux';
 import ModalAction from '../components/modal/ModalAction';
 import useScanGo from '../hooks/validation/usScanGo';
 import additionalSetting from '../config/additionalSettings';
+import {navigate} from '../utils/navigation.utils';
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
@@ -167,7 +167,7 @@ const ScannerBarcode = () => {
 
   const goToProductDetail = response => {
     setShowAlert(false);
-    Actions.productDetail({
+    navigate('productDetail', {
       productId: response?.data?.id,
       resetScanCode,
       isFromScanBarcode: true,

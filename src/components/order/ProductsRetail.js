@@ -58,6 +58,7 @@ import {Dialog} from 'react-native-paper';
 import StorePromotion from '../storePromotion';
 import OutletIcon from './OutletIcon';
 import CategoryList from './CategoryList';
+import {navigate} from '../../utils/navigation.utils';
 
 const ViewTypes = {
   FULL: 0,
@@ -1899,7 +1900,7 @@ class Products2 extends Component {
       cat.id = cat?.categoryID?.replace('category::', '');
     }
     cat.isProductPreset = true;
-    Actions.push('specificCategory', {
+    navigate('specificCategory', {
       categoryDetail: cat,
       item,
     });
@@ -2450,7 +2451,10 @@ class Products2 extends Component {
                     justifyContent: 'center',
                   }}
                   onPress={() =>
-                    Actions.storeDetailStores({item: this.state.item, intlData})
+                    navigate('storeDetailStores', {
+                      item: this.state.item,
+                      intlData,
+                    })
                   }>
                   <Text
                     style={{
@@ -2621,7 +2625,10 @@ class Products2 extends Component {
                   justifyContent: 'center',
                 }}
                 onPress={() =>
-                  Actions.storeDetailStores({item: this.state.item, intlData})
+                  navigate('storeDetailStores', {
+                    item: this.state.item,
+                    intlData,
+                  })
                 }>
                 <Text
                   style={{
@@ -3200,7 +3207,7 @@ class Products2 extends Component {
                         justifyContent: 'center',
                       }}
                       onPress={() =>
-                        Actions.scanBarcode({
+                        navigate('scanBarcode', {
                           setProductFromBarcode: this.toggleModal,
                         })
                       }>
@@ -3243,7 +3250,7 @@ class Products2 extends Component {
                     const {item, searchQuery} = this.state;
                     if (searchQuery != '') {
                       this.setState({searchQuery: '', dialogSearch: false});
-                      Actions.push('specificCategory', {
+                      navigate('specificCategory', {
                         categoryDetail: {name: searchQuery},
                         item,
                         search: searchQuery,

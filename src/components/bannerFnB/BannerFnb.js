@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 
 import {dataPromotion} from '../../actions/promotion.action';
-import {Actions} from 'react-native-router-flux';
 import {isEmptyArray} from '../../helper/CheckEmpty';
+import {navigate} from '../../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -127,7 +127,7 @@ const BannerFnB = ({bottom = 0, placement}) => {
 
       return await Linking.openURL(url);
     } else {
-      return Actions.storeDetailPromotion({
+      navigate('storeDetailPromotion', {
         dataPromotion: item,
         item: defaultOutlet,
       });

@@ -15,6 +15,7 @@ import {
 } from '../../../helper/Layout';
 import BackButton from '../../../assets/svg/BackButton';
 import useSettings from '../../../hooks/settings/useSettings';
+import {navigate} from '../../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -148,7 +149,7 @@ const Header = ({
       setSearchTextInput('');
       setIsSearch(!isSearch);
     } else {
-      Actions.searchProduct();
+      navigate('searchProduct');
     }
   };
 

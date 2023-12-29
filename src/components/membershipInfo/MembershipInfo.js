@@ -26,6 +26,7 @@ import additionalSetting from '../../config/additionalSettings';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 
 import CheckListGreenSvg from '../../assets/svg/ChecklistGreenSvg';
+import {navigate} from '../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -277,7 +278,7 @@ const MembershipInfo = () => {
         <Text style={styles.textYourPoint}>My Points</Text>
         <TouchableOpacity
           onPress={() => {
-            Actions.detailPoint({intlData});
+            navigate('detailPoint', {intlData});
           }}
           style={styles.viewPointValue}>
           <Text style={styles.textPointValue}>{totalPoint} PTS</Text>
@@ -411,7 +412,7 @@ const MembershipInfo = () => {
     <TouchableOpacity
       style={styles.root}
       onPress={() => {
-        Actions.membership();
+        navigate('membership');
       }}>
       {renderWelcomeAndPoint()}
       {renderDivider()}

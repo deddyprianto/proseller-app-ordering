@@ -21,6 +21,7 @@ import {getBasket} from '../actions/product.action';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
+import {navigate} from '../utils/navigation.utils';
 
 const styles = StyleSheet.create({
   root: {
@@ -154,10 +155,10 @@ const Outlets = () => {
           orderingMode: orderingModesFieldFiltered[0].key,
         }),
       );
-      Actions.orderHere();
+      navigate('orderHere');
       setIsLoading(false);
     } else {
-      Actions.push('orderingMode');
+      navigate('orderingMode');
       setIsLoading(false);
     }
   };

@@ -26,7 +26,6 @@ import {reduxForm} from 'redux-form';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import {createNewUser, resendOTPCognito} from '../actions/auth.actions';
 import Loader from '../components/loader';
-import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
@@ -36,6 +35,7 @@ import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {format} from 'date-fns';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {navigate} from '../utils/navigation.utils';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -252,7 +252,7 @@ class MobileRegister extends Component {
           email: this.state.email,
           fromMethod: 'mobile',
         };
-        Actions.verifyRegister(phoneNumber);
+        navigate('verifyRegister', phoneNumber);
       } else {
         this.setState({
           loading: false,

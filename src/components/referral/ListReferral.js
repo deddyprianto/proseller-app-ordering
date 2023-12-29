@@ -33,6 +33,7 @@ import {
   referral,
   resendReferral,
 } from '../../actions/referral.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class ListReferral extends Component {
   constructor(props) {
@@ -270,7 +271,7 @@ class ListReferral extends Component {
   };
 
   addNewReferral = async () => {
-    Actions.push('addReferral', {from: 'listReferral'});
+    navigate('addReferral', {from: 'listReferral'});
   };
 
   render() {

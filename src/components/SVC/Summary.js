@@ -29,6 +29,7 @@ import {
   svcActivity,
   svcHistory,
 } from '../../actions/SVC.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class Summary extends Component {
   constructor(props) {
@@ -319,7 +320,7 @@ class Summary extends Component {
                 <View style={styles.buttonGroup}>
                   <TouchableOpacity
                     onPress={() =>
-                      Actions.buySVC({
+                      navigate('buySVC', {
                         getCustomerActivity: this.refreshCustomerActivity,
                       })
                     }>
@@ -338,7 +339,7 @@ class Summary extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() =>
-                      Actions.transferSVC({
+                      navigate('transferSVC', {
                         getCustomerActivity: this.refreshCustomerActivity,
                       })
                     }>

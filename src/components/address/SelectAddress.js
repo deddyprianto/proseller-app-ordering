@@ -43,6 +43,7 @@ import {
 } from '../../helper/CheckEmpty';
 import CryptoJS from 'react-native-crypto-js';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {navigate} from '../../utils/navigation.utils';
 
 class SelectAddress extends Component {
   constructor(props) {
@@ -469,7 +470,7 @@ class SelectAddress extends Component {
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    Actions.editAddress({
+                    navigate('editAddress', {
                       from: 'basket',
                       myAddress: item,
                       getDeliveryFee: this.props.getDeliveryFee,

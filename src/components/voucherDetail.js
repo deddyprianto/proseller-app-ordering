@@ -38,6 +38,7 @@ import LoaderDarker from './LoaderDarker';
 import {recentTransaction} from '../actions/sales.action';
 import {getBackupOutlet} from '../actions/stores.action';
 import calculateTAX from '../helper/TaxCalculation';
+import {navigate} from '../utils/navigation.utils';
 
 class VoucherDetail extends Component {
   constructor(props) {
@@ -262,7 +263,7 @@ class VoucherDetail extends Component {
         },
       );
     }
-    Actions.accountVouchers({data: myVoucers});
+    navigate('accountVouchers', {data: myVoucers});
   };
 
   componentWillUnmount() {
@@ -544,8 +545,7 @@ class VoucherDetail extends Component {
     try {
       purchaseData.cartDetails = detailPurchase;
     } catch (e) {}
-
-    Actions.settleOrder({
+    navigate('settleOrder', {
       pembayaran: purchaseData,
       url: url,
       outlet: defaultOutlet,

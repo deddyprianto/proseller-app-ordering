@@ -28,6 +28,7 @@ import appConfig from '../config/appConfig';
 import {getPendingOrderById} from '../actions/order.action';
 import {useDispatch, useSelector} from 'react-redux';
 import {permissionDownloadFile} from '../helper/Download';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -717,7 +718,7 @@ const Payment = () => {
           style={styles.viewButton}
           onPress={() => {
             Actions.popTo('pageIndex');
-            Actions.pendingOrderDetail({order});
+            navigate('pendingOrderDetail', {order});
           }}>
           <Text style={styles.textButton}>See Order Detail</Text>
         </TouchableOpacity>

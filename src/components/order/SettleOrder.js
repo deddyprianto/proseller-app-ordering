@@ -76,6 +76,7 @@ import SettleOrderV2 from './SettleOrderV2';
 import moment from 'moment';
 import {showSnackbar} from '../../actions/setting.action';
 import {reportSentry} from '../../helper/Sentry';
+import {navigate} from '../../utils/navigation.utils';
 
 class SettleOrder extends Component {
   constructor(props) {
@@ -139,7 +140,7 @@ class SettleOrder extends Component {
     const find = payments.find(row => row.paymentType === 'FOMO_PAY');
 
     if (find) {
-      Actions.payment();
+      navigate('payment');
     }
   };
 
@@ -154,7 +155,7 @@ class SettleOrder extends Component {
       const response = await this.props.dispatch(registerCard(payload));
 
       if (response.success == true) {
-        Actions.hostedPayment({
+        navigate('hostedPayment', {
           url: response.response.data.url,
           page: 'settleOrder',
         });
@@ -928,7 +929,7 @@ class SettleOrder extends Component {
   };
 
   btnPayment = () => {
-    Actions.paymentSuccess();
+    navigate('paymentSuccess');
   };
 
   myVouchers = () => {
@@ -974,7 +975,7 @@ class SettleOrder extends Component {
         );
       }
 
-      Actions.paymentAddVoucers({
+      navigate('paymentAddVoucers', {
         intlData,
         dataVoucer,
         data: myVoucers,
@@ -1023,7 +1024,7 @@ class SettleOrder extends Component {
       }
     } catch (e) {}
 
-    Actions.paymentAddPoint({
+    navigate('paymentAddPoint', {
       intlData,
       data: this.props.totalPoint,
       amountSVC: this.state.amountSVC,
@@ -1606,7 +1607,7 @@ class SettleOrder extends Component {
 
         if (response.responseBody.data.action != undefined) {
           if (response.responseBody.data.action.type === 'url') {
-            Actions.hostedTrx({
+            navigate('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.data.action.url,
               urlSettle: url,
@@ -1628,7 +1629,7 @@ class SettleOrder extends Component {
 
           // go to payment success
           const {url} = this.props;
-          Actions.paymentSuccess({
+          navigate('paymentSuccess', {
             intlData,
             outlet: this.state.outlet,
             url,
@@ -1889,7 +1890,7 @@ class SettleOrder extends Component {
         this.props.dispatch(getPaidMembership());
         if (response.responseBody.Data.action != undefined) {
           if (response.responseBody.Data.action.type === 'url') {
-            Actions.hostedTrx({
+            navigate('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: 'url',
@@ -1904,7 +1905,7 @@ class SettleOrder extends Component {
           }
         } else {
           this.props.dispatch(clearAccount());
-          Actions.paymentSuccess({
+          navigate('paymentSuccess', {
             intlData,
             url: 'url',
             outlet: this.state.outlet,
@@ -2167,7 +2168,7 @@ class SettleOrder extends Component {
 
         if (response.responseBody.Data.action != undefined) {
           if (response.responseBody.Data.action.type === 'url') {
-            Actions.hostedTrx({
+            navigate('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: 'url',
@@ -2184,7 +2185,7 @@ class SettleOrder extends Component {
           }
         } else {
           this.props.dispatch(clearAccount());
-          Actions.paymentSuccess({
+          navigate('paymentSuccess', {
             intlData,
             url: 'url',
             outlet: this.state.outlet,
@@ -2447,7 +2448,7 @@ class SettleOrder extends Component {
 
         if (response.responseBody.Data.action != undefined) {
           if (response.responseBody.Data.action.type === 'url') {
-            Actions.push('hostedTrx', {
+            navigate('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: 'url',
@@ -2464,7 +2465,7 @@ class SettleOrder extends Component {
           }
         } else {
           this.props.dispatch(clearAccount());
-          Actions.paymentSuccess({
+          navigate('paymentSuccess', {
             intlData,
             url: 'url',
             outlet: this.state.outlet,
@@ -2878,7 +2879,7 @@ class SettleOrder extends Component {
 
         if (response.responseBody.data.action != undefined) {
           if (response.responseBody.data.action.type === 'url') {
-            Actions.hostedTrx({
+            navigate('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.data.action.url,
               urlSettle: url,
@@ -2900,7 +2901,7 @@ class SettleOrder extends Component {
 
           // go to payment success
           const {url} = this.props;
-          Actions.paymentSuccess({
+          navigate('paymentSuccess', {
             intlData,
             outlet: this.state.outlet,
             url,
@@ -2937,7 +2938,7 @@ class SettleOrder extends Component {
 
   detailPayment = pembayaran => {
     const {intlData} = this.props;
-    Actions.paymentDetailItem({
+    navigate('paymentDetailItem', {
       intlData,
       dataVoucer: this.state.dataVoucer,
       point: this.state.addPoint,
@@ -3448,7 +3449,7 @@ class SettleOrder extends Component {
           payAtPOS: true,
         };
 
-        Actions.paymentSuccess({
+        navigate('paymentSuccess', {
           intlData,
           outlet: this.state.outlet,
           url,
@@ -3501,7 +3502,7 @@ class SettleOrder extends Component {
         try {
           clearInterval(this.loopCart);
         } catch (e) {}
-        Actions.paymentSuccess({
+        navigate('paymentSuccess', {
           intlData,
           outlet: this.state.outlet,
           url,
@@ -3620,7 +3621,7 @@ class SettleOrder extends Component {
     }
   };
   onSelectPaymentMethod = () => {
-    Actions.paymentMethods({
+    navigate('paymentMethods', {
       page: 'settleOrder',
       paySVC: this.props.paySVC,
     });
@@ -3865,7 +3866,7 @@ class SettleOrder extends Component {
                               Number(this.state.totalBayar) -
                               this.state.totalNonDiscountable;
                             if (total > 0) {
-                              Actions.applyPromoCode({
+                              navigate('applyPromoCode', {
                                 setDataVoucher: this.setDataVoucher,
                                 dataVoucher: this.state.dataVoucer,
                                 originalPurchase: this.props.pembayaran
@@ -4160,7 +4161,7 @@ class SettleOrder extends Component {
                       <TouchableOpacity
                         style={styles.btnMethodSelectedPoints}
                         onPress={() =>
-                          Actions.virtualKeyboard({
+                          navigate('virtualKeyboard', {
                             useSVC: true,
                             amountSVC: this.state.amountSVC,
                             totalPurchase: this.state.totalBayar,
@@ -4191,7 +4192,7 @@ class SettleOrder extends Component {
                     <TouchableOpacity
                       style={styles.btnMethodUnselected}
                       onPress={() =>
-                        Actions.virtualKeyboard({
+                        navigate('virtualKeyboard', {
                           useSVC: true,
                           amountSVC: this.state.amountSVC,
                           totalPurchase: this.state.totalBayar,

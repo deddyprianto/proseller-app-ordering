@@ -30,6 +30,7 @@ import {Dialog} from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 import {getPaymentData} from '../actions/payment.actions';
 import {isEmptyArray} from '../helper/CheckEmpty';
+import {navigate} from '../utils/navigation.utils';
 
 class RewardsQRscan extends Component {
   constructor(props) {
@@ -143,7 +144,7 @@ class RewardsQRscan extends Component {
   };
 
   paymentDetail = pembayaran => {
-    Actions.paymentDetail({pembayaran: pembayaran});
+    navigate('paymentDetail', {pembayaran: pembayaran});
   };
 
   hideAlert = () => {

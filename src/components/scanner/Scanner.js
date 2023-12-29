@@ -7,7 +7,7 @@ import {getProductByBarcode} from '../../actions/product.action';
 import {showSnackbar} from '../../actions/setting.action';
 import colorConfig from '../../config/colorConfig';
 import LoadingScreen from '../loadingScreen';
-import {Actions} from 'react-native-router-flux';
+import {navigate} from '../../utils/navigation.utils';
 
 const styles = StyleSheet.create({
   textScan: {
@@ -41,7 +41,7 @@ const Scanner = ({open, handleClose}) => {
     if (response?.data) {
       setIsLoading(false);
       setProduct(response?.data);
-      Actions.productDetail({
+      navigate('productDetail', {
         productId: product?.id,
       });
     } else {

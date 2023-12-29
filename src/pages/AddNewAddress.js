@@ -42,6 +42,7 @@ import useGetProtectionData from '../hooks/protection/useGetProtectioData';
 import additionalSetting from '../config/additionalSettings';
 import appConfig from '../config/appConfig';
 import ModalAction from '../components/modal/ModalAction';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -551,7 +552,7 @@ const AddNewAddress = ({address, selectedIndex, user: userParent}) => {
       <View style={styles.viewMap}>
         <MapView
           onPress={() => {
-            Actions.pickCoordinate({
+            navigate('pickCoordinate', {
               coordinated: {
                 latitude,
                 longitude,
@@ -572,7 +573,7 @@ const AddNewAddress = ({address, selectedIndex, user: userParent}) => {
         </MapView>
         <TouchableOpacity
           onPress={() => {
-            Actions.pickCoordinate({
+            navigate('pickCoordinate', {
               coordinated: {
                 latitude,
                 longitude,

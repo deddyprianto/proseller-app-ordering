@@ -44,6 +44,7 @@ import * as _ from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {dataStores} from '../../actions/stores.action';
 import {StatusBarHeight} from '../../helper/StatusBarChecker';
+import {navigate} from '../../utils/navigation.utils';
 
 class Products extends Component {
   constructor(props) {
@@ -1375,7 +1376,10 @@ class Products extends Component {
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  Actions.storeDetailStores({item: this.state.item, intlData})
+                  navigate('storeDetailStores', {
+                    item: this.state.item,
+                    intlData,
+                  })
                 }>
                 <Icon
                   size={26}
@@ -1538,7 +1542,10 @@ class Products extends Component {
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  Actions.storeDetailStores({item: this.state.item, intlData})
+                  navigate('storeDetailStores', {
+                    item: this.state.item,
+                    intlData,
+                  })
                 }>
                 <Icon
                   size={26}

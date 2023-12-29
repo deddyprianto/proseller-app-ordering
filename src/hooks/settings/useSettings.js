@@ -1,6 +1,6 @@
 import {useSelector} from 'react-redux';
 import additionalSetting from '../../config/additionalSettings';
-import {Actions} from 'react-native-router-flux';
+import {navigate} from '../../utils/navigation.utils';
 
 const useSettings = () => {
   const priority_key_mandatory = 'SetLowerPriorityAsMandatory';
@@ -24,11 +24,11 @@ const useSettings = () => {
 
   const useCartVersion = params => {
     if (additionalSetting().cartVersion === 'basic') {
-      Actions.cart(params);
+      navigate('cart', params);
     } else if (additionalSetting().cartVersion === 'advance') {
-      Actions.cartStep1({step: 1, ...params});
+      navigate('cartStep1', {step: 1, ...params});
     } else {
-      Actions.cart(params);
+      navigate('cart', params);
     }
   };
 

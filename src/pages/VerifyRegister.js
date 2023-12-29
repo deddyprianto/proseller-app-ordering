@@ -22,7 +22,7 @@ import {compose} from 'redux';
 import {reduxForm} from 'redux-form';
 import {sendOTP} from '../actions/auth.actions';
 import Loader from '../components/loader';
-import {Actions} from 'react-native-router-flux';
+import {navigate} from '../utils/navigation.utils';
 import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
@@ -123,14 +123,14 @@ class VerifyRegister extends Component {
     console.log('INI SENT OTP EMAIL', this.props.password);
     this.setState({loading: true, firstLoad: false});
     try {
-      let phoneNumber = {
+      let payload = {
         phoneNumber: this.props.phoneNumber,
         password: this.props.password,
         email: this.props.email,
         fromMethod: 'email',
       };
       this.setState({loading: false});
-      Actions.verifyOtpAfterRegisterEmail(phoneNumber);
+      navigate('verifyOtpAfterRegisterEmail', payload);
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
       this.setState({
@@ -143,14 +143,14 @@ class VerifyRegister extends Component {
   sendOTP = async () => {
     this.setState({loading: true, firstLoad: false});
     try {
-      let phoneNumber = {
+      let payload = {
         phoneNumber: this.props.phoneNumber,
         password: this.props.password,
         email: this.props.email,
         fromMethod: 'mobile',
       };
       this.setState({loading: false});
-      Actions.verifyOtpAfterRegister(phoneNumber);
+      navigate('verifyOtpAfterRegister', payload);
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');
       this.setState({

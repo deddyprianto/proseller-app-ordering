@@ -9,11 +9,11 @@ import {
 import {connect} from 'react-redux';
 import {compose} from 'redux';
 import colorConfig from '../config/colorConfig';
-import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {isEmptyArray, isEmptyData, isEmptyObject} from '../helper/CheckEmpty';
+import {navigate} from '../utils/navigation.utils';
 
 class RewardsPoint extends Component {
   constructor(props) {
@@ -39,7 +39,7 @@ class RewardsPoint extends Component {
     }
 
     var dataDiri = {dataDiri: userDetail};
-    Actions.editProfile(dataDiri);
+    navigate('editProfile', dataDiri);
   };
 
   render() {
@@ -97,7 +97,7 @@ class RewardsPoint extends Component {
                 alignItems: 'center',
               }}
               onPress={() => {
-                Actions.detailPoint({intlData});
+                navigate('detailPoint', {intlData});
               }}>
               <Text
                 style={{
@@ -175,7 +175,7 @@ class RewardsPoint extends Component {
                 alignItems: 'center',
               }}
               onPress={() => {
-                Actions.detailPoint({intlData});
+                navigate('detailPoint', {intlData});
               }}>
               <Text
                 style={{

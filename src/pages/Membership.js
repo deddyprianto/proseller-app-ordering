@@ -17,10 +17,10 @@ import {useSelector} from 'react-redux';
 import {Body, Header} from '../components/layout';
 import Theme from '../theme/Theme';
 import appConfig from '../config/appConfig';
-import {Actions} from 'react-native-router-flux';
 import moment from 'moment';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
 import additionalSetting from '../config/additionalSettings';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const {fontFamily, fontSize, colors} = Theme();
@@ -134,7 +134,7 @@ const Membership = () => {
       <TouchableOpacity
         style={styles.viewSeeAllTier}
         onPress={() => {
-          Actions.membershipAllTier();
+          navigate('membershipAllTier');
         }}>
         <Text style={styles.textSeeAllTier}>See All Tier</Text>
         <Image source={appConfig.iconArrowRight} style={styles.iconRight} />

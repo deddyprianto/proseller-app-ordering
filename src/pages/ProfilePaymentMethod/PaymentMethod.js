@@ -17,9 +17,9 @@ import Theme from '../../theme/Theme';
 import GlobalButton from '../../components/button/GlobalButton';
 import PlusSvg from '../../assets/svg/PlusSvg';
 import usePayment from '../../hooks/payment/usePayment';
-import {Actions} from 'react-native-router-flux';
 import {getCompanyInfo} from '../../actions/stores.action';
 import useBackHandler from '../../hooks/backHandler/useBackHandler';
+import {navigate} from '../../utils/navigation.utils';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -97,7 +97,7 @@ const ProfilePaymentMethod = () => {
   };
 
   const goToCcDetail = item => {
-    Actions.creditCardDetail({item});
+    navigate('creditCardDetail', {item});
   };
 
   const renderItem = ({item}) => (

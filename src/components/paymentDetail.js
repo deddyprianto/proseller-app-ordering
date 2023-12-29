@@ -56,6 +56,7 @@ import {sendPayment} from '../actions/sales.action';
 import Fa from 'react-native-vector-icons/FontAwesome';
 import {campaign, dataPoint} from '../actions/rewards.action';
 import {getSVCBalance} from '../actions/SVC.action';
+import {navigate} from '../utils/navigation.utils';
 
 class PaymentDetail extends Component {
   constructor(props) {
@@ -142,7 +143,7 @@ class PaymentDetail extends Component {
       const response = await this.props.dispatch(registerCard(payload));
 
       if (response.success == true) {
-        Actions.hostedPayment({
+        navigate('hostedPayment', {
           url: response.response.data.url,
           page: 'paymentDetail',
         });
@@ -717,8 +718,7 @@ class PaymentDetail extends Component {
       //     Object,
       //   );
       // }
-
-      Actions.paymentAddVoucers({
+      navigate('paymentAddVoucers', {
         intlData,
         dataVoucer,
         data: myVoucers,
@@ -756,8 +756,7 @@ class PaymentDetail extends Component {
         pembayaran.payment = total;
       }
     } catch (e) {}
-
-    Actions.paymentAddPoint({
+    navigate('paymentAddPoint', {
       intlData,
       data: this.props.totalPoint,
       pembayaran: pembayaran,
@@ -1100,7 +1099,7 @@ class PaymentDetail extends Component {
 
         if (response.responseBody.data.action != undefined) {
           if (response.responseBody.data.action.type === 'url') {
-            Actions.hostedTrx({
+            navigate('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.data.action.url,
               urlSettle: url,
@@ -1121,8 +1120,7 @@ class PaymentDetail extends Component {
           this.props.dispatch(getPendingCart());
 
           // go to payment success
-          const {url} = this.props;
-          Actions.paymentSuccess({
+          navigate('paymentSuccess', {
             intlData,
             outlet: this.state.outlet,
             url,
@@ -1336,7 +1334,7 @@ class PaymentDetail extends Component {
 
         if (response.responseBody.Data.action !== undefined) {
           if (response.responseBody.Data.action.type === 'url') {
-            Actions.hostedTrx({
+            navigate('hostedTrx', {
               outlet: this.state.outlet,
               url: response.responseBody.Data.action.url,
               urlSettle: url,
@@ -1358,8 +1356,7 @@ class PaymentDetail extends Component {
           this.props.dispatch(getPendingCart());
 
           // go to payment success
-          const {url} = this.props;
-          Actions.paymentSuccess({
+          navigate('paymentSuccess', {
             intlData,
             outlet: this.state.outlet,
             url,
@@ -1396,7 +1393,7 @@ class PaymentDetail extends Component {
 
   detailPayment = pembayaran => {
     const {intlData} = this.props;
-    Actions.paymentDetailItem({
+    navigate('paymentDetailItem', {
       intlData,
       dataVoucer: this.state.dataVoucer,
       point: this.state.addPoint,
@@ -1722,7 +1719,7 @@ class PaymentDetail extends Component {
         try {
           clearInterval(this.loopCart);
         } catch (e) {}
-        Actions.paymentSuccess({
+        navigate('paymentSuccess', {
           intlData,
           outlet: this.state.outlet,
           url,
@@ -2282,7 +2279,7 @@ class PaymentDetail extends Component {
                     <TouchableOpacity
                       style={styles.btnMethodSelectedPoints}
                       onPress={() =>
-                        Actions.virtualKeyboard({
+                        navigate('virtualKeyboard', {
                           useSVC: true,
                           amountSVC: this.state.amountSVC,
                           totalPurchase: this.state.totalBayar,
@@ -2311,7 +2308,7 @@ class PaymentDetail extends Component {
                   <TouchableOpacity
                     style={styles.btnMethodUnselected}
                     onPress={() =>
-                      Actions.virtualKeyboard({
+                      navigate('virtualKeyboard', {
                         useSVC: true,
                         amountSVC: this.state.amountSVC,
                         totalPurchase: this.state.totalBayar,
@@ -2360,7 +2357,9 @@ class PaymentDetail extends Component {
               }}>
               <TouchableOpacity
                 style={styles.btnPaymentMethod}
-                onPress={() => Actions.paymentMethods({page: 'paymentDetail'})}>
+                onPress={() =>
+                  navigate('paymentMethods', {page: 'paymentDetail'})
+                }>
                 <Text
                   style={[
                     styles.descMethodUnselected,

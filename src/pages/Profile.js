@@ -49,6 +49,7 @@ import useSettings from '../hooks/settings/useSettings';
 import MembershipInfo from '../components/membershipInfo';
 import {openPopupNotification} from '../actions/order.action';
 import {HistoryNotificationModal} from '../components/modal';
+import {navigate} from '../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -499,13 +500,13 @@ const Profile = props => {
   const handleEditProfile = () => {
     const value = {dataDiri: user};
     if (Actions.currentScene !== 'editProfile') {
-      return Actions.editProfile(value);
+      return navigate('editProfile', value);
     }
   };
 
   const openWebviewPage = url => {
     if (!url) return;
-    return Actions.policy({url});
+    return navigate('policy', {url});
   };
 
   const renderBackgroundImage = () => {
@@ -547,7 +548,7 @@ const Profile = props => {
         <TouchableOpacity
           style={styles.viewOption}
           onPress={() => {
-            Actions.myDeliveryAddress({fromScene: 'profile'});
+            navigate('myDeliveryAddress', {fromScene: 'profile'});
           }}>
           <Image
             style={styles.iconSetting}
@@ -565,7 +566,7 @@ const Profile = props => {
       <TouchableOpacity
         style={styles.viewOption}
         onPress={() => {
-          Actions.notifications();
+          navigate('notifications');
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconNotification} />
         <Text style={styles.textIcon}>Notification Setting</Text>
@@ -578,7 +579,7 @@ const Profile = props => {
       <TouchableOpacity
         style={styles.viewOption}
         onPress={() => {
-          Actions.termsAndConditions();
+          navigate('termsAndConditions');
         }}>
         <Image
           style={styles.iconSetting}
@@ -594,7 +595,7 @@ const Profile = props => {
       <TouchableOpacity
         style={styles.viewOption}
         onPress={() => {
-          Actions.faq();
+          navigate('faq');
         }}>
         <Image style={styles.iconSetting} source={appConfig.iconFAQ} />
         <Text style={styles.textIcon}>FAQ</Text>
@@ -604,9 +605,9 @@ const Profile = props => {
 
   const openContactUs = () => {
     if (appConfig.contactUsVersion === 'starter') {
-      return Actions.contactUsStarter();
+      return navigate('contactUsStarter');
     } else {
-      return Actions.contactUsBasic();
+      return navigate('contactUsBasic');
     }
   };
 
@@ -646,7 +647,7 @@ const Profile = props => {
         <TouchableOpacity
           style={styles.viewOption}
           onPress={() => {
-            Actions.referral();
+            navigate('referral');
           }}>
           <Image
             style={styles.iconSetting}
@@ -664,7 +665,7 @@ const Profile = props => {
       <TouchableOpacity
         style={styles.viewOption}
         onPress={() => {
-          Actions.privacyPolicy();
+          navigate('privacyPolicy');
         }}>
         <Image
           style={styles.iconSetting}
@@ -752,7 +753,7 @@ const Profile = props => {
   };
 
   const verifyOtp = (address, mode) => {
-    Actions.changeCredentialsOTP({
+    navigate('changeCredentialsOTP', {
       address,
       mode,
       dataDiri: user,
@@ -761,15 +762,15 @@ const Profile = props => {
   };
 
   const openVoucher = () => {
-    Actions.voucherV2();
+    navigate('voucherV2');
   };
 
   const openStoreLocation = () => {
-    Actions.favoriteOutlets();
+    navigate('favoriteOutlets');
   };
 
   const openPaymentMethod = () => {
-    Actions.profilePaymentMethod();
+    navigate('profilePaymentMethod');
   };
 
   const renderSettingV2 = () => (

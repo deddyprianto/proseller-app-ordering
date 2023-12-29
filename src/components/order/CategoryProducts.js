@@ -37,6 +37,7 @@ import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import * as _ from 'lodash';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {navigate} from '../../utils/navigation.utils';
 
 class StoreDetailStores extends Component {
   constructor(props) {
@@ -839,7 +840,7 @@ class StoreDetailStores extends Component {
               </Text>
               <TouchableOpacity
                 onPress={() =>
-                  Actions.storeDetailStores({item: this.props.item})
+                  navigate('storeDetailStores', {item: this.props.item})
                 }>
                 <Icon
                   size={26}

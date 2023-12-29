@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
@@ -34,6 +33,7 @@ import useValidation from '../hooks/validation/useValidation';
 import {debounce} from 'lodash';
 import {checkReferralCodeAction} from '../actions/user.action';
 import useSettings from '../hooks/settings/useSettings';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -244,7 +244,7 @@ const RegisterForm = ({
     const response = await dispatch(createNewUser(payload));
     if (typeof response === 'boolean' && response) {
       setIsLoading(false);
-      Actions.otp({
+      navigate('otp', {
         isLogin: false,
         method: registerMethod,
         methodValue: methodValue,

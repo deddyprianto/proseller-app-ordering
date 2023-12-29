@@ -27,6 +27,7 @@ import LoadingScreen from '../components/loadingScreen';
 import awsConfig from '../config/awsConfig';
 import Theme from '../theme';
 import CheckOutletStatus from '../helper/CheckOutletStatus';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -91,9 +92,9 @@ const FavoriteOutlets = ({outlet}) => {
       Actions.popTo('pageIndex');
     } else if (orderingMode.length === 1) {
       await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
-      Actions.push('orderHere');
+      navigate('orderHere');
     } else {
-      Actions.push('orderingMode');
+      navigate('orderingMode');
     }
   };
 

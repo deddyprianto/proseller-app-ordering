@@ -31,6 +31,7 @@ import {Actions} from 'react-native-router-flux';
 import useProductCartList from './hooks/useProductCartList';
 import PencilSvg from '../../../assets/svg/PencilSvg';
 import GlobalText from '../../globalText';
+import {navigate} from '../../../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -631,7 +632,7 @@ const ProductCartItemAdvance = ({item, disabled, step}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        Actions.productDetail({
+        navigate('productDetail', {
           productId: item?.product?.id,
           selectedProduct: item,
           prevPage: Actions.currentScene,

@@ -62,6 +62,7 @@ import {Dialog} from 'react-native-paper';
 import LoaderOpacity from '../LoaderOpacity';
 import {dataPromotion} from '../../actions/promotion.action';
 import {getSVCCard} from '../../actions/SVC.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class Basket extends Component {
   constructor(props) {
@@ -1116,7 +1117,7 @@ class Basket extends Component {
         this.props.orderType != undefined &&
         this.props.previousTableNo == undefined
       ) {
-        Actions.scanQRTable({
+        navigate('scanQRTable', {
           basket: this.props.dataBasket,
           orderType: this.props.orderType,
         });
@@ -1521,7 +1522,7 @@ class Basket extends Component {
 
       // CHECK IF CUSTOMER NOT LOGGED IN
       if (this.props.isLoggedIn !== true) {
-        Actions.inputPhoneNumber();
+        navigate('inputPhoneNumber');
         return;
       }
 
@@ -1579,7 +1580,7 @@ class Basket extends Component {
                   {
                     text: 'Got it',
                     onPress: () => {
-                      Actions.editAddress({
+                      navigate('editAddress', {
                         from: 'basket',
                         myAddress: this.props.selectedAddress,
                         getDeliveryFee: this.getDeliveryFee,
@@ -1802,7 +1803,7 @@ class Basket extends Component {
         }
       } catch (e) {}
 
-      Actions.settleOrder({
+      navigate('settleOrder', {
         pembayaran: pembayaran,
         url: url,
         outlet: outletSingle,
@@ -2775,7 +2776,7 @@ class Basket extends Component {
       // if (this.props.from == 'products') {
       //   Actions.pop();
       // } else {
-      //   Actions.push('productsMode2', {item: data});
+      //   navigate('productsMode2', {item: data});
       // }
     } catch (e) {
       Actions.pop();
@@ -2864,10 +2865,10 @@ class Basket extends Component {
 
   goToAddress = () => {
     if (this.props.isLoggedIn !== true) {
-      Actions.inputPhoneNumber();
+      navigate('inputPhoneNumber');
       return;
     }
-    Actions.selectAddress({
+    navigate('selectAddress', {
       clearDelivery: this.clearDelivery,
       getDeliveryFee: this.reCalculateDeliveryFee,
       from: 'basket',
@@ -2875,14 +2876,14 @@ class Basket extends Component {
   };
 
   goToAddAddress = () => {
-    Actions.push('addAddress', {
+    navigate('addAddress', {
       from: 'basket',
       getDeliveryFee: this.reCalculateDeliveryFee,
     });
   };
 
   goToEditAddress = () => {
-    Actions.editAddress({
+    navigate('editAddress', {
       from: 'basket',
       myAddress: this.props.selectedAddress,
       getDeliveryFee: this.reCalculateDeliveryFee,
@@ -3028,7 +3029,7 @@ class Basket extends Component {
       minimumDate = this.state.nextDatePickup;
     }
     try {
-      Actions.push('pickUpTime', {
+      navigate('pickUpTime', {
         setPickupDate: this.setPickupDate,
         setPickupTime: this.setPickupTime,
         setSelectedTimeSlot: this.setSelectedTimeSlot,

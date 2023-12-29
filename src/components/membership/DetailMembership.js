@@ -31,6 +31,7 @@ import appConfig from '../../config/appConfig';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import {getPaidMembership, redeemMembership} from '../../actions/membership.action';
 import {getUserProfile} from '../../actions/user.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class DetailMembership extends Component {
   constructor(props) {
@@ -224,8 +225,7 @@ class DetailMembership extends Component {
     try {
       pembayaran.cartDetails = detailPurchase;
     } catch (e) {}
-
-    Actions.settleOrder({
+    navigate('settleOrder', {
       pembayaran: pembayaran,
       url: url,
       outlet: defaultOutlet,

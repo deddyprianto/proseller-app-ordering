@@ -40,6 +40,7 @@ import {check, PERMISSIONS} from 'react-native-permissions';
 import {Header} from '../layout';
 import CardProfilePayment from './CardProfilePayment';
 import EmptyListPayment from '../../pages/ProfilePaymentMethod/EmptyListPayment';
+import {navigate} from '../../utils/navigation.utils';
 class PaymentAddCard extends Component {
   constructor(props) {
     super(props);
@@ -267,7 +268,7 @@ class PaymentAddCard extends Component {
         // } else {
         //   rootPage = 'settleOrder';
         // }
-        Actions.hostedPayment({
+        navigate('hostedPayment', {
           url: response.response.data.url,
           data: response.response.data,
           page,
