@@ -7,8 +7,8 @@ import Theme from '../theme/Theme';
 import {useSelector} from 'react-redux';
 import GlobalButton from '../components/button/GlobalButton';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {Actions} from 'react-native-router-flux';
 import useCalculation from '../hooks/calculation/useCalculation';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -74,7 +74,7 @@ const CartStep1 = props => {
   );
 
   const goToTheCartStep2 = () => {
-    Actions.cart({step: 2});
+    navigate('cart', {step: 2});
   };
 
   return (

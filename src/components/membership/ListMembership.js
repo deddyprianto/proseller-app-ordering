@@ -24,6 +24,7 @@ import {connect} from 'react-redux';
 import Loader from '../loader';
 import {List} from 'react-native-paper';
 import {getPaidMembership} from '../../actions/membership.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class ListMembership extends Component {
   constructor(props) {
@@ -114,7 +115,7 @@ class ListMembership extends Component {
             {memberships.map(mem => (
               <List.Item
                 onPress={() =>
-                  Actions.detailMembership({membership: mem, userDetail})
+                  navigate('detailMembership', {membership: mem, userDetail})
                 }
                 title={mem.name}
                 style={{

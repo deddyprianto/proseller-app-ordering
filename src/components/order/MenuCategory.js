@@ -34,6 +34,7 @@ import {
   isParentCategory,
 } from '../../actions/order.action';
 import {dataStores, setDefaultOutlet} from '../../actions/stores.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class MenuCategory extends Component {
   constructor(props) {
@@ -184,12 +185,12 @@ class MenuCategory extends Component {
       );
 
       if (isParent === true) {
-        Actions.push('menuCategory', {
+        navigate('menuCategory', {
           parentCategoryID: categoryDetail.sortKey,
           categoryName: categoryDetail.name,
         });
       } else {
-        Actions.push('specificCategory', {categoryDetail, item: outlet});
+        navigate('specificCategory', {categoryDetail, item: outlet});
       }
       await this.setState({loading: false});
     } catch (e) {

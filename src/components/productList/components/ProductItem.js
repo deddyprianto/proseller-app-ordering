@@ -31,6 +31,7 @@ import GlobalText from '../../globalText';
 import colorConfig from '../../../config/colorConfig';
 import {normalizeLayoutSizeHeight} from '../../../helper/Layout';
 import {Actions} from 'react-native-router-flux';
+import {navigate} from '../../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -372,7 +373,7 @@ const Product = ({product, basket}) => {
     if (totalQty) {
       handleOpenUpdateModal();
     } else {
-      Actions.productDetail({
+      navigate('productDetail', {
         productId: product.id,
         prevPage: Actions.currentScene,
       });

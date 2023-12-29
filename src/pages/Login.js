@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import {
@@ -25,6 +24,7 @@ import GlobalButton from '../components/button/GlobalButton';
 import GlobalText from '../components/globalText';
 import additionalSetting from '../config/additionalSettings';
 import {emailValidation} from '../helper/Validation';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -238,7 +238,7 @@ const Login = () => {
     if (response?.status) {
       setErrorLogin(false);
       await dispatch(sendOTP(payload));
-      Actions.otp({
+      navigate('otp', {
         isLogin: true,
         method: loginMethod,
         methodValue: methodValue,
@@ -431,7 +431,7 @@ const Login = () => {
   };
 
   const goToRegisterPage = () => {
-    Actions.register();
+    navigate('register');
   };
 
   const renderRegisterText = () => (

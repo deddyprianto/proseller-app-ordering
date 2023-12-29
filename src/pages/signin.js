@@ -32,10 +32,10 @@ import InputText from '../components/inputText';
 import {loginUser, loginOther, notifikasi} from '../actions/auth.actions';
 import {deviceUserInfo} from '../actions/user.action';
 import Loader from '../components/loader';
-import {Actions} from 'react-native-router-flux';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import awsConfig from '../config/awsConfig';
+import {navigate} from '../utils/navigation.utils';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -194,19 +194,19 @@ class Signin extends Component {
   };
 
   goBack() {
-    Actions.signin();
+    navigate('signin');
   }
 
   signup() {
-    Actions.signup();
+    navigate('signup');
   }
 
   auth() {
-    Actions.verifyCode();
+    navigate('verifyCode');
   }
 
   forgotPassword = () => {
-    Actions.forgotPassword();
+    navigate('forgotPassword');
   };
 
   loginUser = async values => {

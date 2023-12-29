@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
-import {Actions} from 'react-native-router-flux';
 import {isEmptyArray, isEmptyData} from '../helper/CheckEmpty';
 import {format} from 'date-fns';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+import {navigate} from '../utils/navigation.utils';
 
 export default class AccountUserDetail extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ export default class AccountUserDetail extends Component {
 
   editProfil = () => {
     var dataDiri = {dataDiri: this.props.userDetail};
-    Actions.accountEditProfil(dataDiri);
+    navigate('accountEditProfil', dataDiri);
   };
 
   renderCustomerGroupBG = cg => {
@@ -137,7 +137,7 @@ export default class AccountUserDetail extends Component {
       );
 
       if (mem) {
-        Actions.detailMembership({membership: mem, userDetail});
+        navigate('detailMembership', {membership: mem, userDetail});
       }
     } catch (e) {}
   };
@@ -246,7 +246,7 @@ export default class AccountUserDetail extends Component {
                   )}
                 {!isEmptyArray(this.props.memberships.listUpgrade) && (
                   <TouchableOpacity
-                    onPress={() => Actions.listMembership({userDetail})}
+                    onPress={() => navigate('listMembership', {userDetail})}
                     style={styles.btnUpgrade}>
                     <Text style={styles.textUpgrade}>
                       {this.getLabel(userDetail)}

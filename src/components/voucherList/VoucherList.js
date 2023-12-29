@@ -3,9 +3,9 @@ import {useDispatch, useSelector} from 'react-redux';
 
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 
-import {Actions} from 'react-native-router-flux';
 import VoucherListItem from './components/VoucherListItem';
 import {vouchers} from '../../actions/rewards.action';
+import {navigate} from '../../utils/navigation.utils';
 
 const styles = StyleSheet.create({
   root: {
@@ -36,7 +36,7 @@ const VoucherList = () => {
         <TouchableOpacity
           style={styles.touchableVoucher}
           onPress={() => {
-            Actions.voucherDetail({dataVoucher: voucher});
+            navigate('voucherDetail', {dataVoucher: voucher});
           }}>
           <VoucherListItem
             voucher={voucher}

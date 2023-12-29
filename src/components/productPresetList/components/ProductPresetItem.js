@@ -19,8 +19,8 @@ import ProductUpdateModal from '../../productUpdateModal';
 import appConfig from '../../../config/appConfig';
 
 import Theme from '../../../theme';
-import {Actions} from 'react-native-router-flux';
 import {useSelector} from 'react-redux';
+import {navigate} from '../../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -196,7 +196,7 @@ const Product = ({product, basket}) => {
     if (totalQty) {
       handleOpenUpdateModal();
     } else {
-      Actions.productDetail({
+      navigate('productDetail', {
         productId: product?.id,
       });
     }

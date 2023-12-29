@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-import {Actions} from 'react-native-router-flux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 
 import {
@@ -29,6 +28,7 @@ import appConfig from '../config/appConfig';
 import GlobalText from '../components/globalText';
 import additionalSetting from '../config/additionalSettings';
 import {getMandatoryFields} from '../actions/account.action';
+import {navigate} from '../utils/navigation.utils';
 
 const HEIGHT = Dimensions.get('window').height;
 const useStyles = () => {
@@ -178,7 +178,7 @@ const Register = () => {
         }),
       );
     } else {
-      Actions.registerForm({
+      navigate('registerForm', {
         registerMethod,
         inputValue: value,
         approvedData,

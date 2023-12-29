@@ -40,6 +40,7 @@ import * as geolib from 'geolib';
 import IconAwesome from 'react-native-vector-icons/FontAwesome';
 import {format} from 'date-fns';
 import ModalTransfer from './ModalTransfer';
+import {navigate} from '../../utils/navigation.utils';
 
 class Cart extends Component {
   constructor(props) {
@@ -330,7 +331,7 @@ class Cart extends Component {
       }
 
       if (this.props.orderType != undefined) {
-        Actions.scanQRTable({
+        navigate('scanQRTable', {
           basket: this.props.dataBasket,
           orderType: this.props.orderType,
         });
@@ -410,7 +411,7 @@ class Cart extends Component {
 
   goToOrderQRCode = () => {
     const {dataBasket} = this.props;
-    Actions.push('QRCodeCart', {myCart: dataBasket});
+    navigate('QRCodeCart', {myCart: dataBasket});
   };
 
   renderSettleButtonQuickService = () => {
@@ -652,7 +653,7 @@ class Cart extends Component {
         pembayaran.deliveryAddress = selectedAddress;
       }
 
-      Actions.settleOrder({pembayaran: pembayaran, url: url});
+      navigate('settleOrder', {pembayaran: pembayaran, url: url});
     } catch (e) {
       this.setState({
         showAlert: true,
@@ -1162,7 +1163,7 @@ class Cart extends Component {
   };
 
   goToAddress = () => {
-    Actions.selectAddress();
+    navigate('selectAddress');
   };
 
   deliveryAddress = (orderType, dataBasket) => {
@@ -1293,7 +1294,7 @@ class Cart extends Component {
             : true,
       };
 
-      Actions.push('productsMode2', {
+      navigate('productsMode2', {
         item: data,
         previousOrderingMode: dataBasket.orderingMode,
         previousTableNo: dataBasket.tableNo,

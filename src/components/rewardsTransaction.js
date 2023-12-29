@@ -10,12 +10,12 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {compose} from 'redux';
-import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../config/colorConfig';
 import RecentTransactionPlaceHolder from '../components/placeHolderLoading/RecentTransactionPlaceHolder';
 import {movePageIndex} from '../actions/user.action';
 import {afterPayment} from '../actions/account.action';
+import {navigate} from '../utils/navigation.utils';
 
 class RewardsTransaction extends Component {
   constructor(props) {
@@ -28,7 +28,7 @@ class RewardsTransaction extends Component {
   historyDetailPayment = item => {
     // to disable refresh timeout on page index
     this.props.dispatch(movePageIndex(false));
-    Actions.pendingOrderDetail({order: item});
+    navigate('pendingOrderDetail', {order: item});
   };
 
   goToHistory = async () => {

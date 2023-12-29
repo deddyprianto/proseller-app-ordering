@@ -13,6 +13,7 @@ import CryptoJS from 'react-native-crypto-js';
 
 import colorConfig from '../config/colorConfig';
 import LoadingScreen from './loadingScreen';
+import {navigate} from '../utils/navigation.utils';
 
 class StoreStores extends Component {
   constructor(props) {
@@ -100,10 +101,10 @@ class StoreStores extends Component {
           orderingMode: orderingModesFieldFiltered[0].key,
         }),
       );
-      Actions.orderHere();
+      navigate('orderHere');
       this.setState({isLoading: false});
     } else {
-      Actions.push('orderingMode');
+      navigate('orderingMode');
       this.setState({isLoading: false});
     }
   };

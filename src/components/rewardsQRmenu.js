@@ -27,6 +27,7 @@ import appConfig from '../config/appConfig';
 // import DeviceBrightness from 'react-native-device-brightness';
 import awsConfig from '../config/awsConfig';
 import CryptoJS from 'react-native-crypto-js';
+import {navigate} from '../utils/navigation.utils';
 
 class RewardsQRmenu extends Component {
   constructor(props) {
@@ -70,7 +71,7 @@ class RewardsQRmenu extends Component {
   };
 
   pageScan() {
-    Actions.scan();
+    navigate('scan');
   }
 
   onSuccess = e => {

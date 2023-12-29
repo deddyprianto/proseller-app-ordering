@@ -35,6 +35,7 @@ import Geolocation from 'react-native-geolocation-service';
 import PhoneInput from 'react-native-phone-input';
 import {getCompanyInfo} from '../actions/stores.action';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {navigate} from '../utils/navigation.utils';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -263,7 +264,7 @@ class ChangeCredentials extends Component {
           address = email;
           initialTimer = 5;
         }
-        Actions.push('changeCredentialsOTP', {
+        navigate('changeCredentialsOTP', {
           mode,
           address,
           initialTimer,

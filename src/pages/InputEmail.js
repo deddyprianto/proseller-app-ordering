@@ -31,6 +31,7 @@ import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import appConfig from '../config/appConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {navigate} from '../utils/navigation.utils';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -154,9 +155,9 @@ class InputEmail extends Component {
           email.phoneNumber = response.data.phoneNumber;
           // check mode sign in ( by password or by OTP )
           if (enableRegisterWithPassword) {
-            Actions.signInEmailWithPassword(email);
+            navigate('signInEmailWithPassword', email);
           } else {
-            Actions.signInEmail(email);
+            navigate('signInEmail', email);
           }
         } else if (response.data.status == 'SUSPENDED') {
           Alert.alert(
@@ -168,9 +169,9 @@ class InputEmail extends Component {
         } else {
           // check mode sign in ( by password or by OTP )
           if (enableRegisterWithPassword) {
-            Actions.signInEmailWithPassword(email);
+            navigate('signInEmailWithPassword', email);
           } else {
-            Actions.signInEmail(email);
+            navigate('signInEmail', email);
           }
         }
         this.setState({
@@ -180,7 +181,7 @@ class InputEmail extends Component {
         this.setState({
           loading: false,
         });
-        Actions.emailRegister(email);
+        navigate('emailRegister', email);
       }
     } catch (error) {
       Alert.alert('Opss..', 'Something went wrong, please try again.');

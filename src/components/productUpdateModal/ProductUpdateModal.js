@@ -18,6 +18,7 @@ import appConfig from '../../config/appConfig';
 import Theme from '../../theme';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {Actions} from 'react-native-router-flux';
+import {navigate} from '../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -412,7 +413,7 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
       <TouchableOpacity
         onPress={() => {
           handleClose();
-          Actions.productDetail({
+          navigate('productDetail', {
             productId: product.id,
             selectedProduct: item,
             prevPage: Actions.currentScene,
@@ -442,7 +443,7 @@ const ProductUpdateModal = ({open, handleClose, product, basket}) => {
       <TouchableOpacity
         onPress={() => {
           handleClose();
-          Actions.productDetail({
+          navigate('productDetail', {
             productId: product.id,
             prevPage: Actions.currentScene,
           });

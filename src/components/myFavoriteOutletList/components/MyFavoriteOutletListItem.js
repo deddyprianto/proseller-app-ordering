@@ -33,6 +33,7 @@ import {updateUser} from '../../../actions/user.action';
 import LoadingScreen from '../../loadingScreen';
 import {getDistance} from 'geolib';
 import CheckOutletStatus from '../../../helper/CheckOutletStatus';
+import {navigate} from '../../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -219,9 +220,9 @@ const MyFavoriteOutletListItem = ({item}) => {
 
     if (orderingMode.length === 1) {
       await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
-      Actions.push('orderHere');
+      navigate('orderHere');
     } else {
-      Actions.push('orderingMode');
+      navigate('orderingMode');
     }
   };
 
@@ -392,7 +393,7 @@ const MyFavoriteOutletListItem = ({item}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          Actions.favoriteOutletDetail({outlet: item});
+          navigate('favoriteOutletDetail', {outlet: item});
         }}
         style={styles.bodyBottom}>
         <Text style={styles.textBodyBottom}>Outlet Detail</Text>

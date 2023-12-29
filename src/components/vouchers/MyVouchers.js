@@ -27,6 +27,7 @@ import {connect} from 'react-redux';
 import {dataPoint, vouchers} from '../../actions/rewards.action';
 import {myVoucers} from '../../actions/account.action';
 import {format} from 'date-fns';
+import {navigate} from '../../utils/navigation.utils';
 
 class MyVouchers extends Component {
   constructor(props) {
@@ -88,7 +89,7 @@ class MyVouchers extends Component {
   }
 
   pageDetailVoucher = item => {
-    Actions.voucher({
+    navigate('voucher', {
       dataVoucher: item,
     });
   };

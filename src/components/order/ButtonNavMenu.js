@@ -3,6 +3,7 @@ import {Text, TouchableOpacity, Platform, View} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {navigate} from '../../utils/navigation.utils';
 
 export default class ButtonNavMenu extends Component {
   constructor(props) {
@@ -12,7 +13,7 @@ export default class ButtonNavMenu extends Component {
   goToCategorySelection = () => {
     try {
       const {products, selectedCategory, outlet} = this.props;
-      Actions.push('menuCategory', {
+      navigate('menuCategory', {
         products,
         hideBackButton: this.props.hideBackButton,
         isSpecificPageActive: this.props.isSpecificPageActive,

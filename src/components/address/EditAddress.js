@@ -40,6 +40,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scrollview';
 import MapView from 'react-native-maps';
 import CountryPicker from '../react-native-country-picker-modal';
 import PhoneInput from 'react-native-phone-input';
+import {navigate} from '../../utils/navigation.utils';
 
 class EditAddress extends Component {
   constructor(props) {
@@ -576,7 +577,7 @@ class EditAddress extends Component {
               marginTop: 5,
             }}
             onPress={() =>
-              Actions.pickCoordinate({
+              navigate('pickCoordinate', {
                 setCoordinate: this.setCoordinate,
                 oldCoordinate: this.state.coordinate,
                 from: 'address',

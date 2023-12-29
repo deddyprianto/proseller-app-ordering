@@ -16,6 +16,7 @@ import AutoHeightImage from 'react-native-auto-height-image';
 import StampsPlaceHolder from './placeHolderLoading/StampsPlaceHolder';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import {Actions} from 'react-native-router-flux';
+import {navigate} from '../utils/navigation.utils';
 
 class RewardsStamp extends Component {
   constructor(props) {
@@ -136,7 +137,7 @@ class RewardsStamp extends Component {
 
   detailStamps() {
     if (Actions.currentScene === 'pageIndex') {
-      Actions.detailStamps();
+      navigate('detailStamps');
     }
   }
 

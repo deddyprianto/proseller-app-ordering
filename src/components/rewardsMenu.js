@@ -11,9 +11,9 @@ import {
 import colorConfig from '../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
-import {Actions} from 'react-native-router-flux';
 import appConfig from '../config/appConfig';
 import MyECardModal from './modal/MyECardModal';
+import {navigate} from '../utils/navigation.utils';
 // import {movePageIndex} from '../actions/user.action';
 
 export default class RewardsMenu extends Component {
@@ -44,16 +44,16 @@ export default class RewardsMenu extends Component {
     // };
     // console.log(pembayaran);
     // Actions.pay()
-    Actions.scan();
+    navigate('scan');
     // Actions.paymentDetail({pembayaran: pembayaran});
   };
 
   pageRewards = () => {
-    Actions.rewards();
+    navigate('rewards');
   };
 
   pageQRCode = () => {
-    Actions.qrcode();
+    navigate('qrcode');
   };
 
   renderMyECardModal = () => {
@@ -77,7 +77,7 @@ export default class RewardsMenu extends Component {
         <View style={styles.item}>
           <TouchableOpacity
             onPress={() => {
-              Actions.push('referral');
+              navigate('referral');
             }}>
             <View style={{alignItems: 'center'}}>
               <Image

@@ -21,6 +21,7 @@ import appConfig from '../../../config/appConfig';
 import {getDistance} from 'geolib';
 import useTime from '../../../hooks/time/useTime';
 import CheckOutletStatus from '../../../helper/CheckOutletStatus';
+import {navigate} from '../../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -314,7 +315,7 @@ const FavoriteOutletListItem = ({item, disabled}) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          Actions.favoriteOutletDetail({outlet: item});
+          navigate('favoriteOutletDetail', {outlet: item});
         }}
         style={styles.bodyBottom}>
         <Text style={styles.textBodyBottom}>Outlet Detail</Text>

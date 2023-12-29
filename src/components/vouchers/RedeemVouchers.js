@@ -25,6 +25,7 @@ import Loader from '../loader';
 import {clearAccount} from '../../actions/payment.actions';
 import * as _ from 'lodash';
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
+import {navigate} from '../../utils/navigation.utils';
 
 class RedeemVoucher extends Component {
   constructor(props) {
@@ -132,7 +133,7 @@ class RedeemVoucher extends Component {
 
   pageDetailVoucher = item => {
     const {intlData} = this.props;
-    Actions.voucher({
+    navigate('voucher', {
       dataVoucher: item,
       intlData,
       fromPage: 'paymentAddVoucers',

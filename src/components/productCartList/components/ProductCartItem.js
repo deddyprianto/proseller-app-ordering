@@ -29,6 +29,7 @@ import {useSelector} from 'react-redux';
 import PreorderLabel from '../../label/Preorder';
 import AllowSelfSelectionLabel from '../../label/AllowSelfSelection';
 import {Actions} from 'react-native-router-flux';
+import {navigate} from '../../../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -654,7 +655,7 @@ const ProductCartItem = ({item, disabled}) => {
     <TouchableOpacity
       style={styles.root}
       onPress={() => {
-        Actions.productDetail({
+        navigate('productDetail', {
           productId: item?.product?.id,
           selectedProduct: item,
           prevPage: Actions.currentScene,

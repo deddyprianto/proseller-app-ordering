@@ -14,8 +14,8 @@ import MyFavoriteOutletList from '../components/myFavoriteOutletList';
 
 import {Body, Header} from '../components/layout';
 import Theme from '../theme';
-import {Actions} from 'react-native-router-flux';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -96,7 +96,7 @@ const MyFavoriteOutlets = () => {
         <TouchableOpacity
           style={styles.viewButton}
           onPress={() => {
-            Actions.favoriteOutlets();
+            navigate('favoriteOutlets');
           }}>
           <Text style={styles.textButton}>See All Outlet</Text>
         </TouchableOpacity>

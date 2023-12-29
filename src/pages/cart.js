@@ -74,6 +74,7 @@ import useValidation from '../hooks/validation/useValidation';
 import GlobalInputText from '../components/globalInputText';
 import {normalizeLayoutSizeWidth} from '../helper/Layout';
 import {reportSentry} from '../helper/Sentry';
+import {navigate} from '../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -1083,8 +1084,7 @@ const Cart = props => {
         );
         findMinimumDate = findMinimumDate?.latestSelfSelectionDate;
       }
-
-      await Actions.settleOrder({
+      await navigate('settleOrder', {
         pembayaran: pembayaran,
         url: url,
         outlet: outlet,
@@ -1208,7 +1208,7 @@ const Cart = props => {
         <TouchableOpacity
           style={[styles.touchableMethod, styles.selected(myDeliveryAddress)]}
           onPress={() => {
-            Actions.myDeliveryAddress({
+            navigate('myDeliveryAddress', {
               handleResetProvider: () => {
                 handleResetProvider();
               },

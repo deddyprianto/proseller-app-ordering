@@ -23,6 +23,7 @@ import GlobalModal from '../../modal/GlobalModal';
 import GlobalText from '../../globalText';
 import ModalAction from '../../modal/ModalAction';
 import useGetProtectionData from '../../../hooks/protection/useGetProtectioData';
+import {navigate} from '../../../utils/navigation.utils';
 const useStyles = () => {
   const theme = Theme();
   const styles = StyleSheet.create({
@@ -406,7 +407,7 @@ const MyDeliveryAddressItem = ({
           ]}
           title="Edit Address"
           onPress={() => {
-            Actions.addNewAddress({address: item, user, selectedIndex});
+            navigate('addNewAddress', {address: item, user, selectedIndex});
           }}
         />
         {item?.isDefault || !isFromProfileScene ? null : (

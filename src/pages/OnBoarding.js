@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {Actions} from 'react-native-router-flux';
 
 import {
   StyleSheet,
@@ -16,6 +15,7 @@ import appConfig from '../config/appConfig';
 import {useDispatch} from 'react-redux';
 import {getDialCodes, getLoginSettings} from '../actions/setting.action';
 import Theme from '../theme';
+import {navigate} from '../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -160,7 +160,7 @@ const OnBoarding = () => {
         activeOpacity={1}
         style={styles.touchableRegister}
         onPress={() => {
-          Actions.register();
+          navigate('register');
         }}>
         <Text style={styles.textRegister}>Create New Account</Text>
       </TouchableOpacity>
@@ -173,7 +173,7 @@ const OnBoarding = () => {
         activeOpacity={1}
         style={styles.touchableLogin}
         onPress={() => {
-          Actions.login();
+          navigate('login');
         }}>
         <Text style={styles.textLogin}>Login</Text>
       </TouchableOpacity>

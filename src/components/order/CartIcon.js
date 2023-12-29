@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import {navigate} from '../../utils/navigation.utils';
 
 export default class CartIcon extends Component {
   constructor(props) {
@@ -38,7 +38,7 @@ export default class CartIcon extends Component {
           justifyContent: 'center',
         }}
         onPress={() =>
-          Actions.basket({
+          navigate('basket', {
             refreshQuantityProducts: this.props.refreshQuantityProducts,
           })
         }>

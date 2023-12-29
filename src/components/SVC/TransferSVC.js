@@ -30,6 +30,7 @@ import PhoneInput from 'react-native-phone-input';
 import CountryPicker from 'react-native-country-picker-modal';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Body} from '../layout';
+import {navigate} from '../../utils/navigation.utils';
 
 const theme = {
   ...DefaultTheme,
@@ -131,8 +132,7 @@ class TransferSVC extends Component {
         payload.modeInvitation = 'Mobile Number';
         payload.address = mobileNo;
       }
-
-      Actions.virtualKeyboard({
+      navigate('virtualKeyboard', {
         payload,
         transferSVC: true,
         amountSVC: 0,

@@ -15,13 +15,13 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import colorConfig from '../../config/colorConfig';
-import {Actions} from 'react-native-router-flux';
 import {notifikasi} from '../../actions/auth.actions';
 import {getCart, getPendingCart, setCart} from '../../actions/order.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import appConfig from '../../config/appConfig';
 import {handlePaymentStatus} from '../../helper/PaymentStatus';
+import {navigate} from '../../utils/navigation.utils';
 
 class HistoryPayment extends Component {
   constructor(props) {
@@ -74,9 +74,9 @@ class HistoryPayment extends Component {
         item.status === 'READY_FOR_DELIVERY' ||
         item.status === 'ON_THE_WAY'
       ) {
-        Actions.waitingFood({myCart: item, isPop: true});
+        navigate('waitingFood', {myCart: item, isPop: true});
       } else {
-        Actions.pendingOrderDetail({order: item});
+        navigate('pendingOrderDetail', {order: item});
       }
     }
   };

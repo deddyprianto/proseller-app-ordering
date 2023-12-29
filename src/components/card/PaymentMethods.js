@@ -38,6 +38,7 @@ import {
 import {isEmptyArray, isEmptyObject} from '../../helper/CheckEmpty';
 import {defaultPaymentAccount} from '../../actions/user.action';
 import LoadingScreen from '../loadingScreen/LoadingScreen';
+import {navigate} from '../../utils/navigation.utils';
 
 class PaymentMethods extends Component {
   constructor(props) {
@@ -96,7 +97,7 @@ class PaymentMethods extends Component {
   gotoAccounts = async (intlData, item, page) => {
     try {
       if (item.isAccountRequired) {
-        Actions.paymentAddCard({intlData, item, page});
+        navigate('paymentAddCard', {intlData, item, page});
       } else {
         await this.props.dispatch(selectedAccount(item));
         if (isEmptyObject(this.props.defaultAccount)) {

@@ -39,6 +39,7 @@ import {getUserProfile} from '../actions/user.action';
 import {referral} from '../actions/referral.action';
 import {getAccountPayment} from '../actions/payment.actions';
 import {Body} from '../components/layout';
+import {navigate} from '../utils/navigation.utils';
 
 class Store extends Component {
   constructor(props) {
@@ -426,12 +427,12 @@ class Store extends Component {
         dataBasket.status == 'PROCESSING' ||
         dataBasket.status == 'READY_FOR_COLLECTION'
       ) {
-        Actions.waitingFood();
+        navigate('waitingFood');
       } else {
-        Actions.basket();
+        navigate('basket');
       }
     } else {
-      Actions.basket();
+      navigate('basket');
     }
   };
 

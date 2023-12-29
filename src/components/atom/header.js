@@ -17,7 +17,6 @@ import {
   Image,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import awsConfig from '../../config/awsConfig';
 import {compose} from 'redux';
@@ -26,6 +25,7 @@ import {reduxForm} from 'redux-form';
 import appConfig from '../../config/appConfig';
 import {isEmptyData} from '../../helper/CheckEmpty';
 import {getSetting} from '../../actions/order.action';
+import {navigate} from '../../utils/navigation.utils';
 
 const imageWidth = Dimensions.get('window').width / 2;
 
@@ -121,9 +121,9 @@ class Header extends Component {
   gotoBack = () => {
     const {loginByMobile} = this.props;
     if (loginByMobile === false) {
-      Actions.push('onBoarding');
+      navigate('onBoarding');
     } else {
-      Actions.push('pageIndex');
+      navigate('pageIndex');
     }
   };
 

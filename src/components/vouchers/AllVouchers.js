@@ -14,9 +14,9 @@ import {compose} from 'redux';
 
 import colorConfig from '../../config/colorConfig';
 import appConfig from '../../config/appConfig';
-import {Actions} from 'react-native-router-flux';
 import {dataPoint, vouchers} from '../../actions/rewards.action';
 import {myVoucers} from '../../actions/account.action';
+import {navigate} from '../../utils/navigation.utils';
 
 class AllVouchers extends Component {
   constructor(props) {
@@ -59,8 +59,8 @@ class AllVouchers extends Component {
 
   pageDetailVoucher = item => {
     // const {intlData} = this.props;
-    // Actions.voucher({dataVoucher: item, intlData});
-    Actions.voucher({
+    // navigate('voucher', {dataVoucher: item, intlData});
+    navigate('voucher', {
       dataVoucher: item,
     });
   };

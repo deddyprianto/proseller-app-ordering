@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {Text, TouchableOpacity, Platform, View} from 'react-native';
-import {Actions} from 'react-native-router-flux';
 import colorConfig from '../../config/colorConfig';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {navigate} from '../../utils/navigation.utils';
 
 export default class OutletIcon extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ export default class OutletIcon extends Component {
           justifyContent: 'center',
         }}
         onPress={() =>
-          Actions.stores({refreshProducts: this.props.refreshProducts})
+          navigate('stores', {refreshProducts: this.props.refreshProducts})
         }>
         <Icon
           size={20}

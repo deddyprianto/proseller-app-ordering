@@ -10,7 +10,6 @@ import {
   Dimensions,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import {Actions} from 'react-native-router-flux';
 import CryptoJS from 'react-native-crypto-js';
 import QRCode from 'react-native-qrcode-svg';
 import {useSelector} from 'react-redux';
@@ -19,6 +18,7 @@ import awsConfig from '../../config/awsConfig';
 import appConfig from '../../config/appConfig';
 
 import Theme from '../../theme';
+import {navigate} from '../../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -267,7 +267,7 @@ const MyECardModal = ({open, handleClose}) => {
         <TouchableOpacity
           onPress={() => {
             handleClose();
-            Actions.rewards();
+            navigate('rewards');
           }}
           style={styles.viewRedeem}>
           <Text style={styles.textRedeem}>REDEEM</Text>

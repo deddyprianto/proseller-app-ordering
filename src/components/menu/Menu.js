@@ -21,6 +21,7 @@ import {dataStores, getOutletById} from '../../actions/stores.action';
 import {changeOrderingMode, getOrderingMode} from '../../actions/order.action';
 import LoadingScreen from '../loadingScreen/LoadingScreen';
 import MyECardModal from '../modal/MyECardModal';
+import {navigate} from '../../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -234,14 +235,14 @@ const Menu = () => {
     const orderingMode = await dispatch(getOrderingMode(activeOutlets[0]));
 
     if (activeOutlets.length === 1 && orderingMode.length === 1) {
-      Actions.push('orderHere');
+      navigate('orderHere');
       await dispatch(getOutletById(activeOutlets[0].id));
       await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
     } else if (activeOutlets.length === 1) {
-      Actions.push('orderingMode');
+      navigate('orderingMode');
       await dispatch(getOutletById(activeOutlets[0].id));
     } else {
-      Actions.push('outlets');
+      navigate('outlets');
     }
     setIsLoading(false);
   };
@@ -251,7 +252,7 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.touchablePoint}
         onPress={() => {
-          Actions.redeem();
+          navigate('redeem');
         }}>
         <View>
           <Text style={styles.textPoint1}>Current Point</Text>
@@ -283,7 +284,7 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.viewMenu}
         onPress={() => {
-          Actions.myFavoriteOutlets();
+          navigate('myFavoriteOutlets');
         }}>
         <Image source={appConfig.iconHomeOutlet} style={styles.iconMenu} />
         <Text style={styles.textMenu}>Favorite Outlet</Text>
@@ -297,7 +298,7 @@ const Menu = () => {
         disabled
         style={styles.viewMenu}
         onPress={() => {
-          // Actions.push('eStore');
+          // navigate('eStore');
           setIsOpenModal(true);
         }}>
         <Image
@@ -328,7 +329,7 @@ const Menu = () => {
         disabled
         style={styles.viewMenu}
         onPress={() => {
-          Actions.push('eGift');
+          navigate('eGift');
         }}>
         <Image
           source={appConfig.iconHomeSendAGift}

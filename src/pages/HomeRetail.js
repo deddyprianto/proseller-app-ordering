@@ -6,7 +6,6 @@
 
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Actions} from 'react-native-router-flux';
 import {
   StyleSheet,
   View,
@@ -50,6 +49,7 @@ import additionalSetting from '../config/additionalSettings';
 import PointSvg from '../assets/svg/PointSvg';
 import VoucherSvg from '../assets/svg/VoucherSvg';
 import SvcSvg from '../assets/svg/SvcSvg';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -339,7 +339,7 @@ const HomeRetail = () => {
 
   const onStorePress = () => {
     if (stores?.length > 1) {
-      return Actions.store();
+      return navigate('store');
     }
     return null;
   };
@@ -376,7 +376,7 @@ const HomeRetail = () => {
       <TouchableOpacity
         style={styles.viewMenuBarChild}
         onPress={() => {
-          Actions.detailPoint({intlData});
+          navigate('detailPoint', {intlData});
         }}>
         <View style={styles.viewMenuBarChildImage}>
           <PointSvg height={24} color={theme.colors.brandTertiary} />
@@ -393,7 +393,7 @@ const HomeRetail = () => {
       <TouchableOpacity
         style={styles.viewMenuBarChild}
         onPress={() => {
-          Actions.voucherV2();
+          navigate('voucherV2');
         }}>
         <View style={styles.viewMenuBarChildImage}>
           <VoucherSvg height={24} color={theme.colors.brandTertiary} />
@@ -416,7 +416,7 @@ const HomeRetail = () => {
       <TouchableOpacity
         style={styles.viewMenuBarChild}
         onPress={() => {
-          Actions.summary();
+          navigate('summary');
         }}>
         <View style={styles.viewMenuBarChildImage}>
           <SvcSvg color={theme.colors.brandTertiary} height={24} />

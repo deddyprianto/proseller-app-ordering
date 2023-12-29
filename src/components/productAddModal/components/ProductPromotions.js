@@ -19,8 +19,8 @@ import Theme from '../../../theme';
 
 import PromotionSvg from '../../../assets/svg/PromotionSvg';
 
-import {Actions} from 'react-native-router-flux';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
+import {navigate} from '../../../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -139,7 +139,7 @@ const ProductPromotions = ({productPromotions, disabled}) => {
       <TouchableOpacity
         disabled={disabled}
         onPress={() => {
-          Actions.promotionDetail({promotion: value});
+          navigate('promotionDetail', {promotion: value});
         }}
         style={styles.viewProductPromotionItem}>
         {renderProductPromotionItemIcon()}

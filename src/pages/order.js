@@ -27,6 +27,7 @@ import {getProductByOutlet} from '../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import Loader from '../components/loader';
+import {navigate} from '../utils/navigation.utils';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -482,7 +483,7 @@ class StoreDetailStores extends Component {
                   extraData={this.props}
                   renderItem={({item}) => (
                     <TouchableOpacity
-                      onPress={() => Actions.products(item)}
+                      onPress={() => navigate('products', item)}
                       style={{
                         borderBottomWidth: 1,
                         borderColor: colorConfig.pageIndex.inactiveTintColor,

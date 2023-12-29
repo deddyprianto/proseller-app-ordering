@@ -6,6 +6,7 @@ import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import appConfig from '../../config/appConfig';
+import {navigate} from '../../utils/navigation.utils';
 
 class ButtonViewBasket extends Component {
   constructor(props) {
@@ -13,7 +14,7 @@ class ButtonViewBasket extends Component {
   }
 
   openBasket = () => {
-    Actions.basket({
+    navigate('basket', {
       from: 'products',
       refreshQuantityProducts: this.props.refreshQuantityProducts,
       previousTableNo: this.props.previousTableNo,

@@ -6,9 +6,9 @@ import GlobalText from '../../../components/globalText';
 import moment from 'moment';
 import CalendarWhite from '../../../assets/svg/CalenderWhite';
 import appConfig from '../../../config/appConfig';
-import {Actions} from 'react-native-router-flux';
 import PointSmall from '../../../assets/svg/SmallPointSvg';
 import {useSelector} from 'react-redux';
+import {navigate} from '../../../utils/navigation.utils';
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
   const styles = StyleSheet.create({
@@ -126,7 +126,7 @@ const ListVoucher = ({item, isRedeem, vouchers, isMyVoucher}) => {
   };
 
   const onPress = () => {
-    Actions.voucher({
+    navigate('voucher', {
       dataVoucher: item,
       isMyVoucher,
     });

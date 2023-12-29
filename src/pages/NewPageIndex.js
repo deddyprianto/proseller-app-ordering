@@ -38,6 +38,7 @@ import {
   openPopupNotification,
   setNotificationData,
 } from '../actions/order.action';
+import {navigate} from '../utils/navigation.utils';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -268,7 +269,7 @@ const NewPageIndex = () => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            Actions.scannerBarcode();
+            navigate('scannerBarcode');
           }}
           style={styles.viewNavbarItemScan}>
           <Image source={appConfig.iconScan} style={styles.iconNavbarScan} />

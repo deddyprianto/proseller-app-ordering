@@ -1,6 +1,5 @@
 import React from 'react';
 import {Alert} from 'react-native';
-import {Actions} from 'react-native-router-flux';
 import UUIDGenerator from 'react-native-uuid-generator';
 import {useDispatch, useSelector} from 'react-redux';
 import {registerCard} from '../../actions/payment.actions';
@@ -12,6 +11,7 @@ import {
   saveDeliveryCustomField,
   updateProvider,
 } from '../../actions/order.action';
+import {navigate} from '../../utils/navigation.utils';
 
 const usePayment = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -36,7 +36,7 @@ const usePayment = () => {
         };
         const response = await dispatch(registerCard(payload));
         if (response.success === true) {
-          Actions.hostedPayment({
+          navigate('hostedPayment', {
             url: response.response.data.url,
             data: response.response.data,
             page,

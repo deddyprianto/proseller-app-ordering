@@ -51,6 +51,7 @@ import {showSnackbar} from '../actions/setting.action';
 import {checkAccountExist} from '../actions/auth.actions';
 import CheckListGreenSvg from '../assets/svg/ChecklistGreenSvg';
 import VerifyAlert from '../assets/svg/VerifyAlert';
+import {navigate} from '../utils/navigation.utils';
 
 const backupMandatoryFields = [
   {
@@ -485,7 +486,7 @@ class AccountEditProfil extends Component {
         }
       }
     }
-    Actions.changeCredentials({mode, dataDiri: this.props.dataDiri});
+    navigate('changeCredentials', {mode, dataDiri: this.props.dataDiri});
   };
 
   btnChangeCredentials = field => {
@@ -893,7 +894,7 @@ class AccountEditProfil extends Component {
         address = this.state.email;
         initialTimer = 5;
       }
-      Actions.push('changeCredentialsOTP', {
+      navigate('changeCredentialsOTP', {
         mode: type,
         address,
         initialTimer,
