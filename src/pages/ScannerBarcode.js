@@ -179,12 +179,8 @@ const ScannerBarcode = () => {
       if (additionalSetting().enableScanAndGo) {
         setIsLoading(false);
         const showPopup = await checkProductScanGo(true, response.data);
-        if (!showPopup) {
-          return goToProductDetail(response);
-        } else {
-          setShowAlert(showPopup);
-          return setIsOpenDetailPage(false);
-        }
+        !showPopup && setIsOpenDetailPage(false);
+        return goToProductDetail(response);
       }
       goToProductDetail(response);
       setIsLoading(false);
@@ -373,17 +369,6 @@ const ScannerBarcode = () => {
       {renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
-      <ModalAction
-        isVisible={showAlert}
-        title={`Proceed to ${defaultOutlet.storeCheckOutName ||
-          'Store Checkout'}`}
-        description="Your current cart will be emptied.
-Do you still want to proceed?"
-        approveTitle="Proceed"
-        onApprove={() => goToProductDetail(responseBarcode)}
-        closeModal={closeAlert}
-        onCancel={closeAlert}
-      />
     </SafeAreaView>
   );
 };
