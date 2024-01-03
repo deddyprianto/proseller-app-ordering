@@ -859,6 +859,25 @@ const ProductDetail = ({
       {renderPreOrderLabel()}
     </View>
   );
+
+  const alertDescription = () => {
+    if (isFromScanBarcode) {
+      return 'Your current cart will be emptied. Do you still want to proceed?';
+    }
+    return `Your current cart is only eligible for ${defaultOutlet.storeCheckOutName ||
+      'Store Checkout'} therefore it will be emptied. Do you still want to proceed?`;
+  };
+
+  const alertTitle = () => {
+    if (isFromScanBarcode) {
+      return `Proceed to ${defaultOutlet.storeCheckOutName ||
+        'Store Checkout'}`;
+    }
+    return `Proceed to ${
+      !isEmptyObject(selectedProduct) ? 'Update' : 'Add'
+    } Item?`;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -880,12 +899,8 @@ const ProductDetail = ({
         closeModal={closeAlert}
         onCancel={closeAlert}
         onApprove={handleAddUpdateProduct}
-        title={`Proceed to ${
-          !isEmptyObject(selectedProduct) ? 'Update' : 'Add'
-        } Item?`}
-        description={`Your current cart is only eligible for ${
-          defaultOutlet?.name
-        } therefore it will be emptied. Do you still want to proceed?`}
+        title={alertTitle()}
+        description={alertDescription()}
       />
     </SafeAreaView>
   );
