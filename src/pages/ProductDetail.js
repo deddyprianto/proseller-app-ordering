@@ -625,19 +625,11 @@ const ProductDetail = ({
     return <Text style={styles.textName}>{name}</Text>;
   };
 
-  const renderSKU = () => {
-    const references = product?.references;
-    let SKU = null;
-    if (Array.isArray(references) && references.length) {
-      const obj = references.find(item => item.name === 'POS SKU');
-      if (obj.value) {
-        SKU = obj.value;
-      }
-    }
-
+  const renderBarcode = () => {
+    const barcode = product?.barcode;
     return (
-      additionalSetting().showSKU &&
-      SKU && <Text style={styles.textSKU}>{SKU}</Text>
+      additionalSetting().showBarcode &&
+      barcode && <Text style={styles.textSKU}>{barcode}</Text>
     );
   };
 
@@ -705,7 +697,7 @@ const ProductDetail = ({
     return (
       <View style={styles.viewNameQtyPrice}>
         {renderName()}
-        {renderSKU()}
+        {renderBarcode()}
         {renderPriceAndQty()}
       </View>
     );
