@@ -19,6 +19,7 @@ const additionalSetting = () => {
   const isAutoSelectDeliveryProviderType = true;
   const popupNotificationTextAlign = 'left';
   const showForfeitedItemInTransaction = false;
+  const showSKU = false;
 
   return {
     additionalPolicy,
@@ -41,6 +42,7 @@ const additionalSetting = () => {
     isAutoSelectDeliveryProviderType,
     popupNotificationTextAlign,
     showForfeitedItemInTransaction,
+    showSKU,
   };
 };
 

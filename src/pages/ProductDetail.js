@@ -100,6 +100,15 @@ const useStyles = () => {
       color: theme.colors.text1,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
+    textSKU: {
+      width: '100%',
+      textAlign: 'left',
+      fontSize: theme.fontSize[12],
+      color: theme.colors.greyScale5,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      fontWeight: '400',
+      fontStyle: 'italic',
+    },
     textQty: {
       textAlign: 'center',
       fontSize: theme.fontSize[14],
@@ -616,6 +625,22 @@ const ProductDetail = ({
     return <Text style={styles.textName}>{name}</Text>;
   };
 
+  const renderSKU = () => {
+    const references = product?.references;
+    let SKU = null;
+    if (Array.isArray(references) && references.length) {
+      const obj = references.find(item => item.name === 'POS SKU');
+      if (obj.value) {
+        SKU = obj.value;
+      }
+    }
+
+    return (
+      additionalSetting().showSKU &&
+      SKU && <Text style={styles.textSKU}>{SKU}</Text>
+    );
+  };
+
   const renderButtonMinus = () => {
     const isEdit = !isEmptyObject(selectedProduct);
     const isDisabled = isEdit ? qty === 0 : qty === 1;
@@ -680,6 +705,7 @@ const ProductDetail = ({
     return (
       <View style={styles.viewNameQtyPrice}>
         {renderName()}
+        {renderSKU()}
         {renderPriceAndQty()}
       </View>
     );
