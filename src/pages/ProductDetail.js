@@ -568,7 +568,7 @@ const ProductDetail = ({
     setIsLoading(true);
     await dispatch(resetOrderingMode());
     const showPopup = await checkProductScanGo(isFromScanBarcode);
-    if (!showPopup) {
+    if (!showPopup || !isEmptyObject(selectedProduct) || qty === 0) {
       handleAddUpdateProduct();
     } else {
       setShowAlert(true);
@@ -893,7 +893,7 @@ const ProductDetail = ({
     }
     return `Proceed to ${
       !isEmptyObject(selectedProduct) ? 'Update' : 'Add'
-    } Item?`;
+    } Item to Cart?`;
   };
 
   return (
@@ -919,6 +919,7 @@ const ProductDetail = ({
         onApprove={handleAddUpdateProduct}
         title={alertTitle()}
         description={alertDescription()}
+        approveTitle="Proceed"
       />
     </SafeAreaView>
   );
