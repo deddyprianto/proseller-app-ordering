@@ -528,9 +528,11 @@ const ProductModifiers = ({
 
   const renderOptionNameAndPrice = ({isYesNo, modifierValue, isDisabled}) => {
     const isPrice = !isYesNo && modifierValue?.price;
-    const styleView = isPrice
-      ? styles.viewOptionNamePrice
-      : styles.viewOptionName;
+    const barcode = modifierValue?.barcode;
+    const styleView =
+      isPrice || (additionalSetting().showBarcode && barcode)
+        ? styles.viewOptionNamePrice
+        : styles.viewOptionName;
     return (
       <View style={styleView}>
         {renderOptionName({modifierValue, isDisabled})}
