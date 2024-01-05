@@ -100,7 +100,7 @@ const useStyles = () => {
       color: theme.colors.text1,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    textSKU: {
+    textBarcode: {
       width: '100%',
       textAlign: 'left',
       fontSize: theme.fontSize[12],
@@ -629,7 +629,7 @@ const ProductDetail = ({
     const barcode = product?.barcode;
     return (
       additionalSetting().showBarcode &&
-      barcode && <Text style={styles.textSKU}>{barcode}</Text>
+      barcode && <Text style={styles.textBarcode}>{barcode}</Text>
     );
   };
 

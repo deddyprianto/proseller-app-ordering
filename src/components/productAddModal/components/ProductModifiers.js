@@ -16,6 +16,7 @@ import Theme from '../../../theme';
 import appConfig from '../../../config/appConfig';
 import CurrencyFormatter from '../../../helper/CurrencyFormatter';
 import {useSelector} from 'react-redux';
+import additionalSetting from '../../../config/additionalSettings';
 
 const useStyle = () => {
   const theme = Theme();
@@ -42,6 +43,15 @@ const useStyle = () => {
       fontSize: theme.fontSize[14],
       color: theme.colors.textTertiary,
       fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    textBarcode: {
+      width: '100%',
+      textAlign: 'left',
+      fontSize: theme.fontSize[12],
+      color: theme.colors.greyScale5,
+      fontFamily: theme.fontFamily.poppinsMedium,
+      fontWeight: '400',
+      fontStyle: 'italic',
     },
     textTermsAndConditions: {
       fontSize: theme.fontSize[10],
@@ -498,6 +508,14 @@ const ProductModifiers = ({
     );
   };
 
+  const renderOptionBarcode = modifierValue => {
+    const barcode = modifierValue?.barcode;
+    return (
+      additionalSetting().showBarcode &&
+      barcode && <Text style={styles.textBarcode}>{barcode}</Text>
+    );
+  };
+
   const renderOptionPrice = ({isPrice, modifierValue}) => {
     if (isPrice) {
       return (
@@ -516,6 +534,7 @@ const ProductModifiers = ({
     return (
       <View style={styleView}>
         {renderOptionName({modifierValue, isDisabled})}
+        {renderOptionBarcode(modifierValue)}
         {renderOptionPrice({isPrice, modifierValue})}
       </View>
     );
