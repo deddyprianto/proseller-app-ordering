@@ -398,12 +398,14 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   const {minutes, seconds, isTimeEnd} = useCountdownV2(dataParent);
   const [showAllOrder, setShowAllOrder] = React.useState(false);
   const [showAllPreOrder, setShowAllPreOrder] = React.useState(false);
+  const [count, setCount] = React.useState(0);
+
   const {
     checkTaxHandle,
     checkTaxExclusive,
     checkTaxInclusive,
   } = useCalculation();
-  const staustPending = 'PENDING_PAYMENT';
+  const pendingPayment = 'PENDING_PAYMENT';
   const store_checkout = 'STORECHECKOUT';
   const {
     groupingeOrder,
@@ -452,6 +454,24 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
       : filtered;
     setListItems(temp);
   }, [defaultOrder]);
+  React.useEffect(() => {
+    if (data?.status === pendingPayment) {
+      let tempInterval = setInterval(async () => {
+        await getData();
+      }, 30000);
+      if (count >= 20 || isTimeEnd) {
+        clearInterval(tempInterval);
+      }
+      return () => clearInterval(tempInterval);
+    }
+  }, [count]);
+
+  const getData = async () => {
+    const response = await handleGetOrderDetail(data);
+    setData(response);
+    setCount(prevCount => prevCount + 1);
+  };
+
   const renderItemDetails = ({item, index}) => {
     if (!showAllOrder && index > 0) return null;
     return (
@@ -821,7 +841,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   };
   return (
     <Body>
-      {data?.status === staustPending && !isTimeEnd ? (
+      {data?.status === pendingPayment && !isTimeEnd ? (
         <View style={styles.waitingPaymentBox}>
           <GlobalText style={styles.waitingPaymentStyle}>
             Waiting for payment {minutes}:{seconds}
@@ -835,7 +855,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
       <ScrollView
         contentContainerStyle={styles.scrollContainerMain}
         style={styles.scrollContainer}>
-        {data?.status === staustPending && !isTimeEnd ? (
+        {data?.status === pendingPayment && !isTimeEnd ? (
           <>
             <View style={styles.qrContainer}>
               <Image style={styles.qrImage} source={{uri: data?.action?.url}} />
