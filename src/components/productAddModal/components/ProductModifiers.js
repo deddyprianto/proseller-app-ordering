@@ -28,7 +28,6 @@ const useStyle = () => {
       fontFamily: theme.fontFamily.poppinsMedium,
     },
     textOptionName: {
-      flex: 1,
       fontSize: theme.fontSize[14],
       color: theme.colors.textPrimary,
       fontFamily: theme.fontFamily.poppinsMedium,

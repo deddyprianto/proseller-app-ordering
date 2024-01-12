@@ -8,7 +8,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
 
-import Product from './components/ProductPresetItem';
+import Product from '../productList/components/ProductItem';
 
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import Theme from '../../theme';
