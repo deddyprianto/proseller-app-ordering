@@ -801,10 +801,6 @@ const Cart = props => {
       ? orderingDateTimeSelected?.date
       : !!orderingDateTimeSelected?.date;
 
-    const isActiveTakeAway = isEmptyArray(availableTimes)
-      ? orderingDateTimeSelected?.date
-      : !!orderingDateTimeSelected?.date;
-
     switch (value) {
       case 'DELIVERY':
         if (isActiveDeliveryMinAmount && isActiveDeliveryTime) {
@@ -827,11 +823,7 @@ const Cart = props => {
         return false;
 
       case 'TAKEAWAY':
-        if (isActiveTakeAway) {
-          return false;
-        } else {
-          return true;
-        }
+        return false;
 
       default:
         return true;
