@@ -827,7 +827,7 @@ const Cart = props => {
         return false;
 
       case 'TAKEAWAY':
-        if (isActiveTakeAway) {
+        if (isActiveTakeAway || !Array.isArray(availableTimes)) {
           return false;
         } else {
           return true;
