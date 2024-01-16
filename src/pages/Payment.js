@@ -370,9 +370,11 @@ const Payment = () => {
   }, [count, getData, isPendingPayment]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       if (isTimeEnd) {
-        await getData();
+        setTimeout(async () => {
+          await getData();
+        }, 1000);
       }
     };
     fetchData();
