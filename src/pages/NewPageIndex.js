@@ -200,6 +200,7 @@ const NewPageIndex = () => {
 
   React.useEffect(() => {
     handleGetNotification();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderNavbarDefault = ({props, name, index}) => {
@@ -238,7 +239,8 @@ const NewPageIndex = () => {
         if (
           currentPage === 'paymentSuccess' ||
           currentPage === 'pendingOrderDetail' ||
-          currentPage === 'pageIndex'
+          currentPage === 'pageIndex' ||
+          currentPage === 'payment'
         ) {
           dispatch(setNotificationData(getNotification));
           dispatch(openPopupNotification(true));
