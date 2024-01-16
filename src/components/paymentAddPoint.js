@@ -153,7 +153,7 @@ class paymentAddPoint extends Component {
   };
 
   pageDetailPoint = async () => {
-    const {originalPurchase, paymentData} = this.props;
+    const {originalPurchase, paymentData, isLoadingOrder} = this.props;
     const {ratio, jumPoint} = this.state;
     const maxPayment = paymentData.payment * ratio;
     // Actions.paymentDetail({
@@ -174,7 +174,7 @@ class paymentAddPoint extends Component {
     );
     this.setState({isLoading: false});
 
-    if (doPaymentImmediately) {
+    if (doPaymentImmediately && !isLoadingOrder) {
       this.props.doPayment();
     } else {
       Actions.pop();
@@ -317,7 +317,9 @@ class paymentAddPoint extends Component {
       const maxPoint = this.getMaximumPoint();
       if (
         isNaN(this.state.jumPoint) ||
-        Number(this.state.jumPoint) > maxPoint
+        Number(this.state.jumPoint) > maxPoint ||
+        this.state.isLoading ||
+        this.props.isLoadingOrder
       ) {
         return true;
       }
@@ -328,10 +330,10 @@ class paymentAddPoint extends Component {
   };
 
   render() {
-    const {intlData, campign, pendingPoints} = this.props;
+    const {intlData, campign, pendingPoints, isLoadingOrder} = this.props;
     return (
       <SafeAreaView>
-        <LoadingScreen loading={this.state.isLoading} />
+        <LoadingScreen loading={this.state.isLoading || isLoadingOrder} />
         <ScrollView>
           <View
             style={{
@@ -614,16 +616,17 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   campign: state.rewardsReducer.campaign.campaign,
   totalPoint: state.rewardsReducer.dataPoint.totalPoint,
   pendingPoints: state.rewardsReducer.dataPoint.pendingPoints,
   detailPoint: state.rewardsReducer.dataPoint.detailPoint,
   balance: state.SVCReducer.balance.balance,
   defaultBalance: state.SVCReducer.balance.defaultBalance,
+  isLoadingOrder: state.orderReducer.loadingOrder.isLoadingOrder,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
