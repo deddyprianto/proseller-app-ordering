@@ -459,12 +459,20 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
       let tempInterval = setInterval(async () => {
         await getData();
       }, 30000);
-      if (count >= 20 || isTimeEnd) {
+      if (count > 20) {
         clearInterval(tempInterval);
       }
       return () => clearInterval(tempInterval);
     }
   }, [count]);
+  React.useEffect(() => {
+    const fetchData = async () => {
+      if (isTimeEnd) {
+        await getData();
+      }
+    };
+    fetchData();
+  }, [isTimeEnd]);
 
   const getData = async () => {
     const response = await handleGetOrderDetail(data);

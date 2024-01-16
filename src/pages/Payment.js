@@ -25,10 +25,13 @@ import moment from 'moment';
 import {Body} from '../components/layout';
 import appConfig from '../config/appConfig';
 
-import {getPendingOrderById} from '../actions/order.action';
+import {getOrderDetail} from '../actions/order.action';
 import {useDispatch, useSelector} from 'react-redux';
 import {permissionDownloadFile} from '../helper/Download';
 import {navigate} from '../utils/navigation.utils';
+import useCountdownV2 from '../hooks/time/useCountdownV2';
+import {HistoryNotificationModal} from '../components/modal';
+import {openPopupNotification} from '../actions/order.action';
 
 const useStyles = () => {
   const theme = Theme();
@@ -337,44 +340,63 @@ const Payment = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
   const [refresh, setRefresh] = useState(false);
-  const [seconds, setSeconds] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [hours, setHours] = useState(0);
+  const [count, setCount] = useState(0);
 
   const order = useSelector(
     state => state.orderReducer.dataCartSingle.cartSingle,
   );
+  const [data, setData] = useState(order);
 
-  const isPendingPayment = order?.status === 'PENDING_PAYMENT';
+  const notificationData = useSelector(
+    state => state?.orderReducer?.notificationData?.notificationData,
+  );
+  const showPopup = useSelector(
+    state => state?.orderReducer?.popupNotification?.openPopup,
+  );
+  const {hours, minutes, seconds, isTimeEnd} = useCountdownV2(order);
+
+  const isPendingPayment = data?.status === 'PENDING_PAYMENT';
 
   useEffect(() => {
-    const then = moment(order.action.expiry).format('MM/DD/YYYY HH:mm:ss');
-
-    const result = setInterval(() => {
-      const now = moment().format('MM/DD/YYYY HH:mm:ss');
-      const ms = moment(then).diff(moment(now));
-
-      const duration = moment.duration(ms);
-      const second = duration.seconds();
-      const minute = duration.minutes();
-      const hour = duration.hours();
-
-      setSeconds(second);
-      setMinutes(minute);
-      setHours(hour);
-
-      if (second <= 0 && minute <= 0 && hour <= 0) {
-        setSeconds(0);
-        setMinutes(0);
-        setHours(0);
-        clearInterval(result);
+    if (isPendingPayment) {
+      let tempInterval = setInterval(async () => {
+        await getData();
+      }, 30000);
+      if (count > 20) {
+        clearInterval(tempInterval);
       }
-    }, 1);
-  }, [order]);
+      return () => clearInterval(tempInterval);
+    }
+  }, [count, getData, isPendingPayment]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isTimeEnd) {
+        await getData();
+      }
+    };
+    fetchData();
+  }, [getData, isTimeEnd]);
+
+  const getData = useCallback(async () => {
+    const response = await dispatch(getOrderDetail(data?.transactionRefNo));
+    setData(response);
+    setCount(prevCount => prevCount + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  const closePopup = async () => {
+    if (notificationData?.additionalData) {
+      await dispatch(getOrderDetail(data?.transactionRefNo));
+    }
+
+    dispatch(openPopupNotification(false));
+  };
 
   const onRefresh = useCallback(async () => {
     setRefresh(true);
-    await dispatch(getPendingOrderById(order?.id));
+    const response = await dispatch(getOrderDetail(data?.transactionRefNo));
+    setData(response);
     setRefresh(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
@@ -384,7 +406,7 @@ const Payment = () => {
   }, [onRefresh]);
 
   const handleDownloadQrCode = async qr => {
-    permissionDownloadFile(qr, `qrcode${order?.id}`, 'image/png', {
+    permissionDownloadFile(qr, `qrcode${data?.id}`, 'image/png', {
       title: 'QR Code Saved Successfully',
       description:
         'You can finalize the payment by uploading the QR Code to the payment platform.',
@@ -392,7 +414,7 @@ const Payment = () => {
   };
 
   const renderQR = () => {
-    const qr = order?.action?.url;
+    const qr = data?.action?.url;
 
     if (qr && isPendingPayment) {
       return (
@@ -405,14 +427,11 @@ const Payment = () => {
 
   const renderWaitingTime = () => {
     if (isPendingPayment) {
-      const secondMoment = moment(seconds, 'second').format('ss');
-      const minuteMoment = moment(minutes, 'minute').format('mm');
-      const hourMoment = moment(hours, 'hour').format('HH');
       return (
         <View style={styles.viewWaitingPayment}>
           <Text style={styles.textWaitingPayment}>Waiting for payment</Text>
           <Text style={styles.textWaitingPaymentValue}>
-            {hourMoment}:{minuteMoment}:{secondMoment}
+            {hours}:{minutes}:{seconds}
           </Text>
           <Image source={appConfig.iconTime} style={styles.iconTime} />
         </View>
@@ -421,7 +440,7 @@ const Payment = () => {
   };
 
   const renderSaveQR = () => {
-    const qr = order?.action?.url;
+    const qr = data?.action?.url;
     if (isPendingPayment) {
       return (
         <TouchableOpacity
@@ -458,7 +477,7 @@ const Payment = () => {
       case 'COMPLETE':
         return 'COMPLETE';
       default:
-        return '-';
+        return key?.replace(/_/g, ' ');
     }
   };
 
@@ -467,7 +486,7 @@ const Payment = () => {
       <View style={styles.viewStatus}>
         <Text style={styles.textStatus}>Order Status</Text>
         <Text style={styles.textStatusValue}>
-          {renderStatusValue(order.status)}
+          {renderStatusValue(data?.status)}
         </Text>
       </View>
     );
@@ -648,22 +667,22 @@ const Payment = () => {
 
   const renderQueueNumber = () => {
     const isShowQueue =
-      order?.queueNo &&
-      order?.orderingMode !== 'STORECHECKOUT' &&
-      order?.outlet?.outletType !== 'Retail';
+      data?.queueNo &&
+      data?.orderingMode !== 'STORECHECKOUT' &&
+      data?.outlet?.outletType !== 'Retail';
 
     if (isShowQueue) {
       return (
         <View style={styles.viewQueueNumber}>
           <Text style={styles.textQueueNumber1}>Queue No.</Text>
-          <Text style={styles.textQueueNumber2}>{order?.queueNo}</Text>
+          <Text style={styles.textQueueNumber2}>{data?.queueNo}</Text>
         </View>
       );
     }
   };
 
   const renderPaymentDetails = () => {
-    const result = order?.payments.map(row => {
+    const result = data?.payments.map(row => {
       return renderPaymentDetailItem(row);
     });
 
@@ -678,7 +697,7 @@ const Payment = () => {
     return (
       <View style={styles.viewReferenceNo}>
         <Text style={styles.textReference}>Reference No.</Text>
-        <Text style={styles.textReference}>{order?.referenceNo}</Text>
+        <Text style={styles.textReference}>{data?.referenceNo}</Text>
       </View>
     );
   };
@@ -696,9 +715,13 @@ const Payment = () => {
             />
           }>
           <View style={styles.divider} />
-          {renderQR()}
-          {renderWaitingTime()}
-          {renderSaveQR()}
+          {isPendingPayment && (
+            <React.Fragment>
+              {renderQR()}
+              {renderWaitingTime()}
+              {renderSaveQR()}
+            </React.Fragment>
+          )}
           {renderQueueNumber()}
           {renderStatus()}
           {renderTextTitle('Order Details')}
@@ -726,7 +749,7 @@ const Payment = () => {
     );
   };
 
-  if (isEmptyArray(order?.details)) {
+  if (isEmptyArray(data?.details)) {
     Actions.pop();
   }
 
@@ -734,13 +757,20 @@ const Payment = () => {
     <SafeAreaView style={styles.root}>
       <Body>
         <Header
-          title={order.action.name}
+          title={
+            data?.action?.name || renderPaymentDetailText(data?.paymentType)
+          }
           onBackBtn={() => {
             Actions.popTo('pageIndex');
           }}
         />
         {renderBody()}
         {renderBottom()}
+        <HistoryNotificationModal
+          value={notificationData}
+          open={showPopup}
+          handleClose={closePopup}
+        />
       </Body>
     </SafeAreaView>
   );
