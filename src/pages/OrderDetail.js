@@ -466,9 +466,11 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
     }
   }, [count]);
   React.useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       if (isTimeEnd) {
-        await getData();
+        setTimeout(async () => {
+          await getData();
+        }, 1000);
       }
     };
     fetchData();
