@@ -218,6 +218,18 @@ const latestTimeSlotDate = (state = {}, action) => {
   }
 };
 
+const loadingOrder = (state = {}, action) => {
+  switch (action.type) {
+    case 'LOADING_ORDER':
+      return {
+        isLoadingOrder: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -236,4 +248,5 @@ export default combineReducers({
   latestTimeSlotDate,
   popupNotification,
   refreshOrder,
+  loadingOrder,
 });

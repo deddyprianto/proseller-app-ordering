@@ -40,6 +40,7 @@ import {
   getTimeSlot,
   setOrderType,
   settleOrder,
+  loadingOrderAction,
 } from '../../actions/order.action';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
@@ -2526,7 +2527,7 @@ class SettleOrder extends Component {
     //     }
     //   }
     // } catch (e) {}
-
+    this.props.dispatch(loadingOrderAction(true));
     const isNotAvailable = await this.handleOrderingModeOffline();
     if (isNotAvailable) {
       return;
@@ -2927,7 +2928,7 @@ class SettleOrder extends Component {
           );
         }
       }
-
+      this.props.dispatch(loadingOrderAction(false));
       this.setState({loading: false});
     } catch (e) {
       reportSentry('cart/submitAndPay', intlData, e);

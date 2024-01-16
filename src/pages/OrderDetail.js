@@ -668,7 +668,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
             </View>
           </View>
 
-          {data.remark ? (
+          {data?.remark ? (
             <>
               <View style={styles.dashStyle} />
 
@@ -741,7 +741,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
           </>
         ) : null}
 
-        {data.remark ? (
+        {data?.remark ? (
           <>
             <View style={styles.dashStyle} />
             <View style={styles.listOrderDetailContainer}>

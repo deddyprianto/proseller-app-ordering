@@ -2342,3 +2342,12 @@ export const sendNotes = notes => {
     }
   };
 };
+
+export const loadingOrderAction = payload => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'LOADING_ORDER',
+      payload,
+    });
+  };
+};
