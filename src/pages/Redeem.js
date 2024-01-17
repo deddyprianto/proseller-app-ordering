@@ -10,7 +10,7 @@ import MembershipInfo from '../components/membershipInfo';
 
 import {dataPointHistory} from '../actions/rewards.action';
 import {myProgressBarCampaign} from '../actions/account.action';
-
+import awsConfig from '../config/awsConfig';
 import Theme from '../theme';
 
 const useStyles = () => {
@@ -36,8 +36,14 @@ const useStyles = () => {
       marginVertical: 16,
       width: '100%',
       textAlign: 'left',
-      fontSize: theme.fontSize[12],
-      fontFamily: theme.fontFamily.poppinsMedium,
+      fontSize:
+        awsConfig.COMPANY_NAME === 'Funtoast'
+          ? theme.fontSize[16]
+          : theme.fontSize[12],
+      fontFamily:
+        awsConfig.COMPANY_NAME === 'Funtoast'
+          ? theme.fontFamily.poppinsBold
+          : theme.fontFamily.poppinsMedium,
     },
   });
   return result;
@@ -64,7 +70,11 @@ const Redeem = () => {
   };
 
   const renderTextAvailableVoucher = () => {
-    return <Text style={styles.textAvailableVoucher}>Available Voucher</Text>;
+    const textContent =
+      awsConfig.COMPANY_NAME === 'Funtoast'
+        ? 'Redeemable Rewards'
+        : 'Available Voucher';
+    return <Text style={styles.textAvailableVoucher}>{textContent}</Text>;
   };
 
   const renderBodyContent = () => {

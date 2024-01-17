@@ -6,6 +6,7 @@ import colorConfig from '../../../config/colorConfig';
 import appConfig from '../../../config/appConfig';
 import {normalizeLayoutSizeWidth} from '../../../helper/Layout';
 import Theme from '../../../theme/Theme';
+import awsConfig from '../../../config/awsConfig';
 
 const useStyles = () => {
   const {fontFamily} = Theme();
@@ -59,6 +60,11 @@ const useStyles = () => {
       borderRadius: 8,
       marginBottom: 16,
     },
+    textPoint: {
+      fontSize: 12,
+      fontFamily: fontFamily.poppinsMedium,
+      color: awsConfig.COMPANY_NAME === 'Funtoast' ? '#FFF' : '#000',
+    },
   });
 
   return styles;
@@ -70,7 +76,10 @@ const VoucherListItem = ({voucher, qty, pointToRedeem}) => {
     if (pointToRedeem) {
       return (
         <View style={styles.viewVoucherPointToRedeem}>
-          <Text style={styles.textWhite}>{pointToRedeem} Points</Text>
+          <Text style={styles.textPoint}>
+            {awsConfig.COMPANY_NAME === 'Funtoast' && 'Redeem for '}
+            {pointToRedeem} Points
+          </Text>
         </View>
       );
     }
