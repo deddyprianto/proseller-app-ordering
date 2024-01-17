@@ -865,7 +865,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
       <ScrollView
         contentContainerStyle={styles.scrollContainerMain}
         style={styles.scrollContainer}>
-        {data?.status === pendingPayment && !isTimeEnd ? (
+        {data?.status === pendingPayment ? (
           <>
             <View style={styles.qrContainer}>
               <Image style={styles.qrImage} source={{uri: data?.action?.url}} />
