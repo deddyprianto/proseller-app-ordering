@@ -93,11 +93,23 @@ const ReferralCodeShare = ({referralCode}) => {
 
   const handleShare = async () => {
     const link = await dispatch(getReferralDynamicLink());
+    let orderLink = '';
     const url = link?.url;
-    const messageTemplate = `Hey Foodie Friend! Need a caffeine fix to start your day? Skip the queue and download the new Fun Toast app!\n\nUse the referral code ${referralCode} at ${url} to order now and receive instant 200 points!\n\n✨ Download the app here :\nApp store https://apps.apple.com/sg/app/fun-toast/id1668513707\nAndriod https://play.google.com/store/apps/details?id=com.funtoast.app&hl=zh&pli=1`;
+    if (link !== false) {
+      orderLink = `or order now at ${url}`;
+    }
+
+    const messageTemplate = `Hellooo! I enjoy ordering from ${
+      awsConfig.COMPANY_NAME
+    } and I think you will too! Use the referral code ${referralCode} ${orderLink} and receive a gift!`;
+    const funtoastMessageTemplate = `Hey Foodie Friend! Need a caffeine fix to start your day? Skip the queue and download the new Fun Toast app!\n\nUse the referral code ${referralCode} at ${url} to order now and receive instant 200 points!\n\n✨ Download the app here :\nApp store https://apps.apple.com/sg/app/fun-toast/id1668513707\nAndriod https://play.google.com/store/apps/details?id=com.funtoast.app&hl=zh&pli=1`;
+
     try {
       await Share.share({
-        message: messageTemplate,
+        message:
+          awsConfig.COMPANY_NAME === 'Funtoast'
+            ? funtoastMessageTemplate
+            : messageTemplate,
       });
     } catch (error) {
       dispatch(
