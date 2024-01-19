@@ -383,9 +383,9 @@ const Payment = () => {
   const getData = useCallback(async () => {
     const response = await dispatch(getOrderDetail(data?.transactionRefNo));
     setData(response);
+    checkDetails(response);
     setCount(prevCount => prevCount + 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, data]);
 
   const closePopup = async () => {
     if (notificationData?.additionalData) {
@@ -399,9 +399,9 @@ const Payment = () => {
     setRefresh(true);
     const response = await dispatch(getOrderDetail(data?.transactionRefNo));
     setData(response);
+    checkDetails(response);
     setRefresh(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [data, dispatch]);
 
   useEffect(() => {
     onRefresh();
@@ -751,9 +751,11 @@ const Payment = () => {
     );
   };
 
-  if (isEmptyArray(data?.details)) {
-    Actions.pop();
-  }
+  const checkDetails = param => {
+    if (isEmptyArray(param?.details)) {
+      Actions.pop();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.root}>
