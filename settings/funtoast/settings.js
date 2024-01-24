@@ -5,7 +5,7 @@ const additionalSetting = () => {
   const mapType = 'map';
   const showPaymentMethodOnProfile = false;
   const storeLocationProfile = true;
-  const enableSentry = false;
+  const enableSentry = true;
   const applicationName = 'Funtoast';
   const cartVersion = 'basic';
   const registerVersion = 1;
