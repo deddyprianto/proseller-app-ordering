@@ -336,15 +336,11 @@ const useStyles = () => {
   return styles;
 };
 
-const Payment = () => {
+const Payment = ({order}) => {
   const dispatch = useDispatch();
   const styles = useStyles();
   const [refresh, setRefresh] = useState(false);
   const [count, setCount] = useState(0);
-
-  const order = useSelector(
-    state => state.orderReducer.dataCartSingle.cartSingle,
-  );
   const [data, setData] = useState(order);
 
   const notificationData = useSelector(
@@ -401,7 +397,8 @@ const Payment = () => {
     setData(response);
     checkDetails(response);
     setRefresh(false);
-  }, [data, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   useEffect(() => {
     onRefresh();
@@ -684,7 +681,7 @@ const Payment = () => {
   };
 
   const renderPaymentDetails = () => {
-    const result = data?.payments.map(row => {
+    const result = data?.payments?.map(row => {
       return renderPaymentDetailItem(row);
     });
 

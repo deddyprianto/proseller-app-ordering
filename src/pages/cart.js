@@ -1671,7 +1671,7 @@ const Cart = props => {
     }
   };
 
-  if (isEmptyArray(basket?.details)) {
+  if (isEmptyArray(basket?.details) && Actions.currentScene === 'cart') {
     Actions.pop();
   }
 

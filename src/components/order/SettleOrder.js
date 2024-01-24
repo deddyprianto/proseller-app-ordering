@@ -141,7 +141,7 @@ class SettleOrder extends Component {
     const find = payments.find(row => row.paymentType === 'FOMO_PAY');
 
     if (find) {
-      navigate('payment');
+      navigate('payment', {order: response?.responseBody?.data});
     }
   };
 

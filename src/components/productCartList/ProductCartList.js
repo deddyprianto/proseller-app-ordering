@@ -126,7 +126,7 @@ const ProductCartList = ({
     if (items && Array.isArray(items)) {
       groupingeOrder(items);
     }
-    if (!items) {
+    if (!items && Actions.currentScene === 'cart') {
       Actions.pop();
     }
   }, [items]);
