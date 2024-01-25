@@ -49,14 +49,10 @@ const useStyles = () => {
 };
 
 const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
-  const ref = {
-    otp1: useRef(),
-    otp2: useRef(),
-    otp3: useRef(),
-    otp4: useRef(),
-  };
+  const refs = useRef([]);
+  const otpArray = Array.from(Array(4));
   const {styles} = useStyles();
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '']);
   const [onOtpFocus, setOnOtpFocus] = React.useState(false);
   useEffect(() => {
     if (otp[3]) {
@@ -69,26 +65,22 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
   }, [otp]);
 
   const handleInputOtp = (event, index) => {
-    if (event.length > 1) {
-      event = event.charAt(event.length - 1);
-    }
     let results = [...otp];
     results[index] = event;
     setOtp(results);
 
-    const arrayLength = Array.from(Array(4)).length;
     if (event) {
       if (index !== 0 && !event) {
-        return ref[`otp${index - 1}`]?.focus();
+        return refs.current[index - 1]?.focus();
       }
 
-      if (arrayLength - 1 !== index && event) {
-        return ref[`otp${index + 1}`]?.focus();
+      if (otpArray.length - 1 !== index && event) {
+        return refs.current[index + 1]?.focus();
       }
     }
   };
 
-  const onAutomaticOpenKeyboard = async () => {
+  const onAutomaticOpenKeyboard = () => {
     setTimeout(() => {
       setOnOtpFocus(true);
     }, 500);
@@ -96,40 +88,17 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
 
   React.useEffect(() => {
     if (onOtpFocus) {
-      ref.otp0?.focus();
+      refs.current[0]?.focus();
     }
   }, [onOtpFocus]);
 
   const renderTextInput = (index, length) => {
-    if (index === length - 1) {
-      return (
-        <TextInput
-          ref={r => {
-            ref[`otp${index}`] = r;
-          }}
-          maxLength={1}
-          value={otp[index]}
-          keyboardType="numeric"
-          style={styles.textInputOtp(isWrongOtp)}
-          selection={{start: otp[index]?.length || 0}}
-          onChangeText={value => {
-            handleInputOtp(value.replace(/[^0-9]/g, ''), index);
-          }}
-          onLayout={onAutomaticOpenKeyboard}
-          onKeyPress={({nativeEvent}) => {
-            if (nativeEvent.key === 'Backspace' && index !== 0) {
-              ref[`otp${index}`] = null;
-              ref[`otp${index - 1}`].focus();
-            }
-          }}
-        />
-      );
-    }
     return (
       <TextInput
-        ref={r => {
-          ref[`otp${index}`] = r;
+        ref={ref => {
+          refs.current[index] = ref;
         }}
+        maxLength={1}
         value={otp[index]}
         keyboardType="numeric"
         style={styles.textInputOtp(isWrongOtp)}
@@ -140,15 +109,14 @@ const FieldOTP = ({onComplete, isWrongOtp, onChangeOtp}) => {
         }}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace' && index !== 0) {
-            ref[`otp${index}`] = null;
-            ref[`otp${index - 1}`].focus();
+            refs.current[index] = null;
+            refs.current[index - 1]?.focus();
           }
         }}
       />
     );
   };
   const renderInputOtp = () => {
-    const otpArray = Array.from(Array(4));
     const result = otpArray.map((_, index) => {
       return renderTextInput(index, otpArray.length);
     });

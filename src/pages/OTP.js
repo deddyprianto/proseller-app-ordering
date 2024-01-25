@@ -156,7 +156,7 @@ const OTP = ({isLogin, method, methodValue}) => {
         setDisableBtn(false);
         clearInterval(result);
       }
-    }, 1);
+    }, 1000);
   };
 
   useEffect(() => {
