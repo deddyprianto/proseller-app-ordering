@@ -46,23 +46,16 @@ const useCountdownV2 = order => {
   };
 
   useEffect(() => {
-    let timeoutId;
     if (order?.action?.expiry) {
       const now = moment().unix();
       const expired = moment(order?.action?.expiry).unix();
       if (now > expired) {
         return setIsTimeEnd(true);
       }
-      timeoutId = countdownStart(order.action.expiry);
+      countdownStart(order.action.expiry);
     } else {
       setIsTimeEnd(true);
     }
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
   }, [order]);
 
   return {
