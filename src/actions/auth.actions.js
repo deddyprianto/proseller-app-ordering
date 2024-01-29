@@ -340,47 +340,47 @@ export const refreshToken = () => {
       let {
         authReducer: {tokenUser},
       } = state;
+      let _refreshToken = null;
+      const backupRefreshToken = await AsyncStorage.getItem('refreshToken');
+
       // Decrypt token
-      let bytes = CryptoJS.AES.decrypt(
-        tokenUser.refreshToken,
-        awsConfig.PRIVATE_KEY_RSA,
-      );
-      let refreshToken = bytes.toString(CryptoJS.enc.Utf8);
+      if (tokenUser?.refreshToken) {
+        let bytes = CryptoJS.AES.decrypt(
+          tokenUser.refreshToken,
+          awsConfig.PRIVATE_KEY_RSA,
+        );
+        _refreshToken = bytes.toString(CryptoJS.enc.Utf8);
+      }
 
-      // check backup refreshToken
-      try {
-        const value = await AsyncStorage.getItem('refreshToken');
-        if (value !== null) {
-          refreshToken = value;
-        }
-      } catch (error) {}
-
-      var payload = {
-        refreshToken: refreshToken,
+      const payload = {
+        refreshToken: _refreshToken || backupRefreshToken,
       };
       console.log('PAYLOAD REFRESH TOKEN ', payload);
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
       console.log(response, 'response refresh token');
 
       // check if not authorized
-      if (response.responseBody.ResultCode === 401) {
+      if (response.responseBody?.ResultCode >= 400) {
+        reportSentry('/auth/refresh', payload, response);
         dispatch({
           type: 'USER_LOGGED_OUT_SUCCESS',
         });
       }
 
       // if success, then save data
-      if (response.success == true) {
+      if (response.success) {
         // encrypt data
-        let jwtToken = CryptoJS.AES.encrypt(
+        const jwtToken = encryptData(
           response.responseBody.Data.accessToken.jwtToken,
-          awsConfig.PRIVATE_KEY_RSA,
-        ).toString();
+        );
+        const newRefreshToken = encryptData(
+          response.responseBody.Data.refreshToken.token,
+        );
 
         dispatch({
           type: 'TOKEN_USER',
           token: jwtToken,
-          refreshToken: state.authReducer.tokenUser.refreshToken,
+          refreshToken: newRefreshToken,
         });
       }
     } catch (error) {
