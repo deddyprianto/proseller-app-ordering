@@ -35,6 +35,7 @@ import {paymentRefNo} from './actions/account.action';
 import {getBasket, getTermsConditions} from './actions/order.action';
 import NetInfo from '@react-native-community/netinfo';
 import {getColorSettings} from './actions/setting.action';
+import {reportSentry} from './helper/Sentry';
 
 this.isConnected = false;
 
@@ -67,17 +68,17 @@ class Main extends Component {
     } catch (e) {}
 
     try {
-      await this.props.dispatch(dataStores());
-      await this.props.dispatch(getTermsConditions());
-      await this.props.dispatch(getColorSettings());
-      await this.props.dispatch(getDefaultOutlet());
-      await this.props.dispatch(generateOneMapToken());
-      await this.props.dispatch(getCompanyInfo()),
-        await Promise.all([
-          this.props.dispatch(refreshToken()),
-          this.props.dispatch(getBasket()),
-          this.props.dispatch(getCompanyInfo()),
-        ]);
+      await Promise.all([
+        this.props.dispatch(dataStores()),
+        this.props.dispatch(getTermsConditions()),
+        this.props.dispatch(getColorSettings()),
+        this.props.dispatch(getDefaultOutlet()),
+        this.props.dispatch(generateOneMapToken()),
+        this.props.dispatch(getCompanyInfo()),
+        this.props.dispatch(refreshToken()),
+        this.props.dispatch(getBasket()),
+        this.props.dispatch(getCompanyInfo()),
+      ]);
 
       const data = await this.performTimeConsumingTask();
       if (data !== null) {
@@ -85,7 +86,8 @@ class Main extends Component {
       }
       this.turnOnLocation();
     } catch (error) {
-      console.log(error);
+      reportSentry('error initializing app', null, error);
+      console.error('error initializing app => ', error);
     }
 
     try {
