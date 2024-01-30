@@ -69,3 +69,30 @@ buck-out/
 .env.dev
 
 android/java_pid16632.hprof
+
+#project config
+app.json
+android/
+assets/img/image-on-boarding-1.png
+assets/img/image-on-boarding-2.png
+assets/img/image-on-boarding-3.png
+assets/img/image-on-boarding-4.png
+assets/img/image-point-large-background.png
+assets/img/image-point-small-background.png
+assets/img/logo-merchant-with-background.png
+assets/img/logo.png
+config/theme.js
+ios/Automaxima/Automaxima.entitlements
+ios/Automaxima/GoogleService-Info.plist
+src/assets/img/image-on-boarding-1.png
+src/assets/img/image-on-boarding-2.png
+src/assets/img/image-on-boarding-3.png
+src/assets/img/image-on-boarding-4.png
+src/assets/img/image-point-large-background.png
+src/assets/img/image-point-small-background.png
+src/assets/img/logo-merchant-with-background.png
+src/assets/img/logo.png
+src/config/additionalSettings.js
+src/config/appConfig.js
+src/config/awsConfig.js
+src/theme/Theme.js
