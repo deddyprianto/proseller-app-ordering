@@ -333,7 +333,9 @@ const ProductDetail = ({
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const response = await dispatch(getProductById(productId));
+      const response = await dispatch(
+        getProductById(productId, defaultOutlet?.id),
+      );
       setProduct(response);
       setIsLoading(false);
     };
@@ -586,6 +588,10 @@ const ProductDetail = ({
       let qtyModifierSelected = 0;
       const productModifiers = product.productModifiers.map(productModifier => {
         const min = productModifier.modifier?.min || 0;
+        const isAllUnavailable = productModifier.modifier?.details?.every(
+          item => item.orderingStatus === 'UNAVAILABLE',
+        );
+
         selectedProductModifiers.forEach(selectedProductModifier => {
           if (
             productModifier.modifierID === selectedProductModifier.modifierId
@@ -597,7 +603,7 @@ const ProductDetail = ({
 
         const result = qtyModifierSelected >= min;
         qtyModifierSelected = 0;
-        return result;
+        return isAllUnavailable || result;
       });
 
       const productModifierAllTrue = productModifiers.every(v => v === true);
