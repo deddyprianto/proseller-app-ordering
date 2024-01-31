@@ -194,6 +194,11 @@ const useStyle = () => {
       height: 54,
       marginRight: 8,
     },
+    textOutOfStock: {
+      fontSize: theme.fontSize[14],
+      color: theme.colors.errorColor,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
   });
   return result;
 };
@@ -369,7 +374,7 @@ const ProductModifiers = ({
       return false;
     }
 
-    return isDisabled;
+    return isDisabled || modifierValue.orderingStatus === 'UNAVAILABLE';
   };
 
   const renderButtonPlus = ({selectedProductModifier, max}) => {
@@ -553,6 +558,9 @@ const ProductModifiers = ({
           modifierValue,
           isDisabled,
         })}
+        {modifierValue.orderingStatus === 'UNAVAILABLE' && (
+          <Text style={styles.textOutOfStock}>Out of Stock</Text>
+        )}
       </View>
     );
   };

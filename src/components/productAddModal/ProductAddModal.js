@@ -291,7 +291,9 @@ const ProductAddModal = ({
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const response = await dispatch(getProductById(productId));
+      const response = await dispatch(
+        getProductById(productId, defaultOutlet?.id),
+      );
       setProduct(response);
       setIsLoading(false);
     };
