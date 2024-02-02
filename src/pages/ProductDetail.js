@@ -564,7 +564,7 @@ const ProductDetail = ({
     setIsLoading(false);
     setShowAlert(false);
     productUpdate?.quantity === 0 && basket?.details?.length < 2
-      ? navigate('orderHere')
+      ? Actions.popTo('orderHere')
       : Actions.pop();
   };
 
