@@ -50,6 +50,7 @@ import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import useScanGo from '../hooks/validation/usScanGo';
 import ModalAction from '../components/modal/ModalAction';
 import additionalSetting from '../config/additionalSettings';
+import awsConfig from '../config/awsConfig';
 
 const useStyles = () => {
   const theme = Theme();
@@ -562,7 +563,10 @@ const ProductDetail = ({
 
     setIsLoading(false);
     setShowAlert(false);
-    productUpdate?.quantity === 0 && basket?.details?.length < 2
+
+    productUpdate?.quantity === 0 &&
+    basket?.details?.length < 2 &&
+    awsConfig.COMPANY_NAME === 'Funtoast'
       ? Actions.popTo('orderHere')
       : Actions.pop();
   };
