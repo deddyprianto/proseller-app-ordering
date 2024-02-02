@@ -50,7 +50,6 @@ import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import useScanGo from '../hooks/validation/usScanGo';
 import ModalAction from '../components/modal/ModalAction';
 import additionalSetting from '../config/additionalSettings';
-import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -564,7 +563,7 @@ const ProductDetail = ({
     setIsLoading(false);
     setShowAlert(false);
     productUpdate?.quantity === 0 && basket?.details?.length < 2
-      ? navigate('orderHere')
+      ? Actions.popTo('orderHere')
       : Actions.pop();
   };
 
