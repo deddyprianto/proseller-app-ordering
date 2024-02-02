@@ -50,7 +50,6 @@ import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import useScanGo from '../hooks/validation/usScanGo';
 import ModalAction from '../components/modal/ModalAction';
 import additionalSetting from '../config/additionalSettings';
-import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
