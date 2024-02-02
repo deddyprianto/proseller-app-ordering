@@ -354,6 +354,7 @@ const ProductModifiers = ({
   const handleDisabledCheckbox = ({modifierValue, modifier}) => {
     const max = modifier.max;
     let qtyTotal = 0;
+    const isOrderingAvailable = modifierValue.orderingStatus === 'AVAILABLE';
 
     const modifierProducts = selected.filter(
       item => item.modifierId === modifier.id,
@@ -370,11 +371,11 @@ const ProductModifiers = ({
       qtyTotal >= max &&
       modifierProductIds.indexOf(modifierValue.productID) === -1;
 
-    if (max === 0) {
+    if (max === 0 && isOrderingAvailable) {
       return false;
     }
 
-    return isDisabled || modifierValue.orderingStatus === 'UNAVAILABLE';
+    return !isOrderingAvailable || isDisabled;
   };
 
   const renderButtonPlus = ({selectedProductModifier, max}) => {
