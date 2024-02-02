@@ -370,13 +370,18 @@ export const getProductById = id => {
     try {
       const state = getState();
       const dataUser = getUserDetail(state?.userReducer?.getUser?.userDetails);
+      const dataOutlet = state?.storesReducer?.defaultOutlet?.defaultOutlet;
+
       const response = await fetchApiProduct(
-        `/product/${id}?customerGroupId=${dataUser?.customerGroupId}`,
+        `/product/${id}?customerGroupId=${dataUser?.customerGroupId}&outlet=${
+          dataOutlet?.id
+        }`,
         'GET',
         null,
         200,
         null,
       );
+
       if (response.success) {
         const data = response.response.data;
 

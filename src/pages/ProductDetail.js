@@ -50,6 +50,7 @@ import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import useScanGo from '../hooks/validation/usScanGo';
 import ModalAction from '../components/modal/ModalAction';
 import additionalSetting from '../config/additionalSettings';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -286,6 +287,7 @@ const ProductDetail = ({
   const orderingModeSelected = useSelector(
     state => state.orderReducer.dataOrderingMode.orderingMode,
   );
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
   const webStyles = {
     li: {
@@ -333,9 +335,7 @@ const ProductDetail = ({
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const response = await dispatch(
-        getProductById(productId, defaultOutlet?.id),
-      );
+      const response = await dispatch(getProductById(productId));
       setProduct(response);
       setIsLoading(false);
     };
@@ -563,7 +563,9 @@ const ProductDetail = ({
 
     setIsLoading(false);
     setShowAlert(false);
-    Actions.pop();
+    productUpdate?.quantity === 0 && basket?.details?.length < 2
+      ? navigate('orderHere')
+      : Actions.pop();
   };
 
   const handleAddOrUpdateProduct = async () => {

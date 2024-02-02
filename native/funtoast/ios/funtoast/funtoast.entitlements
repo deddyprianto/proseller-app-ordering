@@ -7,7 +7,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:funtoastdemoapp.page.link</string>
-		<string>applinks:funtoastapp.page.link</string>
+		<string>applinks:funtoast.page.link</string>
 	</array>
 </dict>
 </plist>

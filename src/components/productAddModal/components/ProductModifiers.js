@@ -558,7 +558,7 @@ const ProductModifiers = ({
           modifierValue,
           isDisabled,
         })}
-        {modifierValue.orderingStatus === 'UNAVAILABLE' && (
+        {modifierValue?.orderingStatus === 'UNAVAILABLE' && (
           <Text style={styles.textOutOfStock}>Out of Stock</Text>
         )}
       </View>
