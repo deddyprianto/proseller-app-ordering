@@ -33,12 +33,13 @@ import awsConfig from '../config/awsConfig';
 import {dataInbox} from '../actions/inbox.action';
 import MessageCounter from '../components/MessageCounter';
 import additionalSetting from '../config/additionalSettings';
-import {HistoryNotificationModal} from '../components/modal';
+import {HistoryNotificationModal, LocationModal} from '../components/modal';
 import {
   openPopupNotification,
   setNotificationData,
 } from '../actions/order.action';
-import {navigate} from '../utils/navigation.utils';
+import LoadingScreen from '../components/loadingScreen';
+import {useScan} from '../hooks/scan/useScan';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -143,6 +144,15 @@ const useStyles = () => {
 const NewPageIndex = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
+
+  const {
+    onClickScan,
+    isLoading,
+    openLocationModal,
+    handleClose,
+    onClickSubmitLocationModal,
+  } = useScan();
+
   const [isOpenNotification, setIsOpenNotification] = useState(false);
   const [notification, setNotification] = useState({});
 
@@ -150,6 +160,7 @@ const NewPageIndex = () => {
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
+
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getColorSettings());
@@ -271,7 +282,7 @@ const NewPageIndex = () => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            navigate('scannerBarcode');
+            onClickScan(defaultOutlet);
           }}
           style={styles.viewNavbarItemScan}>
           <Image source={appConfig.iconScan} style={styles.iconNavbarScan} />
@@ -302,7 +313,13 @@ const NewPageIndex = () => {
 
     return (
       <View style={styles.viewNavbar}>
+        <LoadingScreen loading={isLoading} />
         {renderHistoryNotificationModal()}
+        <LocationModal
+          openLocationModal={openLocationModal}
+          handleClose={handleClose}
+          onClickSubmitLocationModal={onClickSubmitLocationModal}
+        />
 
         <View style={styles.viewNavbarContent}>{result}</View>
       </View>
