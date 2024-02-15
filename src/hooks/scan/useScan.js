@@ -4,14 +4,15 @@ import Geolocation from 'react-native-geolocation-service';
 import {getDistance} from 'geolib';
 
 import {checkLocationPermission} from '../../utils/location.utils';
-import {navigate} from '../../utils/navigation.utils';
 import appConfig from '../../config/appConfig';
+import {Actions} from 'react-native-router-flux';
 
 export const useScan = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingLocationModal, setIsLoadingLocationModal] = useState(false);
+  const [distance, setDistance] = useState(null);
   const [openLocationModal, setOpenLocationModal] = useState(null);
 
-  const onClickScan = useCallback(async defaultOutlet => {
+  const handleUserLocation = useCallback(async defaultOutlet => {
     const isFEF = appConfig.appName === 'fareastflora';
     if (isFEF) {
       const locationPermission = await checkLocationPermission();
@@ -20,13 +21,11 @@ export const useScan = () => {
       } else {
         await handleGetUserPosition(defaultOutlet);
       }
-    } else {
-      navigate('scannerBarcode');
     }
   }, []);
 
   const handleGetUserPosition = async defaultOutlet => {
-    setIsLoading(true);
+    setIsLoadingLocationModal(true);
     try {
       await Geolocation.getCurrentPosition(
         position => {
@@ -40,22 +39,21 @@ export const useScan = () => {
             longitude: defaultOutlet.longitude,
           };
 
-          const distance = getDistance(userLocation, outletLocation);
-
-          if (distance <= 50) {
-            navigate('scannerBarcode');
-          } else {
+          const _distance = getDistance(userLocation, outletLocation);
+          setDistance(_distance);
+          if (_distance > 50) {
             setOpenLocationModal('outsideRange');
           }
+          setIsLoadingLocationModal(false);
         },
         error => {
-          setIsLoading(false);
+          setIsLoadingLocationModal(false);
           console.log('cek geolocation error:', error);
         },
         {enableHighAccuracy: true, timeout: 15000, maximumAge: 1000},
       );
     } catch (error) {
-      setIsLoading(false);
+      setIsLoadingLocationModal(false);
       console.log('cek error getting location', error);
     }
   };
@@ -64,20 +62,23 @@ export const useScan = () => {
     const isRequestPermission = openLocationModal === 'requestPermission';
     if (isRequestPermission) {
       Linking.openSettings();
+    } else {
+      Actions.pop();
     }
     handleClose();
   };
 
   const handleClose = () => {
-    setIsLoading(false);
+    setIsLoadingLocationModal(false);
     setOpenLocationModal(null);
   };
 
   return {
-    onClickScan,
-    isLoading,
+    handleUserLocation,
+    isLoadingLocationModal,
     openLocationModal,
     handleClose,
     onClickSubmitLocationModal,
+    distance,
   };
 };

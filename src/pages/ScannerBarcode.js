@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {RNCamera} from 'react-native-camera';
 import {useDispatch, useSelector} from 'react-redux';
+import {Actions} from 'react-native-router-flux';
 
 import {
   StyleSheet,
@@ -18,10 +19,11 @@ import {Svg, Defs, Rect, Mask} from 'react-native-svg';
 
 import LoadingScreen from '../components/loadingScreen';
 import {Header} from '../components/layout';
-import {SearchProductByBarcodeModal} from '../components/modal';
+import {LocationModal, SearchProductByBarcodeModal} from '../components/modal';
 
 import {getProductByBarcode} from '../actions/product.action';
 import {showSnackbar} from '../actions/setting.action';
+import {removeBasket, changeOrderingMode} from '../actions/order.action';
 
 import Theme from '../theme';
 import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloating';
@@ -33,6 +35,10 @@ import ModalAction from '../components/modal/ModalAction';
 import useScanGo from '../hooks/validation/usScanGo';
 import additionalSetting from '../config/additionalSettings';
 import {navigate} from '../utils/navigation.utils';
+import {isEmptyObject} from '../helper/CheckEmpty';
+
+import {useScan} from '../hooks/scan/useScan';
+
 const HEIGHT = Dimensions.get('window').height;
 
 const useStyles = () => {
@@ -120,6 +126,15 @@ const useStyles = () => {
 const ScannerBarcode = () => {
   const {styles, theme} = useStyles();
   const dispatch = useDispatch();
+  const {
+    handleUserLocation,
+    isLoadingLocationModal,
+    openLocationModal,
+    handleClose,
+    onClickSubmitLocationModal,
+    distance,
+  } = useScan();
+
   const [searchCondition, setSearchCondition] = useState('');
   const [isOpenDetailPage, setIsOpenDetailPage] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -127,17 +142,29 @@ const ScannerBarcode = () => {
   const [isOpenSearchBarcodeModal, setIsOpenSearchBarcodeModal] = useState(
     false,
   );
+  const [isGoBack, setIsGoBack] = useState(false);
   const [responseBarcode, setResponseBarcode] = React.useState(false);
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
-  const {
-    showAlert,
-    checkProductScanGo,
-    closeAlert,
-    onRemoveBasket,
-    setShowAlert,
-  } = useScanGo();
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const {showAlert, checkProductScanGo, closeAlert, setShowAlert} = useScanGo();
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const isScanGoProduct = basket?.isStoreCheckoutCart;
+      await handleUserLocation(defaultOutlet);
+      const validateDistance = distance && distance <= 50;
+      if (!isEmptyObject(basket) && !isScanGoProduct && validateDistance) {
+        setShowAlert(true);
+      }
+    };
+    loadData();
+    setIsLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultOutlet, distance]);
+
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
   };
@@ -149,9 +176,15 @@ const ScannerBarcode = () => {
     setIsOpenDetailPage(false);
   };
 
-  const onClearCart = () => {
-    onRemoveBasket();
+  const onClearCart = async () => {
+    setIsLoading(true);
     closeAlert();
+    await dispatch(changeOrderingMode({orderingMode: ''}));
+    await dispatch(removeBasket());
+    setIsLoading(false);
+    if (isGoBack) {
+      Actions.pop();
+    }
   };
 
   const onSuccess = async (value, showError) => {
@@ -284,7 +317,18 @@ const ScannerBarcode = () => {
   };
 
   const renderHeader = () => {
-    return <Header isMiddleLogo />;
+    return <Header onBackBtn={onBackHandler} isMiddleLogo />;
+  };
+
+  const onBackHandler = () => {
+    const isScanGoProduct = basket?.isStoreCheckoutCart;
+    const isFEF = appConfig.appName === 'fareastflora';
+    setIsGoBack(true);
+    if (isFEF && !isEmptyObject(basket) && isScanGoProduct) {
+      setShowAlert(true);
+    } else {
+      Actions.pop();
+    }
   };
 
   const renderSearchModal = () => {
@@ -362,13 +406,46 @@ const ScannerBarcode = () => {
     return <ButtonCartFloating />;
   };
 
+  const alertDescription = () => {
+    if (isGoBack) {
+      return `Exiting ${defaultOutlet.storeCheckOutName ||
+        'Store Checkout'} will clear your cart. Are you sure you want to proceed?`;
+    }
+    return 'Your current cart will be emptied. Do you still want to proceed?';
+  };
+
+  const alertTitle = () => {
+    if (isGoBack) {
+      return `Exit ${defaultOutlet.storeCheckOutName || 'Store Checkout'}`;
+    }
+    return `Proceed to ${defaultOutlet.storeCheckOutName || 'Store Checkout'}`;
+  };
+
   return (
     <SafeAreaView style={styles.root}>
-      <LoadingScreen loading={isLoading} />
+      <LoadingScreen loading={isLoading || isLoadingLocationModal} />
       {renderHeader()}
       {renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
+      <ModalAction
+        isVisible={showAlert}
+        closeModal={closeAlert}
+        onCancel={onClearCart}
+        onApprove={() => {
+          closeAlert();
+          Actions.pop();
+        }}
+        title={alertTitle()}
+        description={alertDescription()}
+        approveTitle="No"
+        outlineBtnTitle="Yes"
+      />
+      <LocationModal
+        openLocationModal={openLocationModal}
+        handleClose={handleClose}
+        onClickSubmitLocationModal={onClickSubmitLocationModal}
+      />
     </SafeAreaView>
   );
 };

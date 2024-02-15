@@ -1,11 +1,14 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
+import {useSelector} from 'react-redux';
 
+import Theme from '../../theme/Theme';
 import GlobalModal from './GlobalModal';
 import GlobalButton from '../button/GlobalButton';
 import GlobalText from '../../components/globalText';
 
 const useStyles = () => {
+  const theme = Theme();
   const styles = StyleSheet.create({
     root: {
       flex: 1,
@@ -15,6 +18,7 @@ const useStyles = () => {
       flexDirection: 'row',
     },
     textPopUpContentCenter: {
+      fontFamily: theme.fontFamily.poppinsMedium,
       textAlign: 'center',
     },
     gapBtnOpenSettings: {
@@ -29,16 +33,21 @@ const LocationModal = ({
   handleClose,
   onClickSubmitLocationModal,
 }) => {
+  const defaultOutlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
+  );
   const styles = useStyles();
+
   const title =
     openLocationModal === 'requestPermission'
       ? 'Location Services Disabled'
       : 'Outside Store Range';
   const description =
     openLocationModal === 'requestPermission'
-      ? 'To use Scan and Go, enable your GPS/Location Services'
-      : `You're currently beyond the store's location range. To use Scan and Go,
-        please move closer to the store`;
+      ? `To use ${defaultOutlet.storeCheckOutName ||
+          'Store Checkout'}, enable your GPS/Location Services`
+      : `You're currently beyond the store's location range. To use ${defaultOutlet.storeCheckOutName ||
+          'Store Checkout'}, please move closer to the store`;
   const txtSubmit =
     openLocationModal === 'requestPermission' ? 'Open Settings' : 'Understood';
 
