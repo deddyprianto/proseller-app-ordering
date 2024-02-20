@@ -290,7 +290,7 @@ class Home extends Component {
         awsConfig.COMPANY_TYPE === 'Retail' ? (
           <Store />
         ) : awsConfig.COMPANY_TYPE === 'Retail' ? (
-          <HomeRetail />
+          <HomeRetail navigation={this.props.navigation} />
         ) : (
           <HomeFnB
             isRefresh={this.state.refreshing}

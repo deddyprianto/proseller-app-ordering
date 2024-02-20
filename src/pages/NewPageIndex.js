@@ -143,6 +143,7 @@ const useStyles = () => {
 const NewPageIndex = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
+
   const [isOpenNotification, setIsOpenNotification] = useState(false);
   const [notification, setNotification] = useState({});
 
@@ -150,6 +151,7 @@ const NewPageIndex = () => {
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
+
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getColorSettings());

@@ -55,54 +55,53 @@ index 0000000..d0042e2
 Binary files /dev/null and b/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_library_classes/debug/classes.jar differ
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_only_not_namespaced_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_only_not_namespaced_r_class_jar/debug/generateDebugRFile/R.jar
 new file mode 100644
-index 0000000..29b72da
+index 0000000..738bd60
 Binary files /dev/null and b/node_modules/@react-native-community/cameraroll/android/build/intermediates/compile_only_not_namespaced_r_class_jar/debug/generateDebugRFile/R.jar differ
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/debug-mergeJniLibs/merge-state b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/debug-mergeJniLibs/merge-state
 new file mode 100644
-index 0000000..d5d3bec
-Binary files /dev/null and b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/debug-mergeJniLibs/merge-state differ
+index 0000000..e69de29
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
 new file mode 100644
-index 0000000..31cc2d7
+index 0000000..d90628d
 --- /dev/null
 +++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/debug/jniLibs"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/debug/jniLibs"/></dataSet></merger>
 \ No newline at end of file
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
 new file mode 100644
-index 0000000..e3977b9
+index 0000000..34caada
 --- /dev/null
 +++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/debug/shaders"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/debug/shaders"/></dataSet></merger>
 \ No newline at end of file
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugAssets/merger.xml
 new file mode 100644
-index 0000000..9d6e181
+index 0000000..5d2a390
 --- /dev/null
 +++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugAssets/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/assets"/><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/build/intermediates/shader_assets/debug/compileDebugShaders/out"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/debug/assets"/></dataSet></merger>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/assets"/><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/build/intermediates/shader_assets/debug/compileDebugShaders/out"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/debug/assets"/></dataSet></merger>
 \ No newline at end of file
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
 new file mode 100644
-index 0000000..30ed84d
+index 0000000..9a19d9c
 --- /dev/null
 +++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
 @@ -0,0 +1 @@
-+#Fri Sep 29 09:41:42 WIB 2023
++#Fri Feb 09 17:07:31 WITA 2024
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/merger.xml b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/merger.xml
 new file mode 100644
-index 0000000..eaa6c82
+index 0000000..089111d
 --- /dev/null
 +++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/incremental/packageDebugResources/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/res"/><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/build/generated/res/rs/debug"/><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/res"/><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/build/generated/res/rs/debug"/><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/debug/res"/></dataSet><mergedItems/></merger>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/res"/><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/build/generated/res/rs/debug"/><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/res"/><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/build/generated/res/rs/debug"/><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/debug/res"/></dataSet><mergedItems/></merger>
 \ No newline at end of file
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/BuildConfig.class b/node_modules/@react-native-community/cameraroll/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/reactnativecommunity/cameraroll/BuildConfig.class
 new file mode 100644
@@ -3290,45 +3289,37 @@ index 0000000..96651c0
 +int styleable ViewStubCompat_android_inflatedId 1
 +int styleable ViewStubCompat_android_layout 2
 +int xml rn_dev_preferences 0x7f180001
-diff --git a/node_modules/@react-native-community/cameraroll/android/build/intermediates/transforms/mergeJniLibs/debug/__content__.json b/node_modules/@react-native-community/cameraroll/android/build/intermediates/transforms/mergeJniLibs/debug/__content__.json
-new file mode 100644
-index 0000000..49b1382
---- /dev/null
-+++ b/node_modules/@react-native-community/cameraroll/android/build/intermediates/transforms/mergeJniLibs/debug/__content__.json
-@@ -0,0 +1 @@
-+[{"name":"resources","index":0,"scopes":["PROJECT"],"types":["NATIVE_LIBS"],"format":"DIRECTORY","present":false}]
-\ No newline at end of file
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/@react-native-community/cameraroll/android/build/outputs/logs/manifest-merger-debug-report.txt
 new file mode 100644
-index 0000000..b93245c
+index 0000000..fee1fac
 --- /dev/null
 +++ b/node_modules/@react-native-community/cameraroll/android/build/outputs/logs/manifest-merger-debug-report.txt
 @@ -0,0 +1,25 @@
 +-- Merging decision tree log ---
 +manifest
-+ADDED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
-+INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
-+INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
++ADDED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
++INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
++INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:1-5:12
 +	package
-+		ADDED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:3:11-56
-+		INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+		INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		ADDED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:3:11-56
++		INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +	xmlns:android
-+		ADDED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:11-69
++		ADDED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml:2:11-69
 +uses-sdk
-+INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
-+INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +	android:targetSdkVersion
-+		INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+		ADDED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+		INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		ADDED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 +	android:minSdkVersion
-+		INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+		ADDED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
-+		INJECTED from /Volumes/ssdeksternal/Kantor/proseller-new/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		ADDED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/suard/Project/edgeworks/proseller-app-ordering/node_modules/@react-native-community/cameraroll/android/src/main/AndroidManifest.xml
 diff --git a/node_modules/@react-native-community/cameraroll/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt b/node_modules/@react-native-community/cameraroll/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt
 new file mode 100644
 index 0000000..18d8419

@@ -38,6 +38,7 @@ import {Header} from './layout';
 import GlobalText from './globalText';
 import SuccessSvg from '../assets/svg/SuccessSvg';
 import withHooksComponent from './HOC';
+import ModalAction from './modal/ModalAction';
 
 class PaymentSuccess extends Component {
   constructor(props) {
@@ -270,14 +271,30 @@ class PaymentSuccess extends Component {
   //     color: theme.colors.brandTertiary,
   //     fontFamily: theme.fontFamily.poppinsMedium,
   //   },
+
+  alertDescription = () => {
+    return "Please don't forget to verify the transaction before leaving. You are going to exit the page, are you sure?";
+  };
+
+  onClickBackBtn = () => {
+    const {dataRespons} = this.props;
+    if (!dataRespons.isVerified) {
+      this.setState({showAlert: true});
+    } else {
+      Actions.reset('app', {fromPayment: true});
+    }
+  };
+
   renderPaymentDetails = () => {
     const {intlData, dataRespons, paidMembership, paySVC} = this.props;
+    const {showAlert} = this.state;
     const {cartVersion} = additionalSetting();
+
     if (cartVersion === 'advance') {
       return (
         <>
           <Header
-            onBackBtn={() => Actions.reset('app', {fromPayment: true})}
+            onBackBtn={this.onClickBackBtn}
             customRightIcon={this.renderStep4Text}
             title={'Payment'}
           />
@@ -285,6 +302,19 @@ class PaymentSuccess extends Component {
             step={this.props.step}
             isFromPaymentPage={true}
             data={dataRespons}
+          />
+          <ModalAction
+            isVisible={showAlert}
+            closeModal={this.hideAlert}
+            onCancel={() => {
+              this.hideAlert();
+              Actions.reset('app', {fromPayment: true});
+            }}
+            onApprove={this.hideAlert}
+            title="Transaction Verification Reminder"
+            description={this.alertDescription()}
+            approveTitle="No"
+            outlineBtnTitle="Yes"
           />
         </>
       );

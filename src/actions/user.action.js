@@ -231,12 +231,12 @@ export const setAddressTags = addressTags => {
   };
 };
 
-export const userPosition = userPosition => {
+export const userPosition = param => {
   return async dispatch => {
     try {
       dispatch({
         type: 'GET_USER_POSITION',
-        userPosition: userPosition,
+        userPosition: param,
       });
     } catch (error) {
       return error;

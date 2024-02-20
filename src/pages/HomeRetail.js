@@ -16,6 +16,7 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
+  Animated,
 } from 'react-native';
 
 import Banner from '../components/banner';
@@ -32,6 +33,7 @@ import appConfig from '../config/appConfig';
 import {getBasket, getProductByOutlet} from '../actions/product.action';
 import {getSVCBalance} from '../actions/SVC.action';
 import {dataPointHistory} from '../actions/rewards.action';
+import {dataTransaction} from '../actions/sales.action';
 
 import Theme from '../theme';
 import {myVouchers} from '../actions/account.action';
@@ -182,14 +184,57 @@ const useStyles = () => {
     scrollContainer: {
       paddingBottom: 80,
     },
+    viewInfoBar: {
+      elevation: 2,
+      marginTop: normalizeLayoutSizeHeight(32),
+      padding: 16,
+      borderRadius: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.errorColor,
+    },
+    txtSeeAll: {
+      color: theme.colors.primary,
+      fontSize: theme.fontSize[14],
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    btnSeeAll: {
+      backgroundColor: theme.colors.background,
+      borderColor: theme.colors.primary,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 14,
+    },
+    txtInfoTransaction: {
+      fontSize: theme.fontSize[14],
+      color: theme.colors.background,
+      fontFamily: theme.fontFamily.poppinsMedium,
+    },
+    borderView: {
+      position: 'absolute',
+      top: 23,
+      left: -7,
+      right: -7,
+      bottom: -7,
+      borderColor: theme.colors.errorColor,
+      borderWidth: 1,
+      borderRadius: 8,
+    },
+    viewInfoBarContainer: {
+      marginHorizontal: 16,
+    },
   });
   return styles;
 };
 
-const HomeRetail = () => {
+const HomeRetail = props => {
   const ref = useRef();
   const styles = useStyles();
   const dispatch = useDispatch();
+  const {navigation} = props;
   const [productsLimitLength, setProductsLimitLength] = useState(10);
   const [refresh, setRefresh] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState({});
@@ -221,6 +266,10 @@ const HomeRetail = () => {
 
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
+  );
+
+  const orderHistory = useSelector(
+    state => state.rewardsReducer?.dataPoint?.pointTransaction,
   );
 
   const vouchers = useSelector(
@@ -313,6 +362,7 @@ const HomeRetail = () => {
     await dispatch(myVouchers());
     await dispatch(getUserProfile());
     await dispatch(dataPromotion());
+    await dispatch(dataTransaction());
     setSelectedCategory(response.data[0]);
     setRefresh(false);
   }, [dispatch, defaultOutlet]);
@@ -320,6 +370,42 @@ const HomeRetail = () => {
   useEffect(() => {
     onRefresh();
   }, [onRefresh]);
+
+  const scaleAnimateY = useRef(new Animated.Value(1)).current;
+  const scaleAnimateX = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const blinkAnimation = () => {
+      Animated.parallel([
+        Animated.timing(scaleAnimateY, {
+          toValue: 0.85,
+          duration: 800,
+          useNativeDriver: false,
+        }),
+        Animated.timing(scaleAnimateX, {
+          toValue: 0.96,
+          duration: 800,
+          useNativeDriver: false,
+        }),
+      ]).start(() => {
+        // reset animation values
+        Animated.parallel([
+          Animated.timing(scaleAnimateY, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: false,
+          }),
+          Animated.timing(scaleAnimateX, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: false,
+          }),
+        ]).start(() => blinkAnimation());
+      });
+    };
+
+    isUnverifiedOrder(orderHistory) && blinkAnimation();
+  }, [scaleAnimateX, scaleAnimateY, orderHistory]);
 
   const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     const paddingToBottom = 50;
@@ -439,6 +525,42 @@ const HomeRetail = () => {
     );
   };
 
+  const isUnverifiedOrder = arr => {
+    return arr?.some(
+      obj =>
+        obj.hasOwnProperty('isVerified') &&
+        obj.isVerified === false &&
+        obj.orderingMode === 'STORECHECKOUT',
+    );
+  };
+
+  const renderTransactionInfoBar = () => {
+    if (isUnverifiedOrder(orderHistory)) {
+      return (
+        <View style={styles.viewInfoBarContainer}>
+          <Animated.View
+            style={[
+              styles.borderView,
+              {transform: [{scaleX: scaleAnimateX}, {scaleY: scaleAnimateY}]},
+            ]}
+          />
+          <View style={styles.viewInfoBar}>
+            <Text style={styles.txtInfoTransaction}>
+              You have unverified transaction(s)
+            </Text>
+            <TouchableOpacity
+              style={styles.btnSeeAll}
+              onPress={() => {
+                navigation.navigate('Orders');
+              }}>
+              <Text style={styles.txtSeeAll}>See All</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+  };
+
   const renderFloatingButtonToTop = () => {
     if (isShowFloatingButton) {
       const styleView = !isEmptyArray(basket?.details)
@@ -556,6 +678,7 @@ const HomeRetail = () => {
             />
           }>
           {renderBanner()}
+          {renderTransactionInfoBar()}
           {renderMenuBar()}
           {renderProductCategoryList()}
           {renderDivider()}

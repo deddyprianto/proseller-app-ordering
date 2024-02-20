@@ -11,3 +11,4 @@ export {
 } from './SearchProductByBarcodeModal';
 
 export {default as HistoryNotificationModal} from './HistoryNotificationModal';
+export {default as LocationModal} from './LocationModal';

@@ -47,8 +47,6 @@ import {Header} from '../components/layout';
 import PreorderLabel from '../components/label/Preorder';
 import AllowSelfSelectionLabel from '../components/label/AllowSelfSelection';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
-import useScanGo from '../hooks/validation/usScanGo';
-import ModalAction from '../components/modal/ModalAction';
 import additionalSetting from '../config/additionalSettings';
 import awsConfig from '../config/awsConfig';
 
@@ -279,7 +277,7 @@ const ProductDetail = ({
   const [selectedProductModifiers, setSelectedProductModifiers] = useState([]);
 
   const [product, setProduct] = useState({});
-  const {checkProductScanGo, showAlert, setShowAlert, closeAlert} = useScanGo();
+
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -562,7 +560,6 @@ const ProductDetail = ({
     }
 
     setIsLoading(false);
-    setShowAlert(false);
 
     productUpdate?.quantity === 0 &&
     basket?.details?.length < 2 &&
@@ -574,14 +571,7 @@ const ProductDetail = ({
   const handleAddOrUpdateProduct = async () => {
     setIsLoading(true);
     await dispatch(resetOrderingMode());
-    const showPopup = await checkProductScanGo(isFromScanBarcode);
-    if (!showPopup || !isEmptyObject(selectedProduct) || qty === 0) {
-      handleAddUpdateProduct();
-    } else {
-      setShowAlert(true);
-      setIsLoading(false);
-      // produk ada yang scan go
-    }
+    handleAddUpdateProduct();
   };
 
   const handleDisabledCartButton = () => {
@@ -889,24 +879,6 @@ const ProductDetail = ({
     </View>
   );
 
-  const alertDescription = () => {
-    if (isFromScanBarcode) {
-      return 'Your current cart will be emptied. Do you still want to proceed?';
-    }
-    return `Your current cart is only eligible for ${defaultOutlet.storeCheckOutName ||
-      'Store Checkout'} therefore it will be emptied. Do you still want to proceed?`;
-  };
-
-  const alertTitle = () => {
-    if (isFromScanBarcode) {
-      return `Proceed to ${defaultOutlet.storeCheckOutName ||
-        'Store Checkout'}`;
-    }
-    return `Proceed to ${
-      !isEmptyObject(selectedProduct) ? 'Update' : 'Add'
-    } Item to Cart?`;
-  };
-
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading} />
@@ -923,15 +895,6 @@ const ProductDetail = ({
         {renderSpecialInstruction()}
       </KeyboardAwareScrollView>
       {renderCartButton()}
-      <ModalAction
-        isVisible={showAlert}
-        closeModal={closeAlert}
-        onCancel={closeAlert}
-        onApprove={handleAddUpdateProduct}
-        title={alertTitle()}
-        description={alertDescription()}
-        approveTitle="Proceed"
-      />
     </SafeAreaView>
   );
 };

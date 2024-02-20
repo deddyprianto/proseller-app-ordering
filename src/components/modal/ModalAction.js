@@ -89,7 +89,11 @@ const ModalAction = props => {
         </View>
         <View style={[styles.actionButtonContainer, props.buttonActionStyle]}>
           <View style={styles.buttonStyle}>
-            <GlobalButton onPress={props.onCancel} isOutline title="Cancel" />
+            <GlobalButton
+              onPress={props.onCancel}
+              isOutline
+              title={props.outlineBtnTitle || 'Cancel'}
+            />
           </View>
           <View style={styles.buttonStyle}>
             <GlobalButton

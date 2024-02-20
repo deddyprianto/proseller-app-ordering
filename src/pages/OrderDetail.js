@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   BackHandler,
+  Dimensions,
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
@@ -53,9 +54,12 @@ import {HistoryNotificationModal} from '../components/modal';
 import {openPopupNotification} from '../actions/order.action';
 import {GET_TRANSACTION_BY_REFERENCE_NO} from '../constant/order';
 import LoadingScreen from '../components/loadingScreen';
+import appConfig from '../config/appConfig';
 
 const useStyles = () => {
   const {colors, fontFamily, fontSize} = Theme();
+  const screenHeight = Dimensions.get('window').height;
+  const screenWidth = Dimensions.get('window').width;
   const styles = StyleSheet.create({
     containerCountdown: {
       paddingHorizontal: 10,
@@ -306,7 +310,6 @@ const useStyles = () => {
     paymentSuccessText: {
       fontSize: 24,
       fontFamily: fontFamily.poppinsSemiBold,
-      marginBottom: 16,
     },
     productContainer: {
       marginVertical: 16,
@@ -387,6 +390,65 @@ const useStyles = () => {
       fontWeight: '500',
       fontSize: 16,
       textAlign: 'center',
+    },
+    pleaseScanText: {
+      fontWeight: '500',
+      fontSize: 14,
+      textAlign: 'center',
+      color: colors.background,
+    },
+    iconCheck: {
+      width: 30,
+      height: 30,
+      tintColor: colors.background,
+    },
+    viewIcon: {
+      width: 30,
+      height: 30,
+      borderRadius: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.successColor,
+      marginRight: 10,
+    },
+    containerSuccessLabel: {
+      fontFamily: fontFamily.poppinsSemiBold,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 22,
+    },
+    successText: {
+      color: colors.successColor,
+    },
+    containerQRCodeWithLabel: {
+      borderWidth: 1,
+      borderColor: colors.primary,
+      borderRadius: 8,
+      width: screenWidth * 0.9,
+      height: screenHeight * 0.525,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    bottomQRLabel: {
+      backgroundColor: colors.primary,
+      width: '100%',
+      height: 87,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderBottomLeftRadius: 8,
+      borderBottomRightRadius: 8,
+    },
+    whiteText: {
+      color: colors.background,
+    },
+    verifyYourItem: {
+      fontFamily: fontFamily.poppinsBold,
+      color: colors.background,
+      fontSize: 16,
+    },
+    unverifiedText: {
+      color: colors.errorColor,
     },
   });
   return {styles, colors};
@@ -835,10 +897,16 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
 
   const handleVerified = () => {
     if (data?.orderingMode === store_checkout) {
-      if (!data?.isVerified) {
-        return '(UNVERIFIED)';
-      }
-      return '(VERIFIED)';
+      const verifiedText = !data?.isVerified ? '(UNVERIFIED)' : '(VERIFIED)';
+      const textStyle = !data?.isVerified
+        ? styles.unverifiedText
+        : styles.successText;
+
+      return (
+        <GlobalText style={[styles.boldFont, textStyle]}>
+          {verifiedText}
+        </GlobalText>
+      );
     }
     return '';
   };
@@ -884,7 +952,7 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
         {isFromPaymentPage && data?.orderingMode !== store_checkout ? (
           <View style={styles.successContainer}>
             <SuccessSvg />
-            <GlobalText style={styles.paymentSuccessText}>
+            <GlobalText style={[styles.paymentSuccessText, styles.mb16]}>
               Payment Success
             </GlobalText>
           </View>
@@ -895,15 +963,29 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
         isFromPaymentPage &&
         data?.orderingMode === store_checkout ? (
           <View style={[styles.qrContainer, styles.mt16, styles.mb16]}>
-            <View style={styles.mt12}>
-              <QRCode size={128} value={data.transactionRefNo} />
+            <View style={[styles.mt12, styles.containerQRCodeWithLabel]}>
+              <View style={styles.successContainer}>
+                <QRCode size={310} value={data.transactionRefNo} />
+              </View>
+              <View style={styles.bottomQRLabel}>
+                <GlobalText style={styles.verifyYourItem}>
+                  Verify your item
+                </GlobalText>
+                <GlobalText style={styles.pleaseScanText}>
+                  Please Scan the QR code at the Exit Verification Counter next
+                  to the cashier on Level 1.
+                </GlobalText>
+              </View>
             </View>
-            <GlobalText style={styles.scanThisCode}>
-              Scan this QR Code in Exit Verification Counter
-            </GlobalText>
-            <GlobalText style={[styles.mt8, styles.paymentSuccessText]}>
-              Payment Success
-            </GlobalText>
+            <View style={styles.containerSuccessLabel}>
+              <View style={styles.viewIcon}>
+                <Image source={appConfig.iconCheck} style={styles.iconCheck} />
+              </View>
+              <GlobalText
+                style={[styles.paymentSuccessText, styles.successText]}>
+                Payment Success
+              </GlobalText>
+            </View>
           </View>
         ) : null}
 
