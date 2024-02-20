@@ -232,7 +232,16 @@ class HistoryPayment extends Component {
             }
             renderItem={({item}) => (
               <TouchableOpacity
-                style={styles.item}
+                style={[
+                  styles.item,
+                  {
+                    borderColor:
+                      item.orderingMode === 'STORECHECKOUT' &&
+                      item.isVerified === false
+                        ? colorConfig.store.colorError
+                        : colorConfig.pageIndex.grayColor,
+                  },
+                ]}
                 onPress={() => this.historyDetailPayment(item)}>
                 <View style={styles.sejajarSpace}>
                   <View style={styles.detail}>
@@ -252,11 +261,18 @@ class HistoryPayment extends Component {
                             <Text style={styles.queueNo}>{item.queueNo}</Text>
                           ) : null}
                           {item.point > 0 ? (
-                            <Text style={styles.itemType}>
-                              <Text style={{color: colorConfig.store.title}}>
-                                x{' '}
-                              </Text>
-                              {item.point + ' ' + intlData.messages.point}
+                            <Text
+                              style={[
+                                styles.itemType,
+                                {
+                                  color:
+                                    item.orderingMode === 'STORECHECKOUT' &&
+                                    item.isVerified === false
+                                      ? colorConfig.store.colorError
+                                      : colorConfig.pageIndex.activeTintColor,
+                                },
+                              ]}>
+                              x {item.point + ' ' + intlData.messages.point}
                             </Text>
                           ) : null}
                           {item.point < 0 ? (
@@ -305,9 +321,28 @@ class HistoryPayment extends Component {
                               ? 'ios-pricetag'
                               : 'md-pricetag'
                           }
-                          style={styles.paymentTypeLogo}
+                          style={[
+                            styles.paymentTypeLogo,
+                            {
+                              color:
+                                item.orderingMode === 'STORECHECKOUT' &&
+                                item.isVerified === false
+                                  ? colorConfig.store.colorError
+                                  : colorConfig.store.defaultColor,
+                            },
+                          ]}
                         />
-                        <Text style={styles.paymentType}>
+                        <Text
+                          style={[
+                            styles.paymentType,
+                            {
+                              color:
+                                item.orderingMode === 'STORECHECKOUT' &&
+                                item.isVerified === false
+                                  ? colorConfig.store.colorError
+                                  : colorConfig.store.title,
+                            },
+                          ]}>
                           {/*{appConfig.appMataUang}*/}
                           {this.getAmountHistory(item)}
                         </Text>
@@ -318,7 +353,17 @@ class HistoryPayment extends Component {
                     </View>
                     {this.renderTimeSlot(item)}
                   </View>
-                  <View style={styles.btnDetail}>
+                  <View
+                    style={[
+                      styles.btnDetail,
+                      {
+                        borderLeftColor:
+                          item.orderingMode === 'STORECHECKOUT' &&
+                          item.isVerified === false
+                            ? colorConfig.store.colorError
+                            : colorConfig.pageIndex.activeTintColor,
+                      },
+                    ]}>
                     <Icon
                       size={20}
                       name={
@@ -327,7 +372,11 @@ class HistoryPayment extends Component {
                           : 'md-arrow-dropright-circle'
                       }
                       style={{
-                        color: colorConfig.pageIndex.activeTintColor,
+                        color:
+                          item.orderingMode === 'STORECHECKOUT' &&
+                          item.isVerified === false
+                            ? colorConfig.store.colorError
+                            : colorConfig.pageIndex.activeTintColor,
                       }}
                     />
                   </View>
@@ -452,7 +501,7 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   pointTransaction: state.rewardsReducer.dataPoint.pointTransaction,
   outletSingle: state.storesReducer.dataOutletSingle.outletSingle,
   isSuccessGetTrx: state.rewardsReducer.dataPoint.isSuccessGetTrx,
@@ -462,7 +511,7 @@ mapStateToProps = state => ({
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

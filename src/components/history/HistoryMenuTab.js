@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   afterPayment: state.accountsReducer.afterPayment.afterPayment,
   dataBasket: state.orderReducer.dataCart.cart,
   intlData: state.intlData,
@@ -141,7 +141,7 @@ mapStateToProps = state => ({
   dataNotification: state?.orderReducer?.notificationData?.notificationData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

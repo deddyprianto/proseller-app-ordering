@@ -443,7 +443,10 @@ const ScannerBarcode = () => {
       />
       <LocationModal
         openLocationModal={openLocationModal}
-        handleClose={handleClose}
+        handleClose={() => {
+          handleClose();
+          Actions.pop();
+        }}
         onClickSubmitLocationModal={onClickSubmitLocationModal}
       />
     </SafeAreaView>
