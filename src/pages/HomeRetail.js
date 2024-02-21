@@ -363,7 +363,7 @@ const HomeRetail = props => {
     await dispatch(getUserProfile());
     await dispatch(dataPromotion());
     await dispatch(dataTransaction());
-    setSelectedCategory(response.data[0]);
+    response?.data && setSelectedCategory(response.data[0]);
     setRefresh(false);
   }, [dispatch, defaultOutlet]);
 

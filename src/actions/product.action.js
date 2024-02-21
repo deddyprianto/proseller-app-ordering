@@ -33,10 +33,10 @@ export const getProductByOutlet = (OutletId, refresh) => {
       );
       await dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
-        products: response.response,
+        products: response?.response || [],
       });
       console.log({response, body}, 'log state 2');
-      return response.response;
+      return response?.response || [];
     } catch (error) {
       dispatch({
         type: 'DATA_PRODUCTS_OUTLET',
