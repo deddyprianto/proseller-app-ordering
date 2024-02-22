@@ -127,6 +127,9 @@ target 'Automaxima' do
   target 'fareastfloranew-dev' do
     inherit! :complete
   end
-  
+
+  target 'superpets' do
+    inherit! :complete
+  end
 
 end
