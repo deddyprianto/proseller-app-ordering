@@ -310,7 +310,7 @@ export const unsetFavoriteOutlet = ({outletId}) => {
   };
 };
 
-export const getOutletById = id => {
+export const getOutletById = (id, isGetDataOnly = false) => {
   return async dispatch => {
     try {
       const response = await fetchApiMasterData(
@@ -322,12 +322,12 @@ export const getOutletById = id => {
       );
       console.log(response, 'response outlets get by id');
 
-      dispatch({
-        type: 'DATA_DEFAULT_OUTLET',
-        data: response.response.data,
-      });
-
-      if (response.success == true) {
+      if (response.success) {
+        !isGetDataOnly &&
+          dispatch({
+            type: 'DATA_DEFAULT_OUTLET',
+            data: response.response.data,
+          });
         return response.response.data;
       } else {
         return false;

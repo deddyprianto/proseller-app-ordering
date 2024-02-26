@@ -192,7 +192,7 @@ class SettleOrder extends Component {
     // get outlet details
     const outletID = pembayaran.storeId;
     try {
-      const response = await this.props.dispatch(getOutletById(outletID));
+      const response = await this.props.dispatch(getOutletById(outletID, true));
       if (response != false) {
         await this.setState({outlet: response});
       }
@@ -3150,7 +3150,7 @@ class SettleOrder extends Component {
       await this.setState({refreshing: true});
       // fetch details outlet
       const outletID = this.props.outlet.id;
-      const response = await this.props.dispatch(getOutletById(outletID));
+      const response = await this.props.dispatch(getOutletById(outletID, true));
       if (response != false) {
         await this.setState({outlet: response});
       }
@@ -3222,7 +3222,7 @@ class SettleOrder extends Component {
   handleOrderingModeOffline = async () => {
     const defaultOutlet = this.props.defaultOutlet;
     const currentOutlet = await this.props.dispatch(
-      getOutletById(defaultOutlet.id),
+      getOutletById(defaultOutlet.id, true),
     );
     const orderingModeAvailable = this.orderingModesField.filter(mode => {
       if (currentOutlet[mode.isEnabledFieldName]) {
@@ -3244,7 +3244,9 @@ class SettleOrder extends Component {
   popupPayment = async () => {
     const {pembayaran} = this.props;
     const outledId = pembayaran.storeId;
-    const getOutletData = await this.props.dispatch(getOutletById(outledId));
+    const getOutletData = await this.props.dispatch(
+      getOutletById(outledId, true),
+    );
 
     if (getOutletData.orderingStatus === 'UNAVAILABLE') {
       let message = `${

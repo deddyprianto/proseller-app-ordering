@@ -1722,20 +1722,13 @@ export const addProductToBasket = ({
           token,
         );
       }
-      //NOTE: It will change it letter
-      await dispatch(getBasket());
 
-      // dispatch({
-      //   type: 'DATA_BASKET',
-      //   product: response.response.data,
-      // });
-
-      dispatch({
-        type: 'OFFLINE_CART',
-        product: response.response.data,
-      });
-
-      if (response.success === false) {
+      if (response?.success) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response?.response?.data,
+        });
+      } else {
         const errMessage =
           response.response?.data?.message || response.response?.message;
         Alert.alert('FAILED', errMessage, [
@@ -1746,6 +1739,11 @@ export const addProductToBasket = ({
           },
         ]);
       }
+
+      dispatch({
+        type: 'OFFLINE_CART',
+        product: response?.response?.data,
+      });
       return response;
     } catch (error) {
       reportSentry('cart/additem', selectedProduct, error);
@@ -1764,23 +1762,6 @@ export const updateProductBasket = payload => {
         },
       } = state;
 
-      // get data basket previous
-      const {
-        orderReducer: {
-          dataBasket: {product},
-        },
-      } = state;
-
-      const {
-        authReducer: {
-          authData: {isLoggedIn},
-        },
-      } = state;
-
-      console.log('TOKEN', token);
-
-      console.log('payload update product ', JSON.stringify(payload));
-
       let response = await fetchApiOrder(
         '/cart/updateitem',
         'POST',
@@ -1788,18 +1769,27 @@ export const updateProductBasket = payload => {
         200,
         token,
       );
-      console.log(response, 'response update data basket');
 
-      //NOTE: It will change it letter there's issue in api need to confirm with backend
-      await dispatch(getBasket());
-      // dispatch({
-      //   type: 'DATA_BASKET',
-      //   product: response.response.data,
-      // });
+      if (response?.success) {
+        dispatch({
+          type: 'DATA_BASKET',
+          product: response?.response?.data,
+        });
+      } else {
+        const errMessage =
+          response.response?.data?.message || response.response?.message;
+        Alert.alert('FAILED', errMessage, [
+          {
+            text: 'OK',
+            onPress: () => {},
+            style: 'ok',
+          },
+        ]);
+      }
 
       dispatch({
         type: 'OFFLINE_CART',
-        product: response.response.data,
+        product: response?.response?.data,
       });
       return response;
     } catch (error) {
