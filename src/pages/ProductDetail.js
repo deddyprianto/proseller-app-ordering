@@ -32,6 +32,7 @@ import CurrencyFormatter from '../helper/CurrencyFormatter';
 import {getProductById} from '../actions/product.action';
 import {
   addProductToBasket,
+  getBasket,
   resetOrderingMode,
   updateProductBasket,
 } from '../actions/order.action';
@@ -560,6 +561,7 @@ const ProductDetail = ({
     }
 
     setIsLoading(false);
+    dispatch(getBasket());
 
     productUpdate?.quantity === 0 &&
     basket?.details?.length < 2 &&
