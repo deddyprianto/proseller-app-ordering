@@ -2,7 +2,7 @@ const ENV = {
   APP: 'Superpets',
   IS_DEVELOP: true,
 
-  API_HOST: 'https://supertpets-demo.proseller.io/', //DEMO
+  API_HOST: 'https://api-newsuperpets.proseller-demo.com/', //DEMO
 
   base_url_payment: 'https://payment.proseller-demo.com/api/', //DEMO COM
 
