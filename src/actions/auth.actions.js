@@ -359,6 +359,14 @@ export const refreshToken = () => {
       const response = await fetchApi('/auth/refresh', 'POST', payload, 200);
       console.log(response, 'response refresh token');
 
+      // check if not authorized
+      if (response.responseBody?.message === 'authorization error') {
+        reportSentry('/auth/refresh', payload, response.responseBody.message);
+        dispatch({
+          type: 'USER_LOGGED_OUT_SUCCESS',
+        });
+      }
+
       // if success, then save data
       if (response.success) {
         // encrypt data
