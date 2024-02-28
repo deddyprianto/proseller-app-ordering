@@ -48,6 +48,9 @@ export const useScan = () => {
         },
         error => {
           setIsLoadingLocationModal(false);
+          if (error.code === 5) {
+            setOpenLocationModal('requestPermission');
+          }
           console.log('cek geolocation error:', error);
         },
         {enableHighAccuracy: true, timeout: 15000, maximumAge: 1000},
@@ -62,9 +65,8 @@ export const useScan = () => {
     const isRequestPermission = openLocationModal === 'requestPermission';
     if (isRequestPermission) {
       Linking.openSettings();
-    } else {
-      Actions.pop();
     }
+    Actions.pop();
     handleClose();
   };
 

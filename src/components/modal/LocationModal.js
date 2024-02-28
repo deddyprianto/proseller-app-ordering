@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 
 import Theme from '../../theme/Theme';
@@ -24,6 +24,9 @@ const useStyles = () => {
     gapBtnOpenSettings: {
       paddingHorizontal: 4,
     },
+    txtBold: {
+      fontFamily: theme.fontFamily.poppinsBold,
+    },
   });
   return styles;
 };
@@ -40,16 +43,29 @@ const LocationModal = ({
 
   const title =
     openLocationModal === 'requestPermission'
-      ? 'Location Services Disabled'
+      ? 'Location Services & Permission'
       : 'Outside Store Range';
-  const description =
-    openLocationModal === 'requestPermission'
-      ? `To use ${defaultOutlet.storeCheckOutName ||
-          'Store Checkout'}, enable your GPS/Location Services`
-      : `You're currently beyond the store's location range. To use ${defaultOutlet.storeCheckOutName ||
-          'Store Checkout'}, please move closer to the store`;
   const txtSubmit =
     openLocationModal === 'requestPermission' ? 'Open Settings' : 'Understood';
+
+  const description = () => {
+    if (openLocationModal === 'requestPermission') {
+      return (
+        <Text>
+          To use {defaultOutlet.storeCheckOutName || 'Store Checkout'}, please{' '}
+          <BoldText>enable location services</BoldText> and{' '}
+          <BoldText>grant location permissions</BoldText> to the app.
+        </Text>
+      );
+    } else {
+      return `You're currently beyond the store's location range. To use ${defaultOutlet.storeCheckOutName ||
+        'Store Checkout'}, please move closer to the store`;
+    }
+  };
+
+  const BoldText = props => {
+    return <Text style={styles.txtBold}>{props.children}</Text>;
+  };
 
   return (
     <GlobalModal
@@ -79,7 +95,7 @@ const LocationModal = ({
       isVisible={openLocationModal}
       hideCloseIcon>
       <GlobalText style={styles.textPopUpContentCenter}>
-        {description}
+        {description()}
       </GlobalText>
     </GlobalModal>
   );
