@@ -41,7 +41,7 @@ export const useScan = () => {
 
           const _distance = getDistance(userLocation, outletLocation);
           setDistance(_distance);
-          if (_distance > 50) {
+          if (_distance > 100) {
             setOpenLocationModal('outsideRange');
           }
           setIsLoadingLocationModal(false);
