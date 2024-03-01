@@ -41,6 +41,7 @@ import {
   setOrderType,
   settleOrder,
   loadingOrderAction,
+  changeOrderingMode,
 } from '../../actions/order.action';
 import CurrencyFormatter from '../../helper/CurrencyFormatter';
 import {
@@ -2528,10 +2529,6 @@ class SettleOrder extends Component {
     //   }
     // } catch (e) {}
     this.props.dispatch(loadingOrderAction(true));
-    const isNotAvailable = await this.handleOrderingModeOffline();
-    if (isNotAvailable) {
-      return;
-    }
 
     if (payMembership === true) {
       this.payMembership();
@@ -2896,6 +2893,7 @@ class SettleOrder extends Component {
           //  remove selected account
           this.props.dispatch(clearAccount());
           this.props.dispatch(clearAddress());
+          this.props.dispatch(changeOrderingMode({orderingMode: ''}));
 
           // get pending order
           this.props.dispatch(getPendingCart());
@@ -3219,28 +3217,6 @@ class SettleOrder extends Component {
     },
   ];
 
-  handleOrderingModeOffline = async () => {
-    const defaultOutlet = this.props.defaultOutlet;
-    const currentOutlet = await this.props.dispatch(
-      getOutletById(defaultOutlet.id, true),
-    );
-    const orderingModeAvailable = this.orderingModesField.filter(mode => {
-      if (currentOutlet[mode.isEnabledFieldName]) {
-        return mode;
-      }
-    });
-    const availableCheck = orderingModeAvailable.find(
-      row => row.key === this.props.basket?.orderingMode,
-    );
-
-    if (!availableCheck) {
-      this.handleOpenOrderingModeOfflineModal();
-      return true;
-    }
-
-    return false;
-  };
-
   popupPayment = async () => {
     const {pembayaran} = this.props;
     const outledId = pembayaran.storeId;
@@ -3263,12 +3239,6 @@ class SettleOrder extends Component {
     }
 
     try {
-      const isNotAvailable = await this.handleOrderingModeOffline();
-
-      if (isNotAvailable) {
-        return;
-      }
-
       if (selectedAccount && selectedAccount.paymentID === 'MANUAL_TRANSFER') {
         // check if this payment method is allowed to top up SVC
         try {

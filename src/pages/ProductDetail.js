@@ -563,11 +563,17 @@ const ProductDetail = ({
     setIsLoading(false);
     dispatch(getBasket());
 
-    productUpdate?.quantity === 0 &&
-    basket?.details?.length < 2 &&
-    awsConfig.COMPANY_NAME === 'Funtoast'
-      ? Actions.popTo('orderHere')
-      : Actions.pop();
+    if (
+      productUpdate?.quantity === 0 &&
+      basket?.details?.length < 2 &&
+      awsConfig.COMPANY_NAME === 'Funtoast'
+    ) {
+      Actions.popTo('orderHere');
+    } else if (productUpdate?.quantity === 0 && basket?.details?.length < 2) {
+      Actions.popTo('pageIndex');
+    } else {
+      Actions.pop();
+    }
   };
 
   const handleAddOrUpdateProduct = async () => {

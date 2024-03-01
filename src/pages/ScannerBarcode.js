@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {RNCamera} from 'react-native-camera';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
@@ -12,6 +12,7 @@ import {
   Dimensions,
   SafeAreaView,
   Platform,
+  BackHandler,
 } from 'react-native';
 
 import appConfig from '../config/appConfig';
@@ -164,6 +165,13 @@ const ScannerBarcode = () => {
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultOutlet, distance]);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', onBackHandler);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', onBackHandler);
+    };
+  }, [onBackHandler, basket]);
 
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
@@ -320,7 +328,7 @@ const ScannerBarcode = () => {
     return <Header onBackBtn={onBackHandler} isMiddleLogo />;
   };
 
-  const onBackHandler = () => {
+  const onBackHandler = useCallback(() => {
     const isScanGoProduct = basket?.isStoreCheckoutCart;
     const isFEF = appConfig.appName === 'fareastflora';
     setIsGoBack(true);
@@ -329,7 +337,8 @@ const ScannerBarcode = () => {
     } else {
       Actions.pop();
     }
-  };
+    return true;
+  }, [basket, setShowAlert]);
 
   const renderSearchModal = () => {
     if (isOpenSearchBarcodeModal) {
@@ -434,7 +443,7 @@ const ScannerBarcode = () => {
         onCancel={onClearCart}
         onApprove={() => {
           closeAlert();
-          Actions.pop();
+          !isGoBack && Actions.pop();
         }}
         title={alertTitle()}
         description={alertDescription()}

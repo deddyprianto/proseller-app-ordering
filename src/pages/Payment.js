@@ -377,10 +377,9 @@ const Payment = ({order}) => {
   }, [getData, isTimeEnd]);
 
   const getData = useCallback(async () => {
-    const response = await dispatch(getOrderDetail(data?.transactionRefNo));
-    setData(response);
-    checkDetails(response);
+    await handleGetOrderDetail();
     setCount(prevCount => prevCount + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, data]);
 
   const closePopup = async () => {
@@ -393,9 +392,7 @@ const Payment = ({order}) => {
 
   const onRefresh = useCallback(async () => {
     setRefresh(true);
-    const response = await dispatch(getOrderDetail(data?.transactionRefNo));
-    setData(response);
-    checkDetails(response);
+    await handleGetOrderDetail();
     setRefresh(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
@@ -403,6 +400,14 @@ const Payment = ({order}) => {
   useEffect(() => {
     onRefresh();
   }, [onRefresh]);
+
+  const handleGetOrderDetail = async () => {
+    const response = await dispatch(getOrderDetail(data?.transactionRefNo));
+    if (response.status !== 'NOT_FOUND') {
+      setData(response);
+      checkDetails(response);
+    }
+  };
 
   const handleDownloadQrCode = async qr => {
     permissionDownloadFile(qr, `qrcode${data?.id}`, 'image/png', {

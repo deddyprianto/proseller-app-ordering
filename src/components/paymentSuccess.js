@@ -55,12 +55,11 @@ class PaymentSuccess extends Component {
   }
 
   componentDidMount = async () => {
-    try {
-      this.backHandler = BackHandler.addEventListener(
-        'hardwareBackPress',
-        this.handleBackPress,
-      );
-    } catch (e) {}
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackPress,
+    );
+
     try {
       this.props.dispatch(clearAccount());
       this.props.dispatch(getPendingCart());
@@ -69,9 +68,7 @@ class PaymentSuccess extends Component {
   };
 
   componentWillUnmount() {
-    try {
-      this.backHandler.remove();
-    } catch (e) {}
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
   }
 
   handleRemoveReducer = async () => {
@@ -98,16 +95,32 @@ class PaymentSuccess extends Component {
   };
 
   goBack = async () => {
-    const {url, outlet, paidMembership, paySVC, payVoucher} = this.props;
-    if (paidMembership === true) {
-      Actions.popTo('pageIndex');
-    } else if (paySVC === true) {
-      Actions.popTo('summary');
-    } else if (payVoucher === true) {
-      Actions.popTo(this.props.fromPage);
+    const {
+      url,
+      outlet,
+      paidMembership,
+      paySVC,
+      payVoucher,
+      dataRespons,
+    } = this.props;
+
+    if (
+      dataRespons.isVerified === false &&
+      dataRespons.orderingMode === 'STORECHECKOUT'
+    ) {
+      this.setState({showAlert: true});
     } else {
-      Actions.reset('app', {fromPayment: true});
+      if (paidMembership === true) {
+        Actions.popTo('pageIndex');
+      } else if (paySVC === true) {
+        Actions.popTo('summary');
+      } else if (payVoucher === true) {
+        Actions.popTo(this.props.fromPage);
+      } else {
+        Actions.reset('app', {fromPayment: true});
+      }
     }
+
     // Order Notifications
     try {
       if (paidMembership !== true) {
@@ -276,15 +289,6 @@ class PaymentSuccess extends Component {
     return "Please don't forget to verify the transaction before leaving. You are going to exit the page, are you sure?";
   };
 
-  onClickBackBtn = () => {
-    const {dataRespons} = this.props;
-    if (!dataRespons.isVerified) {
-      this.setState({showAlert: true});
-    } else {
-      Actions.reset('app', {fromPayment: true});
-    }
-  };
-
   renderPaymentDetails = () => {
     const {intlData, dataRespons, paidMembership, paySVC} = this.props;
     const {showAlert} = this.state;
@@ -294,7 +298,7 @@ class PaymentSuccess extends Component {
       return (
         <>
           <Header
-            onBackBtn={this.onClickBackBtn}
+            onBackBtn={this.handleBackPress}
             customRightIcon={this.renderStep4Text}
             title={'Payment'}
           />

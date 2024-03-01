@@ -41,13 +41,16 @@ export const useScan = () => {
 
           const _distance = getDistance(userLocation, outletLocation);
           setDistance(_distance);
-          if (_distance > 50) {
+          if (_distance > 100) {
             setOpenLocationModal('outsideRange');
           }
           setIsLoadingLocationModal(false);
         },
         error => {
           setIsLoadingLocationModal(false);
+          if (error.code === 5) {
+            setOpenLocationModal('requestPermission');
+          }
           console.log('cek geolocation error:', error);
         },
         {enableHighAccuracy: true, timeout: 15000, maximumAge: 1000},
@@ -62,9 +65,8 @@ export const useScan = () => {
     const isRequestPermission = openLocationModal === 'requestPermission';
     if (isRequestPermission) {
       Linking.openSettings();
-    } else {
-      Actions.pop();
     }
+    Actions.pop();
     handleClose();
   };
 

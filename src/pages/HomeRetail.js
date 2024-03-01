@@ -16,7 +16,6 @@ import {
   ScrollView,
   SafeAreaView,
   Pressable,
-  Animated,
 } from 'react-native';
 
 import Banner from '../components/banner';
@@ -213,16 +212,6 @@ const useStyles = () => {
       color: theme.colors.background,
       fontFamily: theme.fontFamily.poppinsMedium,
     },
-    borderView: {
-      position: 'absolute',
-      top: 23,
-      left: -7,
-      right: -7,
-      bottom: -7,
-      borderColor: theme.colors.errorColor,
-      borderWidth: 1,
-      borderRadius: 8,
-    },
     viewInfoBarContainer: {
       marginHorizontal: 16,
     },
@@ -371,42 +360,6 @@ const HomeRetail = props => {
     onRefresh();
   }, [onRefresh]);
 
-  const scaleAnimateY = useRef(new Animated.Value(1)).current;
-  const scaleAnimateX = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    const blinkAnimation = () => {
-      Animated.parallel([
-        Animated.timing(scaleAnimateY, {
-          toValue: 0.85,
-          duration: 800,
-          useNativeDriver: false,
-        }),
-        Animated.timing(scaleAnimateX, {
-          toValue: 0.96,
-          duration: 800,
-          useNativeDriver: false,
-        }),
-      ]).start(() => {
-        // reset animation values
-        Animated.parallel([
-          Animated.timing(scaleAnimateY, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: false,
-          }),
-          Animated.timing(scaleAnimateX, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: false,
-          }),
-        ]).start(() => blinkAnimation());
-      });
-    };
-
-    isUnverifiedOrder(orderHistory) && blinkAnimation();
-  }, [scaleAnimateX, scaleAnimateY, orderHistory]);
-
   const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
     const paddingToBottom = 50;
     return (
@@ -538,12 +491,6 @@ const HomeRetail = props => {
     if (isUnverifiedOrder(orderHistory)) {
       return (
         <View style={styles.viewInfoBarContainer}>
-          <Animated.View
-            style={[
-              styles.borderView,
-              {transform: [{scaleX: scaleAnimateX}, {scaleY: scaleAnimateY}]},
-            ]}
-          />
           <View style={styles.viewInfoBar}>
             <Text style={styles.txtInfoTransaction}>
               You have unverified transaction(s)
