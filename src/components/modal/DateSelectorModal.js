@@ -9,11 +9,7 @@ import CalenderModal from './CalenderModal';
 import moment from 'moment';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 
-import {
-  getTimeSlot,
-  resetProvider,
-  setTimeSlotSelected,
-} from '../../actions/order.action';
+import {resetProvider, setTimeSlotSelected} from '../../actions/order.action';
 import Theme from '../../theme';
 import GlobalText from '../globalText';
 import GlobalButton from '../button/GlobalButton';
@@ -274,24 +270,25 @@ const useStyles = () => {
   return styles;
 };
 
-const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
+const DateSelectorModal = ({
+  open,
+  handleClose,
+  value,
+  preOrderDate,
+  availableDates,
+}) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const {getDeliveryProviderFee, isLoading} = usePayment();
   const [dates, setDates] = useState([]);
   const [times, setTimes] = useState([]);
-  const [availableDates, setAvailableDates] = useState([]);
 
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const {isDeliveryAvailable} = useCalculation();
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
-  const [initDate, setInitDate] = useState(null);
-
-  const defaultOutlet = useSelector(
-    state => state.storesReducer.defaultOutlet.defaultOutlet,
-  );
+  const [initDate, setInitDate] = useState(availableDates[0]?.date);
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const maxDate = useSelector(
@@ -299,33 +296,10 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   );
 
   useEffect(() => {
-    const loadData = async () => {
-      const clientTimezone = Math.abs(new Date().getTimezoneOffset());
-      let date = moment().format('YYYY-MM-DD');
-      let availDate = value.date;
-      if (preOrderDate) {
-        date = moment(preOrderDate).format('YYYY-MM-DD');
-      }
-      const timeSlot = await dispatch(
-        getTimeSlot({
-          outletId: defaultOutlet.id,
-          date,
-          clientTimezone,
-          orderingMode: basket.orderingMode,
-        }),
-      );
-
-      setAvailableDates(timeSlot);
-      setInitDate(timeSlot[0]?.date);
-    };
-
-    loadData();
-  }, [open]);
-  useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
       const dateTimes = availableDates.find(
-        value => value.date === selectedDateFormatter,
+        val => val.date === selectedDateFormatter,
       );
       const timeSlot = dateTimes?.timeSlot || [];
       const availableTimeSlot = timeSlot?.filter(time => time.isAvailable);
@@ -370,11 +344,14 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
   const handleSave = async () => {
     const joinDateTime = `${selectedDate}`;
     const newFormatDate = moment(joinDateTime).format('YYYY-MM-DD');
-    await dispatch(resetProvider());
     await dispatch(
       setTimeSlotSelected({date: selectedDate, time: selectedTime}),
     );
-    await getDeliveryProviderFee(newFormatDate);
+
+    if (basket?.orderingMode === 'DELIVERY') {
+      await dispatch(resetProvider());
+      await getDeliveryProviderFee(newFormatDate);
+    }
     handleClose();
   };
 
@@ -468,7 +445,7 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
 
     const available =
       !isEmptyArray(availableDates) &&
-      availableDates?.find(value => value?.date === dateFormatter) &&
+      availableDates?.find(val => val?.date === dateFormatter) &&
       isCanDelivery;
 
     if (selected && available) {
@@ -581,9 +558,9 @@ const DateSelectorModal = ({open, handleClose, value, preOrderDate}) => {
           handleClose={() => {
             handleCloseCalender();
           }}
-          handleOnChange={value => {
-            initAllDate(value);
-            setSelectedDate(moment(value).format('ddd DD MMMM YYYY'));
+          handleOnChange={val => {
+            initAllDate(val);
+            setSelectedDate(moment(val).format('ddd DD MMMM YYYY'));
           }}
         />
       );

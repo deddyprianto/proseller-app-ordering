@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
@@ -23,7 +22,6 @@ import {
   Dimensions,
   ActivityIndicator,
   KeyboardAvoidingView,
-  StatusBar,
   Platform,
 } from 'react-native';
 import {ProgressBar} from 'react-native-paper';
@@ -489,7 +487,7 @@ const useStyles = () => {
 const Cart = props => {
   const {styles, color} = useStyles();
   const dispatch = useDispatch();
-  const {navigation, isScanGo} = props;
+  const {navigation} = props;
   const [subTotal, setSubTotal] = useState(0);
   const [isOffline, setIsOffline] = useState(false);
   const [errorMessage, setErrorMessage] = useState({
@@ -1078,8 +1076,8 @@ const Cart = props => {
       let findMinimumDate = pembayaran?.orderActionDate;
       if (availableTimes && Array.isArray(availableTimes)) {
         findMinimumDate = availableTimes?.find(
-          data =>
-            data?.date ===
+          val =>
+            val?.date ===
             moment(pembayaran?.orderActionDate).format('YYYY-MM-DD'),
         );
         findMinimumDate = findMinimumDate?.latestSelfSelectionDate;
@@ -1324,7 +1322,7 @@ const Cart = props => {
 
     if (isDelivery || isPickUp || isTakeAway) {
       return (
-        <View style={[styles.viewMethod, ,]}>
+        <View style={styles.viewMethod}>
           <Text style={styles.textMethod}>Date & Time</Text>
           <TouchableOpacity
             style={[
@@ -1597,6 +1595,7 @@ const Cart = props => {
           handleClose={() => {
             handleCloseDeliveryDateModal();
           }}
+          availableDates={availableTimes}
         />
         <OrderingTypeSelectorModal
           value={basket?.orderingMode}
