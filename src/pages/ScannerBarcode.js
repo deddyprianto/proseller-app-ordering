@@ -144,7 +144,6 @@ const ScannerBarcode = () => {
     false,
   );
   const [isGoBack, setIsGoBack] = useState(false);
-  const [responseBarcode, setResponseBarcode] = React.useState(false);
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -156,7 +155,7 @@ const ScannerBarcode = () => {
       setIsLoading(true);
       const isScanGoProduct = basket?.isStoreCheckoutCart;
       await handleUserLocation(defaultOutlet);
-      const validateDistance = distance && distance <= 50;
+      const validateDistance = distance && distance <= 100;
       if (!isEmptyObject(basket) && !isScanGoProduct && validateDistance) {
         setShowAlert(true);
       }
@@ -200,7 +199,6 @@ const ScannerBarcode = () => {
       setTimeout(async () => {
         setIsLoading(true);
         const response = await dispatch(getProductByBarcode(value?.data));
-        setResponseBarcode(response);
         handleSuccess(response, value.oldBarcode, showError);
       }, 1000);
     }
@@ -244,7 +242,6 @@ const ScannerBarcode = () => {
       setSearchCondition('success');
       setIsLoading(false);
       handleCloseSearchProductByBarcodeModal();
-      setResponseBarcode(response);
       handleSuccess(response, value.oldBarcode);
     } else {
       setIsLoading(false);
@@ -457,6 +454,7 @@ const ScannerBarcode = () => {
           Actions.pop();
         }}
         onClickSubmitLocationModal={onClickSubmitLocationModal}
+        outlet={defaultOutlet}
       />
     </SafeAreaView>
   );

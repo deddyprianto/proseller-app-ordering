@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {useSelector} from 'react-redux';
 
 import Theme from '../../theme/Theme';
 import GlobalModal from './GlobalModal';
@@ -35,11 +34,17 @@ const LocationModal = ({
   openLocationModal,
   handleClose,
   onClickSubmitLocationModal,
+  outlet,
 }) => {
-  const defaultOutlet = useSelector(
-    state => state.storesReducer.defaultOutlet.defaultOutlet,
-  );
   const styles = useStyles();
+
+  const isModalVisible = async () => {
+    let isOpen = false;
+    await setTimeout(() => {
+      isOpen = !!openLocationModal;
+    }, 100);
+    return isOpen;
+  };
 
   const title =
     openLocationModal === 'requestPermission'
@@ -52,13 +57,13 @@ const LocationModal = ({
     if (openLocationModal === 'requestPermission') {
       return (
         <Text>
-          To use {defaultOutlet.storeCheckOutName || 'Store Checkout'}, please{' '}
+          To use {outlet?.storeCheckOutName || 'Store Checkout'}, please{' '}
           <BoldText>enable location services</BoldText> and{' '}
           <BoldText>grant location permissions</BoldText> to the app.
         </Text>
       );
     } else {
-      return `You're currently beyond the store's location range. To use ${defaultOutlet.storeCheckOutName ||
+      return `You're currently beyond the store's location range. To use ${outlet?.storeCheckOutName ||
         'Store Checkout'}, please move closer to the store`;
     }
   };
@@ -92,7 +97,7 @@ const LocationModal = ({
           </View>
         </View>
       }
-      isVisible={openLocationModal}
+      isVisible={isModalVisible()}
       hideCloseIcon>
       <GlobalText style={styles.textPopUpContentCenter}>
         {description()}
