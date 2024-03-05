@@ -147,8 +147,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         compileSdkVersion rootProject.ext.compileSdkVersion
-        versionCode 87
-        versionName "1.1.31"
+        versionCode <%= androidVersionCode %>
+        versionName "<%= androidVersionName %>"
         missingDimensionStrategy 'react-native-camera', 'general'
         resValue "string", "build_config_package", "com.<%= name %>"
         multiDexEnabled true
@@ -199,21 +199,21 @@ android {
             dev {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.<%= name %>.dev'
-                versionName "1.1.31"
+                versionName "<%= androidVersionName %>"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.<%= name %>"
             }
             demo {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.<%= name %>.demo'
-                versionName "1.1.31"
+                versionName "<%= androidVersionName %>"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.<%= name %>"
             }
             app {
                 minSdkVersion rootProject.ext.minSdkVersion
                 applicationId 'com.<%= name %>.app'
-                versionName "1.1.31"
+                versionName "<%= androidVersionName %>"
                 targetSdkVersion rootProject.ext.targetSdkVersion
                 resValue "string", "build_config_package", "com.<%= name %>"
             }
