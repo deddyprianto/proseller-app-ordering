@@ -37,12 +37,12 @@ const LocationModal = ({
   outlet,
 }) => {
   const styles = useStyles();
-  const [openModal, setOpenModal] = useState(openLocationModal);
+  const [openModal, setOpenModal] = useState(false);
   useEffect(() => {
     const loadData = () => {
       setTimeout(() => {
         setOpenModal(!!openLocationModal);
-      }, 100);
+      }, 300);
     };
     loadData();
   }, [openLocationModal]);
@@ -98,7 +98,7 @@ const LocationModal = ({
           </View>
         </View>
       }
-      isVisible={openModal}
+      isVisible={openModal && !!openLocationModal}
       hideCloseIcon>
       <GlobalText style={styles.textPopUpContentCenter}>
         {description()}

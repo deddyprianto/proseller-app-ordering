@@ -157,7 +157,9 @@ const ScannerBarcode = () => {
       await handleUserLocation(defaultOutlet);
       const validateDistance = distance && distance <= 100;
       if (!isEmptyObject(basket) && !isScanGoProduct && validateDistance) {
-        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(true);
+        }, 300);
       }
     };
     loadData();
@@ -436,7 +438,7 @@ const ScannerBarcode = () => {
       {renderButtonCartFloating()}
       <ModalAction
         isVisible={showAlert}
-        closeModal={closeAlert}
+        hideCloseButton
         onCancel={onClearCart}
         onApprove={() => {
           closeAlert();
