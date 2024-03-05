@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 
 import Theme from '../../theme/Theme';
@@ -37,14 +37,15 @@ const LocationModal = ({
   outlet,
 }) => {
   const styles = useStyles();
-
-  const isModalVisible = async () => {
-    let isOpen = false;
-    await setTimeout(() => {
-      isOpen = !!openLocationModal;
-    }, 100);
-    return isOpen;
-  };
+  const [openModal, setOpenModal] = useState(openLocationModal);
+  useEffect(() => {
+    const loadData = () => {
+      setTimeout(() => {
+        setOpenModal(!!openLocationModal);
+      }, 100);
+    };
+    loadData();
+  }, [openLocationModal]);
 
   const title =
     openLocationModal === 'requestPermission'
@@ -97,7 +98,7 @@ const LocationModal = ({
           </View>
         </View>
       }
-      isVisible={isModalVisible()}
+      isVisible={openModal}
       hideCloseIcon>
       <GlobalText style={styles.textPopUpContentCenter}>
         {description()}
