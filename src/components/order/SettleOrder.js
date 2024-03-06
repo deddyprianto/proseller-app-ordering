@@ -1141,7 +1141,12 @@ class SettleOrder extends Component {
   callApiCalculatedVoucherPoint = async payload => {
     const response = await this.props.dispatch(getCalculationStep3(payload));
     if (response.message) {
-      return this.props.dispatch(showSnackbar({message: response.message}));
+      return this.props.dispatch(
+        showSnackbar({
+          message:
+            typeof response.message === 'string' ? response.message : 'Failed',
+        }),
+      );
     }
     const mappingPayment = response.payments?.map(payment => {
       if (payment.isPoint) {
