@@ -520,6 +520,8 @@ const ProductDetail = ({
 
   const handleAddUpdateProduct = async () => {
     const isSpecialBarcode = product?.isSpecialBarcode;
+    const isRemoveCart =
+      productUpdate?.quantity === 0 && basket?.details?.length < 2;
 
     if (!isEmptyObject(selectedProduct)) {
       let newProductUpdate = isSpecialBarcode
@@ -561,15 +563,11 @@ const ProductDetail = ({
     }
 
     setIsLoading(false);
-    dispatch(getBasket());
+    !isRemoveCart && dispatch(getBasket());
 
-    if (
-      productUpdate?.quantity === 0 &&
-      basket?.details?.length < 2 &&
-      awsConfig.COMPANY_NAME === 'Funtoast'
-    ) {
+    if (isRemoveCart && awsConfig.COMPANY_NAME === 'Funtoast') {
       Actions.popTo('orderHere');
-    } else if (productUpdate?.quantity === 0 && basket?.details?.length < 2) {
+    } else if (isRemoveCart) {
       Actions.popTo('pageIndex');
     } else {
       Actions.pop();

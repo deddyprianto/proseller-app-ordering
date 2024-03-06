@@ -9,6 +9,7 @@ import GlobalButton from '../components/button/GlobalButton';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import useCalculation from '../hooks/calculation/useCalculation';
 import {navigate} from '../utils/navigation.utils';
+import LoadingScreen from '../components/loadingScreen';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -33,9 +34,8 @@ const useStyles = () => {
     mlAuto: {
       marginLeft: 'auto',
     },
-
     root: {
-      paddingBottom: 2,
+      flex: 1,
     },
     container: {
       shadowOffset: {
@@ -63,8 +63,8 @@ const CartStep1 = props => {
   const {navigation} = props;
   const step = navigation.state.params?.step;
   const {styles} = useStyles();
-  const currentBasket = useSelector(
-    state => state.orderReducer?.dataBasket?.product,
+  const isLoadingBasket = useSelector(
+    state => state.orderReducer?.loadingBasket?.isLoadingBasket,
   );
   const {calculatePriceAferDiscount} = useCalculation();
   const renderStep = () => (
@@ -78,7 +78,8 @@ const CartStep1 = props => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.root}>
+      <LoadingScreen loading={isLoadingBasket} />
       <Header title={'Cart'} customRightIcon={renderStep} />
       <ScrollView contentContainerStyle={styles.contentStyle}>
         <ProductCartList step={step} />

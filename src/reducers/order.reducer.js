@@ -230,6 +230,18 @@ const loadingOrder = (state = {}, action) => {
   }
 };
 
+const loadingBasket = (state = {}, action) => {
+  switch (action.type) {
+    case 'LOADING_BASKET':
+      return {
+        isLoadingBasket: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -249,4 +261,5 @@ export default combineReducers({
   popupNotification,
   refreshOrder,
   loadingOrder,
+  loadingBasket,
 });

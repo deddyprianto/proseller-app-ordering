@@ -42,7 +42,7 @@ const LocationModal = ({
     const loadData = () => {
       setTimeout(() => {
         setOpenModal(!!openLocationModal);
-      }, 300);
+      }, 1000);
     };
     loadData();
   }, [openLocationModal]);

@@ -1837,6 +1837,7 @@ export const getBasket = () => {
           },
         };
       } else {
+        dispatch(loadingBasketAction(true));
         response = await fetchApiOrder(
           '/cart/getcart',
           'GET',
@@ -1866,7 +1867,7 @@ export const getBasket = () => {
           });
         }
       }
-
+      dispatch(loadingBasketAction(false));
       return response;
     } catch (error) {
       reportSentry('cart/getcart', null, error);
@@ -2337,6 +2338,15 @@ export const loadingOrderAction = payload => {
   return async (dispatch, getState) => {
     dispatch({
       type: 'LOADING_ORDER',
+      payload,
+    });
+  };
+};
+
+export const loadingBasketAction = payload => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: 'LOADING_BASKET',
       payload,
     });
   };
