@@ -144,7 +144,6 @@ const ScannerBarcode = () => {
     false,
   );
   const [isGoBack, setIsGoBack] = useState(false);
-  const [responseBarcode, setResponseBarcode] = React.useState(false);
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -153,18 +152,26 @@ const ScannerBarcode = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      await handleUserLocation(defaultOutlet);
+    };
+    loadData();
+  }, [defaultOutlet, handleUserLocation]);
+
+  useEffect(() => {
+    const loadData = () => {
       setIsLoading(true);
       const isScanGoProduct = basket?.isStoreCheckoutCart;
-      await handleUserLocation(defaultOutlet);
-      const validateDistance = distance && distance <= 50;
+      const validateDistance = distance && distance <= 100;
       if (!isEmptyObject(basket) && !isScanGoProduct && validateDistance) {
-        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(true);
+        }, 1000);
       }
     };
     loadData();
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultOutlet, distance]);
+  }, []);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', onBackHandler);
@@ -200,7 +207,6 @@ const ScannerBarcode = () => {
       setTimeout(async () => {
         setIsLoading(true);
         const response = await dispatch(getProductByBarcode(value?.data));
-        setResponseBarcode(response);
         handleSuccess(response, value.oldBarcode, showError);
       }, 1000);
     }
@@ -244,7 +250,6 @@ const ScannerBarcode = () => {
       setSearchCondition('success');
       setIsLoading(false);
       handleCloseSearchProductByBarcodeModal();
-      setResponseBarcode(response);
       handleSuccess(response, value.oldBarcode);
     } else {
       setIsLoading(false);
@@ -439,7 +444,7 @@ const ScannerBarcode = () => {
       {renderButtonCartFloating()}
       <ModalAction
         isVisible={showAlert}
-        closeModal={closeAlert}
+        hideCloseButton
         onCancel={onClearCart}
         onApprove={() => {
           closeAlert();
@@ -457,6 +462,7 @@ const ScannerBarcode = () => {
           Actions.pop();
         }}
         onClickSubmitLocationModal={onClickSubmitLocationModal}
+        outlet={defaultOutlet}
       />
     </SafeAreaView>
   );

@@ -98,7 +98,12 @@ const PaymentAddVouchersV2 = props => {
     const response = await dispatch(getCalculationStep3(payload));
     if (response.message) {
       setLoadingCheckVoucher(false);
-      return dispatch(showSnackbar({message: response.message}));
+      return dispatch(
+        showSnackbar({
+          message:
+            typeof response.message === 'string' ? response.message : 'Failed',
+        }),
+      );
     }
     const mappigResponse = mappingPayment(response.payments);
     setLoadingCheckVoucher(false);

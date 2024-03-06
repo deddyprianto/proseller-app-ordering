@@ -157,6 +157,9 @@ const useStyles = () => {
     ml4: {
       marginLeft: 4,
     },
+    textItalic: {
+      fontStyle: 'italic',
+    },
   });
   return styles;
 };
@@ -171,6 +174,7 @@ const useProductCartList = ({isProductUnavailable}) => {
     styleItem,
     textPriceContainer,
     textPrice,
+    barcode,
   }) => {
     const styleTextQty = isProductUnavailable
       ? styles.textModifierItemQtyUnavailable
@@ -188,6 +192,12 @@ const useProductCartList = ({isProductUnavailable}) => {
           <Text style={[styles.textModifier]}>
             <Text style={styleTextQty}>{qty}x </Text>
             <Text style={styles.textModifierItemName}> {name} </Text>
+            {barcode && (
+              <Text style={[styles.textModifierItemName, styles.textItalic]}>
+                {'\n'}
+                {barcode}
+              </Text>
+            )}
           </Text>
         </View>
         <View style={[styles.rightPrice, textPriceContainer]}>
@@ -245,6 +255,7 @@ const useProductCartList = ({isProductUnavailable}) => {
                 styleItem,
                 textPriceContainer,
                 textPrice,
+                barcode: detail?.product?.barcode,
               });
             })}
           </>

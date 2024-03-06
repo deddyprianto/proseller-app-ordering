@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-
+import moment from 'moment';
 import {StyleSheet, SafeAreaView, View, Alert} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -16,7 +16,11 @@ import OutletList from '../components/OutletList';
 import {Body, Header} from '../components/layout';
 import useBackHandler from '../hooks/backHandler/useBackHandler';
 import {updateUser} from '../actions/user.action';
-import {changeOrderingMode, removeBasket} from '../actions/order.action';
+import {
+  changeOrderingMode,
+  removeBasket,
+  getTimeslot,
+} from '../actions/order.action';
 import {getBasket} from '../actions/product.action';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
@@ -148,7 +152,17 @@ const Outlets = () => {
         return mode;
       }
     });
+    const date = moment().format('YYYY-MM-DD');
+    const clientTimezone = Math.abs(new Date().getTimezoneOffset());
 
+    dispatch(
+      getTimeslot(
+        defaultOutlet?.id,
+        date,
+        clientTimezone,
+        basket?.orderingMode,
+      ),
+    );
     if (orderingModesFieldFiltered.length === 1) {
       await dispatch(
         changeOrderingMode({

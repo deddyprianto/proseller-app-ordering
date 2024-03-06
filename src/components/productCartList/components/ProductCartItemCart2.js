@@ -196,6 +196,9 @@ const useStyles = () => {
     afterDiscountText: {
       color: theme.colors.semanticColorError,
     },
+    textItalic: {
+      fontStyle: 'italic',
+    },
   });
   return {styles};
 };
@@ -293,6 +296,11 @@ const ProductCartItemCart2 = ({item, containerStyle}) => {
           <GlobalText numberOfLines={2} style={styles.productText}>
             {item.product?.name}
           </GlobalText>
+          {item.product?.barcode && (
+            <GlobalText style={[styles.textAddOn, styles.textItalic]}>
+              {item.product?.barcode}
+            </GlobalText>
+          )}
         </View>
         <View style={styles.textPriceContainer}>
           <GlobalText

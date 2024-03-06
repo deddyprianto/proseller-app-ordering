@@ -178,6 +178,7 @@ const VoucherDetail = props => {
     } else {
       const message = response?.message || 'Redeem failed';
       await dispatch(showSnackbar({message, type: 'error'}));
+      setOpenModal(false);
     }
 
     setIsLoading(false);
