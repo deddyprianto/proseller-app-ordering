@@ -526,6 +526,9 @@ const Cart = props => {
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
+  const dataTimeslot = useSelector(
+    state => state?.orderReducer?.timeslot?.timeslots,
+  );
 
   useEffect(() => {
     dispatch(resetProvider());
@@ -575,21 +578,24 @@ const Cart = props => {
   useEffect(() => {
     const loadData = async () => {
       setLoadingTimeSlot(true);
-      const clientTimezone = Math.abs(new Date().getTimezoneOffset());
-      let date = moment().format('YYYY-MM-DD');
-      if (availablePreorderDate) {
-        date = moment(availablePreorderDate).format('YYYY-MM-DD');
+      if (awsConfig.COMPANY_TYPE !== 'Retail') {
+        setAvailableTimes(dataTimeslot);
+      } else {
+        const clientTimezone = Math.abs(new Date().getTimezoneOffset());
+        let date = moment().format('YYYY-MM-DD');
+        if (availablePreorderDate) {
+          date = moment(availablePreorderDate).format('YYYY-MM-DD');
+        }
+        const timeSlot = await dispatch(
+          getTimeSlot({
+            outletId: outlet.id,
+            date,
+            clientTimezone,
+            orderingMode: basket.orderingMode,
+          }),
+        );
+        setAvailableTimes(timeSlot);
       }
-
-      const timeSlot = await dispatch(
-        getTimeSlot({
-          outletId: outlet.id,
-          date,
-          clientTimezone,
-          orderingMode: basket.orderingMode,
-        }),
-      );
-      setAvailableTimes(timeSlot);
       setLoadingTimeSlot(false);
     };
     loadData();
