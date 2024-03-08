@@ -1,6 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
-
 import {
   StyleSheet,
   SafeAreaView,
@@ -9,14 +7,15 @@ import {
   View,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {dataStores, getOutletById} from '../actions/stores.action';
+import moment from 'moment';
 
+import {dataStores, getOutletById} from '../actions/stores.action';
 import {Body, Header} from '../components/layout';
 import Theme from '../theme/Theme';
 import OrderingModeList from '../components/orderingModeList/OrderingModeList';
 import {getAllowedOrder} from '../actions/setting.action';
 import appConfig from '../config/appConfig';
-import {changeOrderingMode} from '../actions/order.action';
+import {changeOrderingMode, getTimeslot} from '../actions/order.action';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import {navigate} from '../utils/navigation.utils';
 const useStyles = () => {
@@ -167,6 +166,11 @@ const OrderingMode = () => {
 
   const handleSaveClicked = async () => {
     setIsLoading(true);
+    const date = moment().format('YYYY-MM-DD');
+    const clientTimezone = Math.abs(new Date().getTimezoneOffset());
+    dispatch(
+      getTimeslot(outlet?.id, date, clientTimezone, orderingModeSelected),
+    );
     await dispatch(
       changeOrderingMode({
         orderingMode: orderingModeSelected,

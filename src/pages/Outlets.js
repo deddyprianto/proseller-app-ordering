@@ -152,18 +152,18 @@ const Outlets = () => {
         return mode;
       }
     });
-    const date = moment().format('YYYY-MM-DD');
-    const clientTimezone = Math.abs(new Date().getTimezoneOffset());
 
-    dispatch(
-      getTimeslot(
-        defaultOutlet?.id,
-        date,
-        clientTimezone,
-        basket?.orderingMode,
-      ),
-    );
     if (orderingModesFieldFiltered.length === 1) {
+      const date = moment().format('YYYY-MM-DD');
+      const clientTimezone = Math.abs(new Date().getTimezoneOffset());
+      dispatch(
+        getTimeslot(
+          item?.id,
+          date,
+          clientTimezone,
+          orderingModesFieldFiltered[0].key,
+        ),
+      );
       await dispatch(
         changeOrderingMode({
           orderingMode: orderingModesFieldFiltered[0].key,
