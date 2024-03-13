@@ -4,7 +4,7 @@
  * PT Edgeworks
  */
 
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import {createStore, applyMiddleware, compose} from 'redux';
 import {persistStore, persistReducer} from 'redux-persist';
 import thunk from 'redux-thunk';
