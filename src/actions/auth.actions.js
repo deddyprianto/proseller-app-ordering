@@ -12,6 +12,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {submitOfflineCart, clearNetsclickData} from './order.action';
 import {reportSentry} from '../helper/Sentry';
+import persist from '../config/store';
+
 const encryptData = value => {
   const result = CryptoJS.AES.encrypt(
     value,
@@ -208,7 +210,7 @@ export const loginUser = payload => {
 
         // Save backup data refresh token
         try {
-          await AsyncStorage.setItem(`refreshToken`, data.refreshToken.token);
+          await AsyncStorage.setItem('refreshToken', data.refreshToken.token);
         } catch (error) {}
 
         // SUBMIT OFFLINE CART
@@ -306,6 +308,8 @@ export const logoutUser = () => {
         type: 'USER_LOGGED_OUT_SUCCESS',
       });
 
+      const persistStore = persist();
+      persistStore.persistor.purge();
       // remove default account
       dispatch({
         type: 'GET_USER_DEFAULT_ACCOUNT',
@@ -333,7 +337,7 @@ export const getToken = () => {
   };
 };
 
-export const refreshToken = () => {
+export const refreshToken = params => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -382,6 +386,13 @@ export const refreshToken = () => {
           token: jwtToken,
           refreshToken: newRefreshToken,
         });
+
+        params?.isRoot &&
+          dispatch({
+            type: 'REFRESH_TOKEN_USER',
+            token: jwtToken,
+            refreshToken: newRefreshToken,
+          });
       }
     } catch (error) {
       console.log(error);

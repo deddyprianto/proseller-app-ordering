@@ -75,7 +75,7 @@ class Main extends Component {
         this.props.dispatch(getDefaultOutlet()),
         this.props.dispatch(generateOneMapToken()),
         this.props.dispatch(getCompanyInfo()),
-        this.props.dispatch(refreshToken()),
+        this.props.dispatch(refreshToken({isRoot: true})),
         this.props.dispatch(getBasket()),
         this.props.dispatch(getCompanyInfo()),
       ]);
