@@ -1799,7 +1799,7 @@ export const updateProductBasket = payload => {
   };
 };
 
-export const getBasket = () => {
+export const getBasket = params => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -1837,7 +1837,7 @@ export const getBasket = () => {
           },
         };
       } else {
-        dispatch(loadingBasketAction(true));
+        params?.isLoading && dispatch(loadingBasketAction(true));
         response = await fetchApiOrder(
           '/cart/getcart',
           'GET',
@@ -1860,14 +1860,14 @@ export const getBasket = () => {
         });
         // check if ordering mode is exist (cart has submitted)
         let order = response.response.data;
-        if (order.orderingMode != undefined && order.tableNo != undefined) {
+        if (order?.orderingMode !== undefined && order?.tableNo !== undefined) {
           dispatch({
             type: 'ORDER_TYPE',
             orderType: order.orderingMode,
           });
         }
       }
-      dispatch(loadingBasketAction(false));
+      params?.isLoading && dispatch(loadingBasketAction(false));
       return response;
     } catch (error) {
       reportSentry('cart/getcart', null, error);

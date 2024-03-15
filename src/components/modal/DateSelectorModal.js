@@ -288,7 +288,7 @@ const DateSelectorModal = ({
   const {isDeliveryAvailable} = useCalculation();
   const [seeMore, setSeeMore] = useState(false);
   const [isOpenTimeSelector, setIsOpenTimeSelector] = useState(false);
-  const [initDate, setInitDate] = useState(availableDates[0]?.date);
+  const [initDate, setInitDate] = useState(null);
 
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
   const maxDate = useSelector(
@@ -298,6 +298,7 @@ const DateSelectorModal = ({
   useEffect(() => {
     const selectedDateFormatter = moment(selectedDate).format('YYYY-MM-DD');
     if (!isEmptyArray(availableDates)) {
+      setInitDate(availableDates[0]?.date);
       const dateTimes = availableDates.find(
         val => val.date === selectedDateFormatter,
       );
@@ -466,7 +467,7 @@ const DateSelectorModal = ({
   };
 
   const renderSeeMore = () => {
-    if (availableDates.length > 5) {
+    if (availableDates?.length > 5) {
       return (
         <TouchableOpacity
           onPress={() => {

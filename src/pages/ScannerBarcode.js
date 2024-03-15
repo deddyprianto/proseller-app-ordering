@@ -171,7 +171,7 @@ const ScannerBarcode = () => {
     loadData();
     setIsLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [distance]);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', onBackHandler);
@@ -371,11 +371,6 @@ const ScannerBarcode = () => {
         flashMode={RNCamera.Constants.FlashMode.on}
         onGoogleVisionBarcodesDetected={onGoogleBarcode}
         onBarCodeRead={onBarcodeRead}
-        barCodeTypes={[
-          RNCamera.Constants.BarCodeType.ean13,
-          RNCamera.Constants.BarCodeType.upc_e,
-          RNCamera.Constants.BarCodeType.code39,
-        ]}
         androidCameraPermissionOptions={{
           title: 'Permission to use camera',
           message: 'We need to use your camera access to scan product barcode',

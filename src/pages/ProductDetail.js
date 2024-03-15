@@ -563,7 +563,7 @@ const ProductDetail = ({
     }
 
     setIsLoading(false);
-    !isRemoveCart && dispatch(getBasket());
+    !isRemoveCart && dispatch(getBasket({isLoading: true}));
 
     if (isRemoveCart && awsConfig.COMPANY_NAME === 'Funtoast') {
       Actions.popTo('orderHere');

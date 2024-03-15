@@ -6,19 +6,23 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 import DeviceBrightness from '@adrianso/react-native-device-brightness';
 
 import CryptoJS from 'react-native-crypto-js';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
+import moment from 'moment';
 
 import appConfig from '../../config/appConfig';
 import awsConfig from '../../config/awsConfig';
 import Theme from '../../theme';
 import TextWarningModal from '../modal/TextWarningModal';
 import {dataStores, getOutletById} from '../../actions/stores.action';
-import {changeOrderingMode, getOrderingMode} from '../../actions/order.action';
+import {
+  changeOrderingMode,
+  getOrderingMode,
+  getTimeslot,
+} from '../../actions/order.action';
 import LoadingScreen from '../loadingScreen/LoadingScreen';
 import MyECardModal from '../modal/MyECardModal';
 import {navigate} from '../../utils/navigation.utils';
@@ -238,6 +242,17 @@ const Menu = () => {
       navigate('orderHere');
       await dispatch(getOutletById(activeOutlets[0].id));
       await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
+
+      const date = moment().format('YYYY-MM-DD');
+      const clientTimezone = Math.abs(new Date().getTimezoneOffset());
+      dispatch(
+        getTimeslot(
+          activeOutlets[0].id,
+          date,
+          clientTimezone,
+          orderingMode[0].key,
+        ),
+      );
     } else if (activeOutlets.length === 1) {
       navigate('orderingMode');
       await dispatch(getOutletById(activeOutlets[0].id));
