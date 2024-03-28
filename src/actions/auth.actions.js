@@ -380,6 +380,9 @@ export const refreshToken = params => {
         const newRefreshToken = encryptData(
           response.responseBody.Data.refreshToken.token,
         );
+        const qrcode = encryptData(
+          response.responseBody.Data.accessToken.qrcode,
+        );
 
         dispatch({
           type: 'TOKEN_USER',
@@ -392,6 +395,7 @@ export const refreshToken = params => {
             type: 'REFRESH_TOKEN_USER',
             token: jwtToken,
             refreshToken: newRefreshToken,
+            qrcode,
           });
       }
     } catch (error) {

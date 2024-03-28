@@ -169,6 +169,10 @@ const Outlets = () => {
           orderingMode: orderingModesFieldFiltered[0].key,
         }),
       );
+      await dispatch({
+        type: 'DATA_PRODUCTS_OUTLET',
+        products: [],
+      });
       navigate('orderHere');
       setIsLoading(false);
     } else {

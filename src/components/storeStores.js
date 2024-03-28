@@ -101,6 +101,10 @@ class StoreStores extends Component {
           orderingMode: orderingModesFieldFiltered[0].key,
         }),
       );
+      await this.props.dispatch({
+        type: 'DATA_PRODUCTS_OUTLET',
+        products: [],
+      });
       navigate('orderHere');
       this.setState({isLoading: false});
     } else {
