@@ -92,6 +92,10 @@ const FavoriteOutlets = ({outlet}) => {
       Actions.popTo('pageIndex');
     } else if (orderingMode.length === 1) {
       await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
+      await dispatch({
+        type: 'DATA_PRODUCTS_OUTLET',
+        products: [],
+      });
       navigate('orderHere');
     } else {
       navigate('orderingMode');

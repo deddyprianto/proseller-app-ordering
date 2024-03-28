@@ -30,7 +30,6 @@ import {getBasket} from '../actions/order.action';
 import Theme from '../theme';
 import ProductPresetList from '../components/productPresetList/ProductPresetList';
 import {Body} from '../components/layout';
-import useSettings from '../hooks/settings/useSettings';
 import ButtonCartFloating from '../components/buttonCartFloating/ButtonCartFloating';
 import {navigate} from '../utils/navigation.utils';
 
@@ -125,9 +124,8 @@ const OrderHere = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [productsSearch, setProductsSearch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [refresh, setRefresh] = useState(false);
   const [isSearchOnFocus, setIsSearchOnFocus] = useState(false);
-  const {useCartVersion} = useSettings();
+
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -137,11 +135,9 @@ const OrderHere = () => {
   );
 
   const onRefresh = useCallback(async () => {
-    setRefresh(true);
     setIsLoading(true);
     await dispatch(getProductByOutlet(defaultOutlet.id));
     await dispatch(getBasket());
-    setRefresh(false);
     setIsLoading(false);
   }, [dispatch, defaultOutlet]);
 
@@ -167,14 +163,6 @@ const OrderHere = () => {
 
   const handleSearchProduct = async value => {
     setSearchQuery(value);
-  };
-
-  const handleLoading = () => {
-    if (isLoading && searchQuery) {
-      return true;
-    } else {
-      return false;
-    }
   };
 
   const handleCancel = () => {
@@ -275,7 +263,7 @@ const OrderHere = () => {
           scrollEnabled={false}
           refreshControl={
             <RefreshControl
-              refreshing={refresh}
+              refreshing={isLoading}
               onRefresh={() => {
                 onRefresh();
               }}
@@ -301,7 +289,7 @@ const OrderHere = () => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <LoadingScreen loading={handleLoading()} />
+      <LoadingScreen loading={isLoading || searchQuery} />
       <Body>
         {renderHeader()}
         {renderBody()}

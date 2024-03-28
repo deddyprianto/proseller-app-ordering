@@ -173,6 +173,10 @@ const OrderingMode = () => {
         orderingMode: orderingModeSelected,
       }),
     );
+    await dispatch({
+      type: 'DATA_PRODUCTS_OUTLET',
+      products: [],
+    });
     navigate('orderHere');
     setIsLoading(false);
   };

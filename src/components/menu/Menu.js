@@ -239,6 +239,10 @@ const Menu = () => {
     const orderingMode = await dispatch(getOrderingMode(activeOutlets[0]));
 
     if (activeOutlets.length === 1 && orderingMode.length === 1) {
+      await dispatch({
+        type: 'DATA_PRODUCTS_OUTLET',
+        products: [],
+      });
       navigate('orderHere');
       await dispatch(getOutletById(activeOutlets[0].id));
       await dispatch(changeOrderingMode({orderingMode: orderingMode[0].key}));
