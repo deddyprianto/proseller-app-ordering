@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Martin
  * martin@edgeworks.co.id
@@ -6,7 +5,14 @@
  */
 
 import React, {useState, useRef, useEffect} from 'react';
-import {StyleSheet, View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 
 import Product from '../productList/components/ProductItem';
 
@@ -136,7 +142,7 @@ const ProductPresetList = ({products, basket}) => {
 
   const onViewableItemsChanged = ({viewableItems}) => {
     if (!isEmptyArray(viewableItems)) {
-      if (viewableItems[0].index === 0) {
+      if (Platform.OS === 'android' && viewableItems[0].index === 0) {
         return handleScrollProducts(viewableItems[0]);
       }
 
@@ -148,7 +154,14 @@ const ProductPresetList = ({products, basket}) => {
     }
   };
 
-  const viewabilityConfigCallbackPairs = useRef([{onViewableItemsChanged}]);
+  const viewabilityConfig = {
+    viewAreaCoveragePercentThreshold: 10,
+    minimumViewTime: Platform.OS === 'android' ? 0 : 200,
+  };
+
+  const viewabilityConfigCallbackPairs = useRef([
+    {viewabilityConfig, onViewableItemsChanged},
+  ]);
 
   const renderProductItem = (category, index) => {
     const categoryProducts = category?.items?.map(item => {
