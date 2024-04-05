@@ -37,8 +37,6 @@ import NetInfo from '@react-native-community/netinfo';
 import {getColorSettings} from './actions/setting.action';
 import {reportSentry} from './helper/Sentry';
 
-this.isConnected = false;
-
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -48,6 +46,7 @@ class Main extends Component {
     this.state = {
       isLoading: true,
       geolocation: true,
+      isConnected: false,
     };
 
     OneSignal.promptForPushNotificationsWithUserResponse();
@@ -64,7 +63,7 @@ class Main extends Component {
   componentDidMount = async () => {
     try {
       const response = await NetInfo.fetch();
-      this.isConnected = response.isConnected;
+      this.setState({isConnected: response.isConnected});
     } catch (e) {}
 
     try {
@@ -123,7 +122,8 @@ class Main extends Component {
 
   componentWillUnmount() {
     // OneSignal.removeEventListener('received', this.onReceived);
-    OneSignal.removeEventListener('opened', this.onOpened);
+    // OneSignal.removeEventListener('opened', this.onOpened);
+    OneSignal.clearHandlers();
     // OneSignal.removeEventListener('ids', this.onIds);
   }
 
@@ -185,7 +185,7 @@ class Main extends Component {
       authData: {isLoggedIn},
     } = this.props;
 
-    if (this.state.isLoading || !this.isConnected) {
+    if (this.state.isLoading || !this.state.isConnected) {
       return <Splash />;
     }
     return (
