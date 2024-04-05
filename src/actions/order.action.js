@@ -2206,6 +2206,14 @@ export const getOrderDetail = refNo => {
         200,
         token,
       );
+
+      if (responseBody?.resultCode === 200) {
+        dispatch({
+          type: 'SET_ORDER_DETAIL',
+          payload: responseBody?.data,
+        });
+      }
+
       return responseBody?.data;
     } catch (error) {
       return error;
