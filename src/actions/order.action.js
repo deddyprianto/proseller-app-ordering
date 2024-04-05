@@ -1067,6 +1067,14 @@ export const getTermsConditions = () => {
           hideEmailOnRegistration,
         });
 
+        const find = response.response.data.settings.find(
+          item => item.settingKey === 'OutletSelection',
+        );
+        dispatch({
+          type: 'OUTLET_SELECTION_MODE',
+          outletSelectionMode: find?.settingValue,
+        });
+
         return response.response.data;
       } else {
         return false;
