@@ -466,11 +466,11 @@ const Profile = props => {
     initDeviceBright();
   }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = async (isDeleteAccount = false) => {
     setIsLoading(true);
     await AsyncStorage.removeItem(KEY_VERIFIED_USER);
     await AsyncStorage.removeItem(NUMBER_USER_VISIT_PROFILE);
-    await dispatch(logoutUser());
+    await dispatch(logoutUser({isDeleteAccount}));
     setIsLoading(false);
   };
 
@@ -689,6 +689,19 @@ const Profile = props => {
     );
   };
 
+  const renderDeleteAccount = () => {
+    return (
+      <TouchableOpacity
+        style={styles.viewOption}
+        onPress={() => {
+          handleOpenDeleteAccountModal();
+        }}>
+        <Image style={styles.iconSetting} source={appConfig.iconDelete} />
+        <Text style={styles.textLogout}>Delete My Account</Text>
+      </TouchableOpacity>
+    );
+  };
+
   const renderListMenu = (title, Icon, onPress) => (
     <TouchableOpacity onPress={onPress} style={styles.viewOption}>
       <View style={styles.iconSetting}>{Icon}</View>
@@ -807,6 +820,7 @@ const Profile = props => {
       {renderFAQ()}
       {renderContactUs()}
       {renderDivider()}
+      {renderDeleteAccount()}
       {renderLogout()}
       {renderAppVersion()}
     </View>
@@ -821,7 +835,7 @@ const Profile = props => {
             handleCloseDeleteAccountModal();
           }}
           handleSubmit={() => {
-            handleLogout();
+            handleLogout(true);
           }}
           isLoading={isLoading}
           textTitle="Delete account"

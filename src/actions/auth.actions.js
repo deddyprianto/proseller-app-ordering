@@ -261,7 +261,7 @@ export const loginUser = payload => {
 };
 
 //valid
-export const logoutUser = () => {
+export const logoutUser = params => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -284,6 +284,22 @@ export const logoutUser = () => {
       // Decrypt data user
       let bytes = CryptoJS.AES.decrypt(userDetails, awsConfig.PRIVATE_KEY_RSA);
       userDetails = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+      if (params.isDeleteAccount) {
+        let payloadDeleteAccount = {
+          phoneNumber: userDetails.phoneNumber,
+          deleted: true,
+          status: 'SUSPENDED',
+        };
+
+        await fetchApi(
+          '/customer/updateProfile',
+          'PUT',
+          payloadDeleteAccount,
+          200,
+          token,
+        );
+      }
 
       let payload = {
         phoneNumber: userDetails.phoneNumber,
