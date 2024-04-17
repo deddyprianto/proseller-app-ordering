@@ -1,14 +1,15 @@
-package com.funtoast;
-
-// import com.funtoast.generated.BasePackageList;
+package com.cno;
 
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
+import io.github.traviskn.rnuuidgenerator.RNUUIDGeneratorPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
-// import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
-// import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+//import io.invertase.firebase.crashlytics.ReactNativeFirebaseCrashlyticsPackage;
+//import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+
 
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
@@ -23,44 +24,28 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-// react native unimodules
-import java.util.Arrays;
-
-// import org.unimodules.adapters.react.ModuleRegistryAdapter;
-// import org.unimodules.adapters.react.ReactModuleRegistryProvider;
-// import org.unimodules.core.interfaces.SingletonModule;
-
 // Facebook login
-// import com.facebook.CallbackManager;
-// import com.facebook.FacebookSdk;
-// import com.facebook.appevents.AppEventsLogger;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
 
 // Multidex
 import androidx.multidex.MultiDexApplication;
 
-// import com.microsoft.codepush.react.CodePush;
-
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
-  // private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
+  private static CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
-  // protected static CallbackManager getCallbackManager() {
-  //   return mCallbackManager;
-  // }
-
-  // private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
+  protected static CallbackManager getCallbackManager() {
+    return mCallbackManager;
+  }
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
     }
-
-    //@Override
-    //protected String getJSBundleFile() {
-    //    return CodePush.getJSBundleFile();
-    //}
 
     @Override
     protected List<ReactPackage> getPackages() {
@@ -69,13 +54,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
       // Packages that cannot be autolinked yet can be added manually here, for
       // example:
       // packages.add(new MyReactNativePackage());
-
-      // Add unimodules
-        // List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
-        //   new ModuleRegistryAdapter(mModuleRegistryProvider)
-        // );
-        // packages.addAll(unimodules);
-
       return packages;
     }
 
@@ -94,8 +72,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-    // FacebookSdk.sdkInitialize(getApplicationContext());
-    // AppEventsLogger.activateApp(this);
+    FacebookSdk.sdkInitialize(getApplicationContext());
+    AppEventsLogger.activateApp(this);
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
   }
 
