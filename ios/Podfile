@@ -132,4 +132,8 @@ target 'Automaxima' do
     inherit! :complete
   end
 
+  target 'cno' do
+    inherit! :complete
+  end
+
 end
