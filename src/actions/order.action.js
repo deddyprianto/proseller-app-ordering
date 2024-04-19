@@ -1067,6 +1067,14 @@ export const getTermsConditions = () => {
           hideEmailOnRegistration,
         });
 
+        const find = response.response.data.settings.find(
+          item => item.settingKey === 'OutletSelection',
+        );
+        dispatch({
+          type: 'OUTLET_SELECTION_MODE',
+          outletSelectionMode: find?.settingValue,
+        });
+
         return response.response.data;
       } else {
         return false;
@@ -2198,6 +2206,14 @@ export const getOrderDetail = refNo => {
         200,
         token,
       );
+
+      if (responseBody?.resultCode === 200) {
+        dispatch({
+          type: 'SET_ORDER_DETAIL',
+          payload: responseBody?.data,
+        });
+      }
+
       return responseBody?.data;
     } catch (error) {
       return error;

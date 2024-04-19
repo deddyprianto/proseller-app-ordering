@@ -242,6 +242,18 @@ const loadingBasket = (state = {}, action) => {
   }
 };
 
+const orderDetail = (state = {}, action) => {
+  switch (action.type) {
+    case 'SET_ORDER_DETAIL':
+      return {
+        orderDetail: action.payload,
+      };
+
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -262,4 +274,5 @@ export default combineReducers({
   refreshOrder,
   loadingOrder,
   loadingBasket,
+  orderDetail,
 });

@@ -22,9 +22,9 @@ import LottieView from 'lottie-react-native';
 import colorConfig from '../config/colorConfig';
 import appConfig from '../config/appConfig';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
-import {clearAccount, clearAddress} from '../actions/payment.actions';
+import {clearAccount} from '../actions/payment.actions';
 // import OneSignal from 'react-native-onesignal';
-import {getPendingCart, removeTimeslot} from '../actions/order.action';
+import {removeTimeslot} from '../actions/order.action';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -36,7 +36,7 @@ import additionalSetting from '../config/additionalSettings';
 import OrderDetail from '../pages/OrderDetail';
 import {Header} from './layout';
 import GlobalText from './globalText';
-import SuccessSvg from '../assets/svg/SuccessSvg';
+
 import withHooksComponent from './HOC';
 import ModalAction from './modal/ModalAction';
 
@@ -62,7 +62,6 @@ class PaymentSuccess extends Component {
 
     try {
       this.props.dispatch(clearAccount());
-      this.props.dispatch(getPendingCart());
       this.props.dispatch(removeTimeslot());
     } catch (e) {}
   };
@@ -102,11 +101,12 @@ class PaymentSuccess extends Component {
       paySVC,
       payVoucher,
       dataRespons,
+      orderDetail,
     } = this.props;
-
     if (
-      dataRespons.isVerified === false &&
-      dataRespons.orderingMode === 'STORECHECKOUT'
+      !dataRespons.isVerified &&
+      dataRespons.orderingMode === 'STORECHECKOUT' &&
+      !orderDetail?.isVerified
     ) {
       this.setState({showAlert: true});
     } else {
@@ -627,6 +627,7 @@ const mapStateToProps = state => ({
   intlData: state.intlData,
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   user: state.userReducer.getUser.userDetails,
+  orderDetail: state.orderReducer.orderDetail.orderDetail,
 });
 
 const mapDispatchToProps = dispatch => ({

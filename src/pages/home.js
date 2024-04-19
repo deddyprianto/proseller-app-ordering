@@ -11,6 +11,7 @@ import Store from './store';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 // import ProductsRetail from '../components/order/ProductsRetail';
 import {campaign, dataPoint} from '../actions/rewards.action';
+import {getDefaultOutlet} from '../actions/stores.action';
 
 import {getAccountPayment} from '../actions/payment.actions';
 import {
@@ -62,6 +63,16 @@ class Home extends Component {
     // this.checkOneSignal();
     this.checkUseApp();
   };
+
+  componentDidUpdate(prevProps) {
+    if (this.props.outletSelectionMode !== prevProps.outletSelectionMode) {
+      const loadData = async () => {
+        await this.props.dispatch(getDefaultOutlet());
+      };
+
+      loadData();
+    }
+  }
 
   getDataRewards = async () => {
     try {

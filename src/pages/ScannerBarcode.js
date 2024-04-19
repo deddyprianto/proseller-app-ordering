@@ -194,7 +194,6 @@ const ScannerBarcode = () => {
   const onClearCart = async () => {
     setIsLoading(true);
     closeAlert();
-    await dispatch(changeOrderingMode({orderingMode: ''}));
     await dispatch(removeBasket());
     setIsLoading(false);
     if (isGoBack) {
