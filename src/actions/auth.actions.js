@@ -331,6 +331,7 @@ export const logoutUser = params => {
         type: 'GET_USER_DEFAULT_ACCOUNT',
         defaultAccount: {},
       });
+      await AsyncStorage.removeItem('refreshToken');
     } catch (e) {
       console.log(e);
     }
