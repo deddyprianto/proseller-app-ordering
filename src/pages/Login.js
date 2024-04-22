@@ -196,7 +196,9 @@ const Login = () => {
     const findDefaultLogin = orderSetting?.find(
       data => data?.settingKey === login_priority_key,
     );
-    if (findDefaultLogin) return findDefaultLogin;
+    if (findDefaultLogin) {
+      return findDefaultLogin;
+    }
     return {};
   };
   useEffect(() => {
@@ -216,10 +218,10 @@ const Login = () => {
   }, [loginSettings]);
 
   const handleRequestOtp = async () => {
-    const isEmail = loginMethod === 'email';
-    const methodValue = isEmail ? email : countryCode + phoneNumber;
+    const isLoginMethodEmail = loginMethod === 'email';
+    const methodValue = isLoginMethodEmail ? email : countryCode + phoneNumber;
     let payload = {};
-    if (isEmail) {
+    if (isLoginMethodEmail) {
       const isValidEmail = emailValidation(email);
       payload.email = email;
       if (!isValidEmail) {
@@ -266,9 +268,9 @@ const Login = () => {
 
   const renderLoginMethod = value => {
     const isActive = value === loginMethod;
-    const isEmail = value === 'email';
+    const isValueEmail = value === 'email';
 
-    const text = isEmail ? 'Use Email' : 'Use Mobile Phone';
+    const text = isValueEmail ? 'Use Email' : 'Use Mobile Phone';
 
     const style = isActive
       ? styles.viewLoginMethodActive
@@ -318,6 +320,7 @@ const Login = () => {
           value={phoneNumber}
           placeholder="Enter your mobile phone"
           onChangeCountryCode={value => {
+            setErrorLogin(false);
             setCountryCode(value);
           }}
           rootStyle={styles.noMb}
@@ -333,7 +336,9 @@ const Login = () => {
   };
 
   const handleChangeText = value => {
-    if (value.length === 0) setErrorLogin(false);
+    if (value.length === 0) {
+      setErrorLogin(false);
+    }
     setEmail(value);
   };
 

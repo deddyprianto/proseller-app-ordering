@@ -255,8 +255,8 @@ const FieldPhoneNumberInput = ({
           textAlignVertical="center"
           value={phoneNumber}
           placeholder={placeholder}
-          onChangeText={value => {
-            onChange(value.replace(/[^0-9]/g, ''));
+          onChangeText={val => {
+            onChange(val.replace(/[^0-9]/g, ''));
             onChangeCountryCode(countryCode);
           }}
         />
@@ -295,8 +295,9 @@ const FieldPhoneNumberInput = ({
         <View style={styles.CountryCodeSelectorModal}>
           <CountryCodeSelectorModal
             value={countryCode}
-            onChange={value => {
-              setCountryCode(value);
+            onChange={val => {
+              setCountryCode(val);
+              onChangeCountryCode(val);
               setCountryCodeModal(false);
             }}
           />
