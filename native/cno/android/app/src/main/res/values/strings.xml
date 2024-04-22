@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">MAISON 66</string>
+
+    <!-- NetsClick -->
+    <string name="appType">NON_RIDE_HAILING</string>
+    <string name="envType">PROD</string>
+    <string name="appId">00015000105</string>
+    <string name="appSecret">CDCFC595A03B69EE756827AFD3ED3242E824584B1C460D16F0E74EA72C270D82</string>
+    <string name="mapPubKeyId">2</string>
+    <string name="mapPubKeyExp">03</string>
+    <string name="mapPubKeyModulus">a8d687ac064ee2ce75a51a6351e1b4906366173bd53bba3dea9b8ee9cb57d8028b496cc860e3205f983afdac338b1f4a76a89ba4e832811cb6b8a581b961af256ba53f64cac3153a78922d5142667d5ca31766deb965f2f178e3e5622377d9fa24602e3e3d50bd82c40a9491065260c0f7bcef8a24425ae07acbde658caecb5d56ed2cd67f07bece6bdcefa733b8ab815c4c0d249f9d0784cd2a2a839ba650ae5359bc83b9c38539681603833ef05eeb6ca9b138b9abf3da592f443e6d90467d4a261864cc5de87d54cafcb4ed227e9c649674dd7bbdfd96c7ea25210216f0e7b484b00d39e019a62c8552b2f7b48f1b41be91e5f9262d6c4f75db39f5ea3f73</string>
+    <string name="mapServerCert">netspay_nets_com_sg</string>
+    <string name="mid">11170235100</string>
+    <string name="tid">70235101</string>
+    <string name="urlMap">https://netspay.nets.com.sg</string>
+    <string name="urlApiGw">https://api.nets.com.sg</string>
+    <string name="mhostType">APIGW</string>
+    <string name="mhostUrl">-</string>
+</resources>

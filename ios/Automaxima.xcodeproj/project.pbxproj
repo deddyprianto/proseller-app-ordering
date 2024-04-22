@@ -12,6 +12,27 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		17BADFD30EE7ABB08DD57D90 /* libPods-Automaxima-acemart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9585211BEACB18F40D503AD /* libPods-Automaxima-acemart.a */; };
 		27CFB91208C84B89AAE58C56 /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
+		2875766A2BD111FB00B2315A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
+		2875766B2BD111FB00B2315A /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
+		2875766D2BD111FB00B2315A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
+		2875766E2BD111FB00B2315A /* libPods-Automaxima-superpets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 281D2DF0D1F90E300C614833 /* libPods-Automaxima-superpets.a */; };
+		287576712BD111FB00B2315A /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */; };
+		287576722BD111FB00B2315A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7BD1A63F265E73280011B660 /* GoogleService-Info.plist */; };
+		287576732BD111FB00B2315A /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FE262852DC00262C97 /* Poppins-Black.ttf */; };
+		287576742BD111FB00B2315A /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FC262852DC00262C97 /* Poppins-Bold.ttf */; };
+		287576752BD111FB00B2315A /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FB262852DB00262C97 /* Poppins-Italic.ttf */; };
+		287576762BD111FB00B2315A /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FF262852DC00262C97 /* Poppins-Medium.ttf */; };
+		287576772BD111FB00B2315A /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B4FF2FD262852DC00262C97 /* Poppins-Regular.ttf */; };
+		287576792BD111FB00B2315A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		2875767A2BD111FB00B2315A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
+		2875767B2BD111FB00B2315A /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F2539776D32B4B29B0B8C8A7 /* Lato-Bold.ttf */; };
+		2875767C2BD111FB00B2315A /* Lato-Heavy.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35A970A69DA7440188817DD0 /* Lato-Heavy.ttf */; };
+		2875767D2BD111FB00B2315A /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
+		2875767E2BD111FB00B2315A /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40AD4A3553664601BD423484 /* Lato-Medium.ttf */; };
+		2875767F2BD111FB00B2315A /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
+		2875768C2BD113E100B2315A /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 2875768B2BD113E100B2315A /* assets */; };
+		287576902BD11FB600B2315A /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
+		288F81352BD12685006BBB6A /* cno-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 288F81342BD12685006BBB6A /* cno-Info.plist */; };
 		28B775BF2B85AA240002EF6C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8BA49726AA61AC00486032 /* AppDelegate.swift */; };
 		28B775C02B85AA240002EF6C /* Automaxima.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B4FF2F826284ECC00262C97 /* Automaxima.swift */; };
 		28B775C22B85AA240002EF6C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B8783AC08D84065AC0B2230 /* libz.tbd */; };
@@ -235,6 +256,9 @@
 		1B72DACACE284B79B036A8DA /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		1BEF7B63D29F4F9BBC59BB56 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../src/assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		281D2DF0D1F90E300C614833 /* libPods-Automaxima-superpets.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Automaxima-superpets.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		287576872BD111FB00B2315A /* cno.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cno.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2875768B2BD113E100B2315A /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../native/cno/assets; sourceTree = "<group>"; };
+		288F81342BD12685006BBB6A /* cno-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "cno-Info.plist"; sourceTree = "<group>"; };
 		28B775DA2B85AA240002EF6C /* superpets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = superpets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28B775DB2B85AA250002EF6C /* superpets-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "superpets-Info.plist"; path = "/Users/suard/Project/edgeworks/proseller-app-ordering/ios/superpets-Info.plist"; sourceTree = "<absolute>"; };
 		28B775DD2B85ABC90002EF6C /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../native/superpets/assets; sourceTree = "<group>"; };
@@ -348,6 +372,15 @@
 				B6FA351076D44777B6129C53 /* libz.tbd in Frameworks */,
 				C059695DF9A863BFBAED6300 /* (null) in Frameworks */,
 				87D147AED404A95D6432A686 /* libPods-Automaxima.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2875766C2BD111FB00B2315A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2875766D2BD111FB00B2315A /* libz.tbd in Frameworks */,
+				2875766E2BD111FB00B2315A /* libPods-Automaxima-superpets.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,6 +571,7 @@
 				5BA4EE4A2B0CA603005DBC87 /* assets */,
 				5BA4EE4C2B0CB41E005DBC87 /* assets */,
 				28B775DD2B85ABC90002EF6C /* assets */,
+				2875768B2BD113E100B2315A /* assets */,
 				881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */,
 				13B07FAE1A68108700A75B9A /* Automaxima */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -554,6 +588,7 @@
 				88D1A7192A40301C00C00653 /* fareastflora-info.plist */,
 				88072E152A4BEBB700E3D5A4 /* fareastfloranew-dev.plist */,
 				88A12C5D2AB183F3003936F8 /* fareastflora-live.plist */,
+				288F81342BD12685006BBB6A /* cno-Info.plist */,
 				88813BC62B145B9A0027E05E /* sales-Info.plist */,
 				28B775DB2B85AA250002EF6C /* superpets-Info.plist */,
 			);
@@ -575,6 +610,7 @@
 				5B83B43C2B05EF3C00720BF1 /* funtoast-dev.app */,
 				88813BC52B145B980027E05E /* sales.app */,
 				28B775DA2B85AA240002EF6C /* superpets.app */,
+				287576872BD111FB00B2315A /* cno.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -687,6 +723,29 @@
 			name = Automaxima;
 			productName = Automaxima;
 			productReference = 13B07F961A680F5B00A75B9A /* Automaxima.app */;
+			productType = "com.apple.product-type.application";
+		};
+		287576662BD111FB00B2315A /* cno */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 287576842BD111FB00B2315A /* Build configuration list for PBXNativeTarget "cno" */;
+			buildPhases = (
+				287576672BD111FB00B2315A /* [CP] Check Pods Manifest.lock */,
+				287576682BD111FB00B2315A /* Start Packager */,
+				287576692BD111FB00B2315A /* Sources */,
+				2875766C2BD111FB00B2315A /* Frameworks */,
+				2875766F2BD111FB00B2315A /* Resources */,
+				287576802BD111FB00B2315A /* Bundle React Native code and images */,
+				287576812BD111FB00B2315A /* Upload Debug Symbols to Sentry */,
+				287576822BD111FB00B2315A /* [CP] Embed Pods Frameworks */,
+				287576832BD111FB00B2315A /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = cno;
+			productName = Automaxima;
+			productReference = 287576872BD111FB00B2315A /* cno.app */;
 			productType = "com.apple.product-type.application";
 		};
 		28B775BB2B85AA240002EF6C /* superpets */ = {
@@ -901,6 +960,9 @@
 						DevelopmentTeam = YSZ34Z59CY;
 						LastSwiftMigration = 1140;
 					};
+					287576662BD111FB00B2315A = {
+						DevelopmentTeam = YSZ34Z59CY;
+					};
 					28B775BB2B85AA240002EF6C = {
 						DevelopmentTeam = YSZ34Z59CY;
 					};
@@ -956,6 +1018,7 @@
 				881C82652AD53C0B00DD1C92 /* OneSignalNotificationServiceExtension */,
 				88813BA52B145B980027E05E /* sales */,
 				28B775BB2B85AA240002EF6C /* superpets */,
+				287576662BD111FB00B2315A /* cno */,
 			);
 		};
 /* End PBXProject section */
@@ -985,6 +1048,30 @@
 				B64A1B8556C5492E8237AFE5 /* Poppins-MediumItalic.ttf in Resources */,
 				BD97E6CA6F81487495BCE0A2 /* Poppins-Regular.ttf in Resources */,
 				D985197DD1D842C49B95DB91 /* Poppins-SemiBold.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2875766F2BD111FB00B2315A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				288F81352BD12685006BBB6A /* cno-Info.plist in Resources */,
+				287576902BD11FB600B2315A /* main.jsbundle in Resources */,
+				2875768C2BD113E100B2315A /* assets in Resources */,
+				287576712BD111FB00B2315A /* Poppins-SemiBold.ttf in Resources */,
+				287576722BD111FB00B2315A /* GoogleService-Info.plist in Resources */,
+				287576732BD111FB00B2315A /* Poppins-Black.ttf in Resources */,
+				287576742BD111FB00B2315A /* Poppins-Bold.ttf in Resources */,
+				287576752BD111FB00B2315A /* Poppins-Italic.ttf in Resources */,
+				287576762BD111FB00B2315A /* Poppins-Medium.ttf in Resources */,
+				287576772BD111FB00B2315A /* Poppins-Regular.ttf in Resources */,
+				287576792BD111FB00B2315A /* Images.xcassets in Resources */,
+				2875767A2BD111FB00B2315A /* LaunchScreen.xib in Resources */,
+				2875767B2BD111FB00B2315A /* Lato-Bold.ttf in Resources */,
+				2875767C2BD111FB00B2315A /* Lato-Heavy.ttf in Resources */,
+				2875767D2BD111FB00B2315A /* Lato-Italic.ttf in Resources */,
+				2875767E2BD111FB00B2315A /* Lato-Medium.ttf in Resources */,
+				2875767F2BD111FB00B2315A /* Lato-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1238,6 +1325,153 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-acemart/Pods-Automaxima-acemart-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		287576672BD111FB00B2315A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Automaxima-superpets-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		287576682BD111FB00B2315A /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		287576802BD111FB00B2315A /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=/usr/local/bin/node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
+		};
+		287576812BD111FB00B2315A /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
+		};
+		287576822BD111FB00B2315A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-superpets/Pods-Automaxima-superpets-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignal.framework/OneSignal",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalCore/OneSignalCore.framework/OneSignalCore",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalExtension/OneSignalExtension.framework/OneSignalExtension",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OneSignalXCFramework/OneSignalOutcomes/OneSignalOutcomes.framework/OneSignalOutcomes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignal.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalExtension.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OneSignalOutcomes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-superpets/Pods-Automaxima-superpets-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		287576832BD111FB00B2315A /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Automaxima-superpets/Pods-Automaxima-superpets-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionFaceModel/GoogleMVFaceDetectorResources.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionTextModel/GoogleMVTextDetectorResources.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVFaceDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Automaxima-superpets/Pods-Automaxima-superpets-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		28B775BD2B85AA240002EF6C /* Start Packager */ = {
@@ -2307,6 +2541,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		287576692BD111FB00B2315A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2875766A2BD111FB00B2315A /* AppDelegate.swift in Sources */,
+				2875766B2BD111FB00B2315A /* Automaxima.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		28B775BE2B85AA240002EF6C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2477,6 +2720,84 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.automaxima-demo";
 				PRODUCT_NAME = Automaxima;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		287576852BD111FB00B2315A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BD9E268E4362343B91810EAB /* Pods-Automaxima-superpets.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = CNOIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+					ode_modules,
+					"eact-native-device-brightnessRNDeviceBrightness",
+				);
+				INFOPLIST_FILE = "cno-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.cno-demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		287576862BD111FB00B2315A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AEBCDDFB748A9E4899220F97 /* Pods-Automaxima-superpets.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = CNOIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YSZ34Z59CY;
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/..",
+					ode_modules,
+					"eact-native-device-brightnessRNDeviceBrightness",
+				);
+				INFOPLIST_FILE = "cno-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.2.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.cno-demo";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -3260,6 +3581,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		287576842BD111FB00B2315A /* Build configuration list for PBXNativeTarget "cno" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				287576852BD111FB00B2315A /* Debug */,
+				287576862BD111FB00B2315A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
