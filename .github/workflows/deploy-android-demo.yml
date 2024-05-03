@@ -13,7 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set current date as env variable
+        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Set up node.js
         uses: actions/setup-node@v4
@@ -31,11 +35,8 @@ jobs:
         with:
           cmdline-tools-version: 9477386
 
-      - name: Print JAVA_HOME
-        run: echo "JAVA_HOME is set to $JAVA_HOME $env.JAVA_HOME"
-
       - name: Set Gradle properties
-        run: sed -i "s|^org.gradle.java.home=.*|org.gradle.java.home=${JAVA_HOME}|" $GITHUB_WORKSPACE/android/gradle.properties
+        run: echo "org.gradle.java.home=${JAVA_HOME}" >> $GITHUB_WORKSPACE/gradle.properties
 
       - name: Install dependencies
         run: yarn install
@@ -53,5 +54,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-demo-release.apk
+          name: ${{ env.date_today }} - APK(s) Demo generated
           path: android/app/build/outputs/apk/demo/release/
