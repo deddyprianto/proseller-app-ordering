@@ -1,4 +1,4 @@
-name: Deploy Android Demo
+name: Build Android Demo
 
 on:
   workflow_dispatch:
@@ -49,7 +49,9 @@ jobs:
         run: yarn move-fareastflora-mac
 
       - name: Build APK
-        run: yarn android-demo-rel
+        run: |
+          echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > release-key.keystore
+          yarn android-demo-rel
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
