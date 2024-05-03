@@ -48,7 +48,7 @@ jobs:
       - name: Build APK
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 --decode > $GITHUB_WORKSPACE/android/app/release-key.keystore
-          yarn android-demo-rel
+          yarn apk-release-demo
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
