@@ -12,9 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      JAVA_HOME: /Library/Java/JavaVirtualMachines/jdk-11.0.16.1.jdk/Contents/Home
-
     steps:
       - uses: actions/checkout@v4
 
@@ -34,9 +31,6 @@ jobs:
         with:
           cmdline-tools-version: 9477386
 
-      - name: Set Gradle properties
-        run: echo "org.gradle.java.home=${JAVA_HOME}" >> $GITHUB_WORKSPACE/gradle.properties
-
       - name: Install dependencies
         run: yarn install
 
@@ -48,7 +42,11 @@ jobs:
         run: yarn move-fareastflora-mac
 
       - name: Build APK
-        run: yarn android-demo-rel
+        env:
+          JAVA_HOME: ${{ runner.temp }}/jdk
+        run: |
+          export JAVA_HOME="${JAVA_HOME}"
+          yarn android-demo-rel
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
