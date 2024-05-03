@@ -31,6 +31,9 @@ jobs:
         with:
           cmdline-tools-version: 9477386
 
+      - name: Print JAVA_HOME
+        run: echo "JAVA_HOME is set to $JAVA_HOME $env.JAVA_HOME"
+
       - name: Set Gradle properties
         run: sed -i "s|^org.gradle.java.home=.*|org.gradle.java.home=${JAVA_HOME}|" $GITHUB_WORKSPACE/android/gradle.properties
 
