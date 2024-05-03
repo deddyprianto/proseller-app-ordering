@@ -32,7 +32,7 @@ jobs:
           cmdline-tools-version: 9477386
 
       - name: Set Gradle properties
-        run: sed -i "s/^org.gradle.java.home=.*/org.gradle.java.home=${JAVA_HOME}/" $GITHUB_WORKSPACE/gradle.properties
+        run: sed -i "s|^org.gradle.java.home=.*|org.gradle.java.home=${JAVA_HOME}|" $GITHUB_WORKSPACE/gradle.properties
 
       - name: Install dependencies
         run: yarn install
