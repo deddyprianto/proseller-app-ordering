@@ -35,7 +35,7 @@ jobs:
         run: yarn move-funtoast-mac
 
       - name: Check if FEF project
-        if: github.event_name == 'pull_request' && github.event.pull_request.title contains 'FEF' && github.event.pull_request.head.ref == 'main'
+        if: github.event_name == 'pull_request' && startsWith(github.event.pull_request.title, 'FUNTOAST') && github.event.pull_request.head.ref == 'main'
         run: yarn move-fareastflora-mac
 
       - name: Build APK
