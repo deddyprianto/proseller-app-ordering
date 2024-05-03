@@ -31,6 +31,9 @@ jobs:
         with:
           cmdline-tools-version: 9477386
 
+      - name: Set Gradle properties
+        run: echo "org.gradle.java.home=${JAVA_HOME}" >> $GITHUB_WORKSPACE/gradle.properties
+
       - name: Install dependencies
         run: yarn install
 
@@ -42,8 +45,6 @@ jobs:
         run: yarn move-fareastflora-mac
 
       - name: Build APK
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME }}
         run: yarn android-demo-rel
 
       - name: Upload Artifact
