@@ -25,7 +25,7 @@ import RewardsTransaction from '../components/rewardsTransaction';
 // import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
 import {Actions} from 'react-native-router-flux';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import {
   defaultPaymentAccount,
   deviceUserInfo,
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   recentTransaction: state.rewardsReducer.dataPoint.recentTransaction,
   defaultAccount: state.userReducer.defaultPaymentAccount.defaultAccount,
   myCardAccount: state.cardReducer.myCardAccount.card,
@@ -594,7 +594,7 @@ mapStateToProps = state => ({
   balance: state.SVCReducer.balance.balance,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

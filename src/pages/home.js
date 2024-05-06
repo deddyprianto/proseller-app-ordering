@@ -22,7 +22,7 @@ import {
 } from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
 import {Alert, Linking, PermissionsAndroid} from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
 import {Actions} from 'react-native-router-flux';
