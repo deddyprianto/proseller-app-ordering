@@ -31,7 +31,7 @@ import colorConfig from '../config/colorConfig';
 import awsConfig from '../config/awsConfig';
 import CountryPicker from '../components/react-native-country-picker-modal';
 import {deviceUserInfo, requestOTP} from '../actions/user.action';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import PhoneInput from 'react-native-phone-input';
 import {getCompanyInfo} from '../actions/stores.action';
 import Icon from 'react-native-vector-icons/Ionicons';

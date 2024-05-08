@@ -1,6 +1,6 @@
 import {useCallback, useState} from 'react';
 import {Linking} from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import {getDistance} from 'geolib';
 
 import {checkLocationPermission} from '../../utils/location.utils';

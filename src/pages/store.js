@@ -19,7 +19,7 @@ import {dataStores, getCompanyInfo} from '../actions/stores.action';
 
 import * as geolib from 'geolib';
 import * as _ from 'lodash';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 
 import Loader from '../components/loader';
 import colorConfig from '../config/colorConfig';
@@ -596,7 +596,7 @@ const styles = StyleSheet.create({
   },
 });
 
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   dataBasket: state.orderReducer.dataBasket.product,
   dataStores: state.storesReducer.dataStores.stores,
   userDetail: state.userReducer.getUser.userDetails,
@@ -605,7 +605,7 @@ mapStateToProps = state => ({
   intlData: state.intlData,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 

@@ -33,7 +33,7 @@ import awsConfig from '../config/awsConfig';
 import Header from '../components/atom/header';
 import CountryPicker from '../components/react-native-country-picker-modal';
 import {deviceUserInfo, userPosition} from '../actions/user.action';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 // import packageJson from '../../package';
 import PhoneInput from 'react-native-phone-input';
 // import VersionCheck from 'react-native-version-check';
@@ -139,7 +139,6 @@ class InputPhoneNumber extends Component {
 
   componentDidMount = async () => {
     const {loginByMobile} = this.props;
-    console.log(loginByMobile, 'loginByMobile')
     if (loginByMobile === false) {
       Actions.replace('inputEmail');
     }
@@ -462,7 +461,7 @@ class InputPhoneNumber extends Component {
     );
   }
 }
-mapStateToProps = state => ({
+const mapStateToProps = state => ({
   companyInfo: state.userReducer.getCompanyInfo.companyInfo,
   status: state.accountsReducer.accountExist.status,
   deviceID: state.userReducer.deviceUserInfo,
@@ -473,7 +472,7 @@ mapStateToProps = state => ({
   loginByMobile: state.orderReducer.orderingSetting.loginByMobile,
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
