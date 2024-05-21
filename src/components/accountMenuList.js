@@ -23,7 +23,7 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import {defaultPaymentAccount, updateUser} from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   netsclickDeregister,
   netsclickRegister,

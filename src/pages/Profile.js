@@ -39,7 +39,7 @@ import additionalSetting from '../config/additionalSettings';
 import InfoMessage from '../components/infoMessage/InfoMessage';
 import {getUserProfile} from '../actions/user.action';
 import {dataPoint, dataPointHistory} from '../actions/rewards.action';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   KEY_VERIFIED_USER,
   NUMBER_USER_VISIT_PROFILE,

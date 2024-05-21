@@ -5,7 +5,7 @@ import {fetchApi} from '../service/api';
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 import NetsClick from '../helper/NetsClick';
 import {Alert} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {reportSentry} from '../helper/Sentry';
 
 export const setNetsclickStatus = status => {

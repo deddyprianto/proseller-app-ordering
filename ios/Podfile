@@ -71,8 +71,6 @@ target 'Automaxima' do
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
-
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
