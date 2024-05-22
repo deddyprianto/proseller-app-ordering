@@ -98,6 +98,14 @@ target 'Automaxima' do
     installer.pods_project.build_configurations.each do |config|
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
     end
+    installer.pods_project.targets.each do |target|
+      # Make it work with GoogleDataTransport
+      if target.name.start_with? "GoogleDataTransport"
+        target.build_configurations.each do |config|
+          config.build_settings['CLANG_WARN_STRICT_PROTOTYPES'] = 'NO'
+        end
+      end
+    end
   end
 
 
