@@ -2,11 +2,11 @@ name: Build Android Demo
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+    inputs:
+      company_name:
+        description: 'Company Name'
+        required: true
+        type: string
 
 jobs:
   build:
@@ -38,12 +38,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Set default project setup
-        run: yarn move-funtoast-mac
-
-      - name: Check if FEF project
-        if: github.event_name == 'pull_request' && startsWith(github.event.pull_request.title, 'FUNTOAST') && github.event.pull_request.head.ref == 'main'
-        run: yarn move-fareastflora-mac
+      - name: Setup project
+        run: yarn move-${{ inputs.company_name }}-mac
 
       - name: Build APK
         run: |
@@ -53,5 +49,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.date_today }} - APK(s) Demo generated
+          name: ${{ env.date_today }} - ${{ inputs.company_name }} - APK(s) Demo generated
           path: android/app/build/outputs/apk/demo/release/

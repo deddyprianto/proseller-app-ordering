@@ -8,7 +8,7 @@ import {Alert} from 'react-native';
 import awsConfig from '../config/awsConfig';
 import {fetchApi} from '../service/api';
 import CryptoJS from 'react-native-crypto-js';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {isEmptyArray} from '../helper/CheckEmpty';
 import {submitOfflineCart, clearNetsclickData} from './order.action';
 import {reportSentry} from '../helper/Sentry';

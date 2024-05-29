@@ -18,7 +18,6 @@ import com.BV.LinearGradient.LinearGradientPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.zoontek.rnpermissions.RNPermissionsPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.heanoria.library.reactnative.locationenabler.RNAndroidLocationEnablerPackage;
 import com.horcrux.svg.SvgPackage;
 import org.reactnative.camera.RNCameraPackage;

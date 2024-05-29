@@ -41,7 +41,6 @@ import {defaultPaymentAccount, movePageIndex} from '../../actions/user.action';
 import {isEmptyArray} from '../../helper/CheckEmpty';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import UUIDGenerator from 'react-native-uuid-generator';
-import AsyncStorage from '@react-native-community/async-storage';
 import {check, PERMISSIONS} from 'react-native-permissions';
 import {navigate} from '../../utils/navigation.utils';
 class ListCard extends Component {

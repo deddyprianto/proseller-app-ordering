@@ -238,7 +238,7 @@ const ProductModifiers = ({
             modifierId: item.modifierID,
             modifierProductId: detail.productID,
             name: detail.name,
-            price: detail.price,
+            price: detail.productPrice,
             qty: detail.quantity,
           });
         });
@@ -482,7 +482,7 @@ const ProductModifiers = ({
             modifierProductId: modifierValue.productID,
             modifierId: modifier.id,
             qty: 1,
-            price: modifierValue.price,
+            price: modifierValue.productPrice,
             name: modifierValue.name,
           });
         }}>
@@ -522,17 +522,17 @@ const ProductModifiers = ({
   };
 
   const renderOptionPrice = ({isPrice, modifierValue}) => {
-    if (isPrice) {
+    if (isPrice >= 0) {
       return (
         <Text style={styles.textOptionPrice}>
-          {CurrencyFormatter(modifierValue.price)}
+          {CurrencyFormatter(modifierValue.productPrice)}
         </Text>
       );
     }
   };
 
   const renderOptionNameAndPrice = ({isYesNo, modifierValue, isDisabled}) => {
-    const isPrice = !isYesNo && modifierValue?.price;
+    const isPrice = !isYesNo && modifierValue?.productPrice;
     const barcode = modifierValue?.barcode;
     const styleView =
       isPrice || (additionalSetting().showBarcode && barcode)

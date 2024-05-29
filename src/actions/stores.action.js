@@ -2,7 +2,7 @@ import {fetchApiMasterData} from '../service/apiMasterData';
 import {isEmptyObject} from '../helper/CheckEmpty';
 import {fetchApi} from '../service/api';
 import appConfig from '../config/appConfig';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import awsConfig from '../config/awsConfig';
 
 export const getCompanyInfo = () => {

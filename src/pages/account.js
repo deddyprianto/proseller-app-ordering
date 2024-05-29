@@ -34,7 +34,7 @@ import {Overlay} from 'react-native-elements';
 import {Dialog} from 'react-native-paper';
 import appConfig from '../config/appConfig';
 import QRCode from 'react-native-qrcode-svg';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {dataInbox} from '../actions/inbox.action';
 import {getPaidMembership} from '../actions/membership.action';
 import {dataPoint} from '../actions/rewards.action';
