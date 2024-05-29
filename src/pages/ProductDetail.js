@@ -351,7 +351,7 @@ const ProductDetail = ({
 
     if (!isEmptyArray(items)) {
       items.forEach(item => {
-        totalPrice = totalPrice + item.qty * item.price;
+        totalPrice = totalPrice + item.qty * item.productPrice;
         productModifiers.push({
           modifierID: item.modifierId,
           modifier: {
@@ -359,7 +359,7 @@ const ProductDetail = ({
               {
                 productID: item.modifierProductId,
                 quantity: item.qty,
-                price: item.price,
+                price: item.productPrice,
                 name: item.name,
               },
             ],
@@ -807,7 +807,7 @@ const ProductDetail = ({
       );
     }
   };
-  console.log({description: product?.description}, 'lihai');
+
   const renderProductDescription = () => {
     if (product?.description) {
       return (
