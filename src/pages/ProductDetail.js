@@ -351,7 +351,7 @@ const ProductDetail = ({
 
     if (!isEmptyArray(items)) {
       items.forEach(item => {
-        totalPrice = totalPrice + item.qty * item.productPrice;
+        totalPrice = totalPrice + item.qty * item.price;
         productModifiers.push({
           modifierID: item.modifierId,
           modifier: {
@@ -359,7 +359,7 @@ const ProductDetail = ({
               {
                 productID: item.modifierProductId,
                 quantity: item.qty,
-                price: item.productPrice,
+                price: item.price,
                 name: item.name,
               },
             ],
