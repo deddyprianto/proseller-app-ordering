@@ -218,6 +218,7 @@ const Login = () => {
   }, [loginSettings]);
 
   const handleRequestOtp = async () => {
+    setIsLoading(true);
     const isLoginMethodEmail = loginMethod === 'email';
     const methodValue = isLoginMethodEmail ? email : countryCode + phoneNumber;
     let payload = {};
@@ -235,7 +236,7 @@ const Login = () => {
         return setErrorPhone('Mobile phone is invalid. Please try again');
       }
     }
-    setIsLoading(true);
+
     const response = await dispatch(checkAccountExist(payload));
     if (response?.status) {
       setErrorLogin(false);
@@ -368,8 +369,7 @@ const Login = () => {
   };
 
   const renderButtonNext = () => {
-    const active = email || phoneNumber;
-
+    const active = (email || phoneNumber) && !isLoading;
     return (
       <TouchableOpacity
         disabled={!active}
