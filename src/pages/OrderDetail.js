@@ -454,7 +454,7 @@ const useStyles = () => {
   return {styles, colors};
 };
 
-const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
+const OrderDetail = ({data: dataParent, isFromPaymentPage, step, handleBackPress}) => {
   const {styles} = useStyles();
   const [data, setData] = React.useState(dataParent);
   const {minutes, seconds, isTimeEnd} = useCountdownV2(dataParent);
@@ -567,7 +567,11 @@ const OrderDetail = ({data: dataParent, isFromPaymentPage, step}) => {
   };
 
   const backToHome = () => {
-    Actions.reset('app', {fromPayment: true});
+    if (isFromPaymentPage) {
+      handleBackPress()
+    } else {
+      Actions.reset('app', {fromPayment: true});
+    }
     return true;
   };
 

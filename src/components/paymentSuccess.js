@@ -306,6 +306,7 @@ class PaymentSuccess extends Component {
             step={this.props.step}
             isFromPaymentPage={true}
             data={dataRespons}
+            handleBackPress={this.handleBackPress}
           />
           <ModalAction
             isVisible={showAlert}
