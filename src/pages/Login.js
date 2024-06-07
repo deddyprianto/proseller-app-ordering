@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
+  Linking,
 } from 'react-native';
 import awsConfig from '../config/awsConfig';
 import FieldPhoneNumberInput from '../components/fieldPhoneNumberInput';
@@ -25,6 +26,7 @@ import GlobalText from '../components/globalText';
 import additionalSetting from '../config/additionalSettings';
 import {emailValidation} from '../helper/Validation';
 import {navigate} from '../utils/navigation.utils';
+import ModalAction from '../components/modal/ModalAction';
 
 const useStyles = () => {
   const theme = Theme();
@@ -179,11 +181,13 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [loginMethod, setLoginMethod] = useState('email');
   const {checkTncPolicyData} = useSettings();
-  const [openType, setOpenType] = React.useState(null);
-  const [buttonActive, setButtonActive] = React.useState(false);
-  const [errorLogin, setErrorLogin] = React.useState(false);
-  const [errorEmail, setErrorEmail] = React.useState(null);
-  const [errorPhone, setErrorPhone] = React.useState(null);
+  const [openType, setOpenType] = useState(null);
+  const [buttonActive, setButtonActive] = useState(false);
+  const [errorLogin, setErrorLogin] = useState(false);
+  const [errorEmail, setErrorEmail] = useState(null);
+  const [errorPhone, setErrorPhone] = useState(null);
+  const [alertDescSuspend, setAlertDescSuspend] = useState("");
+  const [isSuspended, setIsSuspended] = useState(false);
   const loginSettings = useSelector(
     state => state.settingReducer.loginSettings,
   );
@@ -226,12 +230,14 @@ const Login = () => {
       const isValidEmail = emailValidation(email);
       payload.email = email;
       if (!isValidEmail) {
+        setIsLoading(false);
         setErrorLogin(true);
         return setErrorEmail('Email is invalid. Please try again.');
       }
     } else {
       payload.phoneNumber = countryCode + phoneNumber;
       if (phoneNumber.length < 8 || phoneNumber.length > 12) {
+        setIsLoading(false);
         setErrorLogin(true);
         return setErrorPhone('Mobile phone is invalid. Please try again');
       }
@@ -254,6 +260,10 @@ const Login = () => {
         'Sorry, no account found with this mobile phone. Try to enter another.',
       );
       setErrorLogin(true);
+    }
+    if (response?.message?.includes('suspended')) {
+      setIsSuspended(true)
+      setAlertDescSuspend(response.message)
     }
     setIsLoading(false);
   };
@@ -503,6 +513,19 @@ const Login = () => {
         isVisible={openType === 'privacy'}>
         <GlobalText>{checkTncPolicyData().privacy?.settingValue}</GlobalText>
       </GlobalModal>
+      <ModalAction
+        isVisible={isSuspended}
+        hideCloseButton
+        onCancel={() => setIsSuspended(false)}
+        onApprove={() => {
+          setIsSuspended(false)
+          Linking.openURL("https://www.funtoast.com.sg/contact/feedback/")
+        }}
+        title={"Account Deletion Notification"}
+        description={alertDescSuspend}
+        approveTitle="Contact Us"
+        outlineBtnTitle="Cancel"
+      />
     </SafeAreaView>
   );
 };
