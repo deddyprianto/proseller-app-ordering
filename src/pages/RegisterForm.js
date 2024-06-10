@@ -466,15 +466,6 @@ const RegisterForm = ({
     );
   };
 
-  const getMaxDate = () => {
-    try {
-      let year = new Date().getFullYear() - 1;
-      return new Date(`${year}-12-31`);
-    } catch (e) {
-      return new Date();
-    }
-  };
-
   const handleConfirm = (date, isMonth) => {
     if (!isMonth) {
       toggleDatePicker();
@@ -487,7 +478,7 @@ const RegisterForm = ({
     if (birthDate) {
       return new Date(moment(birthDate).format());
     }
-    return new Date(moment().subtract(10, 'year'));
+    return minimumDate();
   };
 
   const minimumDate = () => {
