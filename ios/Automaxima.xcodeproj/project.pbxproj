@@ -52,6 +52,10 @@
 		28B775D22B85AA240002EF6C /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
 		28B775DC2B85AA6F0002EF6C /* superpets-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28B775DB2B85AA250002EF6C /* superpets-Info.plist */; };
 		28B775DE2B85ABC90002EF6C /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 28B775DD2B85ABC90002EF6C /* assets */; };
+		28BCD0B92C12E55000B10EDD /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
+		28BCD0BC2C12E58C00B10EDD /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 28BCD0BB2C12E58C00B10EDD /* assets */; };
+		28BCD0BD2C16B0DF00B10EDD /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
+		28BCD0BE2C16B0E500B10EDD /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 28BCD0BB2C12E58C00B10EDD /* assets */; };
 		34B85190313E4D1C966C6F8B /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1BEF7B63D29F4F9BBC59BB56 /* Poppins-Bold.ttf */; };
 		4364869283FE453CB8F3B773 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5004E2CBAFBB4547A8CCA619 /* Lato-Italic.ttf */; };
 		43681597396048A0961F05E9 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61448CC0B03644E5AE6729E7 /* Lato-Regular.ttf */; };
@@ -244,6 +248,7 @@
 		28B775DA2B85AA240002EF6C /* superpets.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = superpets.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28B775DB2B85AA250002EF6C /* superpets-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "superpets-Info.plist"; path = "/Users/suard/Project/edgeworks/proseller-app-ordering/ios/superpets-Info.plist"; sourceTree = "<absolute>"; };
 		28B775DD2B85ABC90002EF6C /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../native/superpets/assets; sourceTree = "<group>"; };
+		28BCD0BB2C12E58C00B10EDD /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		2C3DC72BAF59423B9B8EF4ED /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		2C7D2C5D52109680C642991B /* Pods-Automaxima-cno.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-cno.debug.xcconfig"; path = "Target Support Files/Pods-Automaxima-cno/Pods-Automaxima-cno.debug.xcconfig"; sourceTree = "<group>"; };
 		3186C1F52C43E61C494CE008 /* Pods-Automaxima-fareastfloranew.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Automaxima-fareastfloranew.release.xcconfig"; path = "Target Support Files/Pods-Automaxima-fareastfloranew/Pods-Automaxima-fareastfloranew.release.xcconfig"; sourceTree = "<group>"; };
@@ -558,6 +563,7 @@
 				5BA4EE4C2B0CB41E005DBC87 /* assets */,
 				28B775DD2B85ABC90002EF6C /* assets */,
 				2875768B2BD113E100B2315A /* assets */,
+				28BCD0BB2C12E58C00B10EDD /* assets */,
 				881D49842A1B3DDE009E45B9 /* Poppins-SemiBold.ttf */,
 				13B07FAE1A68108700A75B9A /* Automaxima */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -1159,6 +1165,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28BCD0BC2C12E58C00B10EDD /* assets in Resources */,
+				28BCD0B92C12E55000B10EDD /* main.jsbundle in Resources */,
 				88A12C472AB183F0003936F8 /* Poppins-SemiBold.ttf in Resources */,
 				88A12C482AB183F0003936F8 /* GoogleService-Info.plist in Resources */,
 				88A12C492AB183F0003936F8 /* Poppins-Black.ttf in Resources */,
@@ -1180,6 +1188,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28BCD0BE2C16B0E500B10EDD /* assets in Resources */,
+				28BCD0BD2C16B0DF00B10EDD /* main.jsbundle in Resources */,
 				88D1A7032A40301B00C00653 /* Poppins-SemiBold.ttf in Resources */,
 				88D1A7042A40301B00C00653 /* GoogleService-Info.plist in Resources */,
 				88D1A7052A40301B00C00653 /* Poppins-Black.ttf in Resources */,
@@ -3260,7 +3270,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -3275,7 +3285,7 @@
 				INFOPLIST_FILE = "fareastflora-live.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -3297,7 +3307,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -3312,7 +3322,7 @@
 				INFOPLIST_FILE = "fareastflora-live.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -3334,7 +3344,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -3371,7 +3381,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = FareastfloraIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Automaxima/Automaxima.entitlements;
-				CURRENT_PROJECT_VERSION = 29;
+				CURRENT_PROJECT_VERSION = 32;
 				DEVELOPMENT_TEAM = YSZ34Z59CY;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -3503,7 +3513,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -3541,7 +3551,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-app";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.edgeworks.funtoast-demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Automaxima-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

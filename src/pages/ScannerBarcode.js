@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {RNCamera} from 'react-native-camera';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
@@ -144,6 +144,8 @@ const ScannerBarcode = () => {
     false,
   );
   const [isGoBack, setIsGoBack] = useState(false);
+  const [barcodeData, setBarcodeData] = useState(null);
+
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -203,11 +205,9 @@ const ScannerBarcode = () => {
 
   const onSuccess = async (value, showError) => {
     if (!isOpenDetailPage) {
-      setTimeout(async () => {
         setIsLoading(true);
         const response = await dispatch(getProductByBarcode(value?.data));
-        handleSuccess(response, value.oldBarcode, showError);
-      }, 1000);
+        handleSuccess(response, value, showError);
     }
   };
 
@@ -220,7 +220,7 @@ const ScannerBarcode = () => {
     });
   };
 
-  const handleSuccess = async (response, oldBarcode, showError) => {
+  const handleSuccess = async (response, data, showError) => {
     if (response?.data) {
       if (additionalSetting().enableScanAndGo) {
         setIsLoading(false);
@@ -233,7 +233,7 @@ const ScannerBarcode = () => {
     } else {
       setIsLoading(false);
       if (!showError) {
-        onSuccess({data: oldBarcode}, true);
+        onSuccess({data: data.oldBarcode}, true);
       }
       if (showError) {
         setIsOpenDetailPage(false);
@@ -249,49 +249,37 @@ const ScannerBarcode = () => {
       setSearchCondition('success');
       setIsLoading(false);
       handleCloseSearchProductByBarcodeModal();
-      handleSuccess(response, value.oldBarcode);
+      handleSuccess(response, value);
     } else {
       setIsLoading(false);
       setSearchCondition('error');
     }
   };
 
-  const onBarcodeRead = barcodes => {
-    if (Platform.OS === 'ios') {
-      let oldBarcode = barcodes?.data;
-      let newBarCode = barcodes?.data;
-      if (!additionalSetting().enableUpcaScanner) {
-        if (!isOpenDetailPage) {
-          setIsOpenDetailPage(true);
-          onSuccess({data: newBarCode});
-        }
-        return;
-      }
-      newBarCode = newBarCode?.substring(1, newBarCode.length - 1);
-      oldBarcode = oldBarcode?.substring(0, oldBarcode.length - 1);
-      if (!isOpenDetailPage) {
-        setIsOpenDetailPage(true);
-        onSuccess({data: newBarCode, oldBarcode});
+  const onBarcodeRead = async barcodes => {
+    const barcodeResult = barcodes?.data
+    if (Platform.OS === 'ios' && !isOpenDetailPage && barcodeResult && barcodeData !== barcodeResult && !(isLoading || isLoadingLocationModal)) {
+      await barcodeHandler(barcodeResult);
+    }
+  };
+
+  const onGoogleBarcode = async barcodes => {
+    const code = barcodes.barcodes[0]?.data;
+    const barcodeType = barcodes.barcodes[0]?.type
+    const barcodeResult = barcodeType === "UPC_A" ? code?.substring(0, code?.length - 1) : code;
+
+    if (!isOpenDetailPage && code && barcodeData !== barcodeResult && !(isLoading || isLoadingLocationModal)) {
+      if (barcodeType === "UPC_A" || Platform.OS === 'android') {
+        await barcodeHandler(barcodeResult);
       }
     }
   };
 
-  const onGoogleBarcode = barcodes => {
-    if (Platform.OS === 'android' && !isOpenDetailPage) {
-      const code = barcodes.barcodes[0]?.data;
-      if (!additionalSetting().enableUpcaScanner) {
-        const barcodeData = code;
-        setIsOpenDetailPage(true);
-        return onSuccess({data: barcodeData}, true);
-      }
-
-      if (code) {
-        setIsOpenDetailPage(true);
-        const barcodeData = code?.substring(0, code?.length - 1);
-        onSuccess({data: barcodeData}, true);
-      }
-    }
-  };
+  const barcodeHandler = async data => {
+    setBarcodeData(data);
+    setIsOpenDetailPage(true);
+    await onSuccess({data: data}, true);
+  }
 
   const renderTopContent = () => {
     if (isShowInstruction) {
@@ -433,7 +421,7 @@ const ScannerBarcode = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isLoadingLocationModal} />
       {renderHeader()}
-      {renderScanner()}
+      {!isLoadingLocationModal && renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
       <ModalAction

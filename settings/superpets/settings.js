@@ -13,7 +13,6 @@ const additionalSetting = () => {
   const hideLabelForSingleOutlet = false;
   const textRedeemVoucher = 'Available Voucher';
   const isUsingValidityDays = false;
-  const enableUpcaScanner = false;
   const maxVoucherInOneTransaction = 1;
   const enableScannerButton = true;
   const isAutoSelectDeliveryProviderType = true;
@@ -35,7 +34,6 @@ const additionalSetting = () => {
     hideLabelForSingleOutlet,
     textRedeemVoucher,
     isUsingValidityDays,
-    enableUpcaScanner,
     maxVoucherInOneTransaction,
     enableScannerButton,
     isAutoSelectDeliveryProviderType,

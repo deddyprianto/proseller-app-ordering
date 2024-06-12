@@ -382,7 +382,6 @@ export const refreshToken = params => {
 
       // check if not authorized
       if (response.responseBody?.message === 'authorization error') {
-        reportSentry('/auth/refresh', payload, response.responseBody.message);
         dispatch({
           type: 'USER_LOGGED_OUT_SUCCESS',
         });
