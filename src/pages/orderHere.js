@@ -125,6 +125,7 @@ const OrderHere = () => {
   const [productsSearch, setProductsSearch] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearchOnFocus, setIsSearchOnFocus] = useState(false);
+  const [isRefresh, setIsRefresh] = useState(false);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
@@ -133,21 +134,25 @@ const OrderHere = () => {
   const products = useSelector(
     state => state.productReducer.productsOutlet.data,
   );
+  const isLoggedIn = useSelector(state => state.authReducer.authData.token);
 
   const onRefresh = useCallback(async () => {
-    setIsLoading(true);
-    await dispatch(getProductByOutlet(defaultOutlet.id));
-    await dispatch(getBasket());
-    setIsLoading(false);
+    setIsRefresh(true);
+    await fetchData();
+    setIsRefresh(false);
   }, [dispatch, defaultOutlet]);
-
-  useEffect(() => {
-    onRefresh();
-  }, [onRefresh]);
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
+      await fetchData();
+      setIsLoading(false);
+    };
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    const loadData = async () => {
       const response = await dispatch(
         getProductBySearch({
           outletId: defaultOutlet.sortKey,
@@ -155,13 +160,19 @@ const OrderHere = () => {
         }),
       );
 
-      setIsLoading(false);
       setProductsSearch(response);
+      setIsLoading(false);
     };
     loadData();
   }, [dispatch, searchQuery, defaultOutlet]);
 
+  const fetchData = async () => {
+    await dispatch(getProductByOutlet(defaultOutlet.id));
+    isLoggedIn && await dispatch(getBasket());
+  };
+
   const handleSearchProduct = async value => {
+    setIsLoading(true);
     setSearchQuery(value);
   };
 
@@ -263,7 +274,7 @@ const OrderHere = () => {
           scrollEnabled={false}
           refreshControl={
             <RefreshControl
-              refreshing={isLoading}
+              refreshing={isRefresh}
               onRefresh={() => {
                 onRefresh();
               }}
@@ -289,7 +300,7 @@ const OrderHere = () => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <LoadingScreen loading={isLoading || searchQuery} />
+      <LoadingScreen loading={isLoading} />
       <Body>
         {renderHeader()}
         {renderBody()}

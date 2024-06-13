@@ -7,11 +7,14 @@ import awsConfig from '../config/awsConfig';
 import {reportSentry} from '../helper/Sentry';
 
 const getUserDetail = userDetail => {
-  const userDecrypt = CryptoJS.AES.decrypt(
-    userDetail,
-    awsConfig.PRIVATE_KEY_RSA,
-  );
-  const result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+  let result = null
+  if (userDetail) {
+    const userDecrypt = CryptoJS.AES.decrypt(
+      userDetail,
+      awsConfig.PRIVATE_KEY_RSA,
+    );
+    result = JSON.parse(userDecrypt.toString(CryptoJS.enc.Utf8));
+  }
   return result;
 };
 
@@ -27,7 +30,7 @@ export const getProductByOutlet = (OutletId, refresh) => {
       const response = await fetchApiProduct(
         `/productpreset/load/${PRESET_TYPE}/${OutletId}`,
         'POST',
-        body,
+        dataUser ? body : {},
         200,
         null,
       );
@@ -371,11 +374,11 @@ export const getProductById = id => {
       const state = getState();
       const dataUser = getUserDetail(state?.userReducer?.getUser?.userDetails);
       const dataOutlet = state?.storesReducer?.defaultOutlet?.defaultOutlet;
-
+      const url = dataUser ?
+        `/product/${id}?customerGroupId=${dataUser?.customerGroupId}&outlet=${dataOutlet?.id}` :
+        `/product/${id}?outlet=${dataOutlet?.id}`;
       const response = await fetchApiProduct(
-        `/product/${id}?customerGroupId=${dataUser?.customerGroupId}&outlet=${
-          dataOutlet?.id
-        }`,
+        url,
         'GET',
         null,
         200,

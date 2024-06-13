@@ -50,6 +50,7 @@ import AllowSelfSelectionLabel from '../components/label/AllowSelfSelection';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';
 import additionalSetting from '../config/additionalSettings';
 import awsConfig from '../config/awsConfig';
+import {navigate} from '../utils/navigation.utils';
 
 const useStyles = () => {
   const theme = Theme();
@@ -287,6 +288,7 @@ const ProductDetail = ({
     state => state.orderReducer.dataOrderingMode.orderingMode,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const isLoggedIn = useSelector(state => state.authReducer.authData.token);
 
   const webStyles = {
     li: {
@@ -758,7 +760,7 @@ const ProductDetail = ({
           style={styleDisabled}
           disabled={disabled}
           onPress={() => {
-            handleAddOrUpdateProduct();
+            isLoggedIn ? handleAddOrUpdateProduct() : navigate('login');
           }}>
           <Text style={styles.textCartButton}>{text}</Text>
         </TouchableOpacity>

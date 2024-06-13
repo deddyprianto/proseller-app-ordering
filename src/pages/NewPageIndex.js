@@ -222,7 +222,7 @@ const NewPageIndex = () => {
           style={styles.viewNavbarItem}
           activeOpacity={1}
           onPress={() => {
-            props.navigation.navigate(name);
+            !isLoggedIn ? navigate('login') : props.navigation.navigate(name);
           }}>
           <Image source={handleImage(name)} style={imageStyle} />
           <Text numberOfLines={1} style={textStyle}>
@@ -320,11 +320,11 @@ const NewPageIndex = () => {
 
   const Tabs = createAppContainer(TabNavigator);
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn && !additionalSetting().enableFnBBrowseMode) {
     return <OnBoarding />;
   } else if (!defaultOutlet.id && awsConfig.COMPANY_TYPE === 'Retail') {
     return <Store />;
-  } else if (isLoggedIn) {
+  } else if (isLoggedIn || additionalSetting().enableScannerButton) {
     return (
       <SafeAreaView style={styles.root}>
         <Tabs />
