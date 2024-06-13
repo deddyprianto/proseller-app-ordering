@@ -15,6 +15,7 @@ import {
   ScrollView,
   SafeAreaView,
   RefreshControl,
+  BackHandler,
 } from 'react-native';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
@@ -375,6 +376,18 @@ const Payment = ({order}) => {
     };
     fetchData();
   }, [getData, isTimeEnd]);
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backToHome);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backToHome);
+    };
+  }, []);
+
+  const backToHome = () => {
+    Actions.reset('app', {fromPayment: true});
+    return true;
+  };
 
   const getData = useCallback(async () => {
     await handleGetOrderDetail();
@@ -766,9 +779,7 @@ const Payment = ({order}) => {
           title={
             data?.action?.name || renderPaymentDetailText(data?.paymentType)
           }
-          onBackBtn={() => {
-            Actions.popTo('pageIndex');
-          }}
+          onBackBtn={backToHome}
         />
         {renderBody()}
         {renderBottom()}
