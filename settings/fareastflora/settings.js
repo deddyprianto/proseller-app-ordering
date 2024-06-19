@@ -41,6 +41,7 @@ const additionalSetting = () => {
   const showForfeitedItemInTransaction = false;
   const showBarcode = true;
   const enableFnBBrowseMode = false;
+  const disableSearchFunction = true;
 
   return {
     additionalPolicy,
@@ -64,6 +65,7 @@ const additionalSetting = () => {
     showForfeitedItemInTransaction,
     showBarcode,
     enableFnBBrowseMode,
+    disableSearchFunction,
   };
 };
 
