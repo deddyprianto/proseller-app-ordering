@@ -180,13 +180,14 @@ const Menu = () => {
   const [isOpenMyECardModal, setIsOpenMyECardModal] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const totalPoint = useSelector(
     state => state.rewardsReducer?.dataPoint?.totalPoint,
   );
-
   const userDetail = useSelector(
     state => state.userReducer?.getUser?.userDetails,
   );
+  const isLoggedIn = useSelector(state => state.authReducer.authData.token);
 
   useEffect(() => {
     if (userDetail) {
@@ -232,11 +233,11 @@ const Menu = () => {
 
   const handleClick = async () => {
     setIsLoading(true);
-    const allOutlet = await dispatch(dataStores());
-    const activeOutlets = allOutlet.filter(
+    const allOutlet = isLoggedIn ? await dispatch(dataStores()) : [];
+    const activeOutlets = isLoggedIn ? allOutlet.filter(
       row => row.orderingStatus === 'AVAILABLE',
-    );
-    const orderingMode = await dispatch(getOrderingMode(activeOutlets[0]));
+    ) : [];
+    const orderingMode = isLoggedIn ? await dispatch(getOrderingMode(activeOutlets[0])) : [];
 
     if (activeOutlets.length === 1 && orderingMode.length === 1) {
       await dispatch({
@@ -271,11 +272,11 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.touchablePoint}
         onPress={() => {
-          navigate('redeem');
+          isLoggedIn ? navigate('redeem') : navigate('login');
         }}>
         <View>
           <Text style={styles.textPoint1}>Current Point</Text>
-          <Text style={styles.textPoint2}>{totalPoint} PTS</Text>
+          <Text style={styles.textPoint2}>{totalPoint || 0} PTS</Text>
         </View>
         <View style={styles.viewRedeem}>
           <Text style={styles.textRedeem}>Redeem</Text>
@@ -303,7 +304,7 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.viewMenu}
         onPress={() => {
-          navigate('myFavoriteOutlets');
+          !isLoggedIn ? navigate('login') : navigate('myFavoriteOutlets');
         }}>
         <Image source={appConfig.iconHomeOutlet} style={styles.iconMenu} />
         <Text style={styles.textMenu}>Favorite Outlet</Text>
@@ -318,7 +319,7 @@ const Menu = () => {
         style={styles.viewMenu}
         onPress={() => {
           // navigate('eStore');
-          setIsOpenModal(true);
+          !isLoggedIn ? navigate('login') : setIsOpenModal(true);
         }}>
         <Image
           source={appConfig.iconHomeEStore}
@@ -334,7 +335,7 @@ const Menu = () => {
       <TouchableOpacity
         style={styles.viewMenu}
         onPress={() => {
-          handleOpenMyECardModal();
+          !isLoggedIn ? navigate('login') : handleOpenMyECardModal();
         }}>
         <Image source={appConfig.iconHomeECard} style={styles.iconMenu} />
         <Text style={styles.textMenu}>My E-Card</Text>
@@ -348,7 +349,7 @@ const Menu = () => {
         disabled
         style={styles.viewMenu}
         onPress={() => {
-          navigate('eGift');
+          !isLoggedIn ? navigate('login') : navigate('eGift');
         }}>
         <Image
           source={appConfig.iconHomeSendAGift}
@@ -376,7 +377,7 @@ const Menu = () => {
     <View style={styles.root}>
       <LoadingScreen loading={isLoading} />
       <Text style={styles.textWelcome} numberOfLines={1}>
-        Welcome {user?.name},
+        {isLoggedIn && `Welcome ${user?.name},`}
       </Text>
       <View style={styles.top}>
         {renderPoint()}

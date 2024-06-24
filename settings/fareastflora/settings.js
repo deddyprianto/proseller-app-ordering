@@ -40,6 +40,8 @@ const additionalSetting = () => {
   const popupNotificationTextAlign = 'left';
   const showForfeitedItemInTransaction = false;
   const showBarcode = true;
+  const enableFnBBrowseMode = false;
+  const disableSearchFunction = true;
 
   return {
     additionalPolicy,
@@ -62,6 +64,8 @@ const additionalSetting = () => {
     popupNotificationTextAlign,
     showForfeitedItemInTransaction,
     showBarcode,
+    enableFnBBrowseMode,
+    disableSearchFunction,
   };
 };
 

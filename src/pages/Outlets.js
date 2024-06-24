@@ -56,6 +56,7 @@ const Outlets = () => {
   );
 
   const user = useSelector(state => state.userReducer.getUser.userDetails);
+  const isLoggedIn = useSelector(state => state.authReducer.authData.token);
 
   useBackHandler();
 
@@ -194,25 +195,30 @@ const Outlets = () => {
   };
 
   const handleChangeOutlet = async item => {
-    try {
-      if (defaultOutlet?.id === item?.id) {
+    if (!isLoggedIn) {
+      await dispatch(getOutletById(item?.id));
+      navigate('orderHere');
+    } else {
+      try {
+        if (defaultOutlet?.id === item?.id) {
+          await handleSetOutlet(item);
+          return;
+        }
+        if (!basket) {
+          await removeCart();
+          await handleSetOutlet(item);
+          return;
+        }
+        if (basket && basket.outlet.id !== item.id) {
+          showAlertBasketNotEmpty(item);
+          return;
+        }
         await handleSetOutlet(item);
-        return;
-      }
-      if (!basket) {
+        setIsLoading(false);
+      } catch (e) {
         await removeCart();
         await handleSetOutlet(item);
-        return;
       }
-      if (basket && basket.outlet.id !== item.id) {
-        showAlertBasketNotEmpty(item);
-        return;
-      }
-      await handleSetOutlet(item);
-      setIsLoading(false);
-    } catch (e) {
-      await removeCart();
-      await handleSetOutlet(item);
     }
   };
 

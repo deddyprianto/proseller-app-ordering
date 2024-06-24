@@ -103,9 +103,7 @@ const useCalculation = () => {
   };
 
   const calculatePriceAferDiscount = () => {
-    const amount =
-      basket?.totalGrossAmount - (basket?.totalDiscountAmount || 0);
-    return amount;
+    return basket?.totalNettAmount || 0;
   };
 
   const removePointAmount = (payload = []) => {

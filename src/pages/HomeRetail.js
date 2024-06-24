@@ -600,7 +600,7 @@ const HomeRetail = props => {
   };
 
   const renderHeader = () => {
-    return <Header customTitle={renderHeaderTitle()} search isLogo />;
+    return <Header customTitle={renderHeaderTitle()} search={!additionalSetting().disableSearchFunction} isLogo />;
   };
 
   const renderBody = () => {

@@ -258,7 +258,8 @@ const ScannerBarcode = () => {
 
   const onBarcodeRead = async barcodes => {
     const barcodeResult = barcodes?.data
-    if (Platform.OS === 'ios' && !isOpenDetailPage && barcodeResult && barcodeData !== barcodeResult && !(isLoading || isLoadingLocationModal)) {
+    const barcodeType = barcodes?.type
+    if (Platform.OS === 'ios' && barcodeResult && isScannerActive(barcodeResult) && !EANUPCChecker(barcodeType)) {
       await barcodeHandler(barcodeResult);
     }
   };
@@ -266,14 +267,22 @@ const ScannerBarcode = () => {
   const onGoogleBarcode = async barcodes => {
     const code = barcodes.barcodes[0]?.data;
     const barcodeType = barcodes.barcodes[0]?.type
-    const barcodeResult = barcodeType === "UPC_A" ? code?.substring(0, code?.length - 1) : code;
+    const barcodeResult = isEANUPC(barcodeType) ? code?.substring(0, code?.length - 1) : code;
 
-    if (!isOpenDetailPage && code && barcodeData !== barcodeResult && !(isLoading || isLoadingLocationModal)) {
-      if (barcodeType === "UPC_A" || Platform.OS === 'android') {
+    if (code && isScannerActive(barcodeResult)) {
+      if (isEANUPC(barcodeType) || Platform.OS === 'android') {
         await barcodeHandler(barcodeResult);
       }
     }
   };
+
+  const isScannerActive = barcodeResult => {
+    return (barcodeData !== barcodeResult) && !(isLoading || isLoadingLocationModal) && !isOpenDetailPage
+  }
+
+  const isEANUPC = data => {
+    return data?.includes("EAN") || data?.includes("UPC");
+  }
 
   const barcodeHandler = async data => {
     setBarcodeData(data);
