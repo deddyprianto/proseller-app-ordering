@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {RNCamera} from 'react-native-camera';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
@@ -33,7 +33,6 @@ import {
   normalizeLayoutSizeWidth,
 } from '../helper/Layout';
 import ModalAction from '../components/modal/ModalAction';
-import useScanGo from '../hooks/validation/usScanGo';
 import additionalSetting from '../config/additionalSettings';
 import {navigate} from '../utils/navigation.utils';
 import {isEmptyObject} from '../helper/CheckEmpty';
@@ -145,12 +144,12 @@ const ScannerBarcode = () => {
   );
   const [isGoBack, setIsGoBack] = useState(false);
   const [barcodeData, setBarcodeData] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
 
   const defaultOutlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-  const {showAlert, checkProductScanGo, closeAlert, setShowAlert} = useScanGo();
 
   useEffect(() => {
     const loadData = async () => {
@@ -195,7 +194,7 @@ const ScannerBarcode = () => {
 
   const onClearCart = async () => {
     setIsLoading(true);
-    closeAlert();
+    setShowAlert(false);
     await dispatch(removeBasket());
     setIsLoading(false);
     if (isGoBack) {
@@ -225,8 +224,6 @@ const ScannerBarcode = () => {
     if (response?.data) {
       if (additionalSetting().enableScanAndGo) {
         setIsLoading(false);
-        const showPopup = await checkProductScanGo(true, response.data);
-        !showPopup && setIsOpenDetailPage(false);
         return goToProductDetail(response);
       }
       goToProductDetail(response);
@@ -402,7 +399,7 @@ const ScannerBarcode = () => {
               fill-opacity="0"
             />
           </Svg>
-          {renderBottomContent()}
+          {!openLocationModal && renderBottomContent()}
         </>
       </RNCamera>
     );
@@ -439,7 +436,7 @@ const ScannerBarcode = () => {
         hideCloseButton
         onCancel={onClearCart}
         onApprove={() => {
-          closeAlert();
+          setShowAlert(false);
           !isGoBack && Actions.pop();
         }}
         title={alertTitle()}
