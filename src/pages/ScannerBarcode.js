@@ -213,6 +213,7 @@ const ScannerBarcode = () => {
 
   const goToProductDetail = response => {
     setShowAlert(false);
+    setBarcodeData(null);
     navigate('productDetail', {
       productId: response?.data?.id,
       resetScanCode,
