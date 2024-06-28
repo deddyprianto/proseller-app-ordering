@@ -1,13 +1,14 @@
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import additionalSetting from '../../config/additionalSettings';
 import {navigate} from '../../utils/navigation.utils';
 
 const useSettings = () => {
   const priority_key_mandatory = 'SetLowerPriorityAsMandatory';
-
+  const dispatch = useDispatch();
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
+
   const checkTncPolicyData = () => {
     if (orderSetting && Array.isArray(orderSetting)) {
       const tnc = orderSetting.find(
@@ -22,10 +23,14 @@ const useSettings = () => {
     return {tnc: null, privacy: null};
   };
 
-  const useCartVersion = params => {
+  const useCartVersion = async params => {
     if (additionalSetting().cartVersion === 'basic') {
       navigate('cart', params);
     } else if (additionalSetting().cartVersion === 'advance') {
+      await dispatch({
+        type: 'SET_OPEN_CART',
+        payload: true,
+      });
       navigate('cartStep1', {step: 1, ...params});
     } else {
       navigate('cart', params);

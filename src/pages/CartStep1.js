@@ -1,15 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Header from '../components/layout/header';
-import {SafeAreaView, ScrollView, View, StyleSheet} from 'react-native';
+import {SafeAreaView, ScrollView, View, StyleSheet, BackHandler} from 'react-native';
 import ProductCartList from '../components/productCartList/ProductCartList';
 import GlobalText from '../components/globalText';
 import Theme from '../theme/Theme';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import GlobalButton from '../components/button/GlobalButton';
 import CurrencyFormatter from '../helper/CurrencyFormatter';
 import useCalculation from '../hooks/calculation/useCalculation';
 import {navigate} from '../utils/navigation.utils';
 import LoadingScreen from '../components/loadingScreen';
+import {Actions} from 'react-native-router-flux';
 
 const useStyles = () => {
   const {colors, fontFamily} = Theme();
@@ -63,10 +64,28 @@ const CartStep1 = props => {
   const {navigation} = props;
   const step = navigation.state.params?.step;
   const {styles} = useStyles();
+  const dispatch = useDispatch();
+  const {calculatePriceAferDiscount} = useCalculation();
+
   const isLoadingBasket = useSelector(
     state => state.orderReducer?.loadingBasket?.isLoadingBasket,
   );
-  const {calculatePriceAferDiscount} = useCalculation();
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', onBackHandler);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', onBackHandler);
+    };
+  }, [onBackHandler]);
+
+  const onBackHandler = async () => {
+    await dispatch({
+      type: 'SET_OPEN_CART',
+      payload: false,
+    });
+    Actions.pop();
+  };
+
   const renderStep = () => (
     <View>
       <GlobalText style={styles.stepText}>Step 1 of 4</GlobalText>
@@ -80,7 +99,7 @@ const CartStep1 = props => {
   return (
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoadingBasket} />
-      <Header title={'Cart'} customRightIcon={renderStep} />
+      <Header title={'Cart'} customRightIcon={renderStep} onBackBtn={onBackHandler} />
       <ScrollView contentContainerStyle={styles.contentStyle}>
         <ProductCartList step={step} />
       </ScrollView>

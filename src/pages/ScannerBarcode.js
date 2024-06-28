@@ -149,6 +149,7 @@ const ScannerBarcode = () => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const isOpenCart = useSelector(state => state.orderReducer?.openCart?.isOpenCart)
 
   useEffect(() => {
     const loadData = async () => {
@@ -178,7 +179,14 @@ const ScannerBarcode = () => {
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackHandler);
     };
-  }, [onBackHandler, basket]);
+  }, [onBackHandler, basket, isOpenCart]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'SET_OPEN_CART',
+      payload: false,
+    });
+  }, []);
 
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
@@ -252,7 +260,7 @@ const ScannerBarcode = () => {
 
   const onBarcodeRead = async barcodes => {
     const code = barcodes?.data
-    if (Platform.OS === 'ios' && code) {
+    if (Platform.OS === 'ios' && code && !showAlert && !openLocationModal) {
       const barcodeType = barcodes?.type
       await barcodeHandler(code, barcodeType);
     }
@@ -260,7 +268,7 @@ const ScannerBarcode = () => {
 
   const onGoogleBarcode = async barcodes => {
     const code = barcodes.barcodes[0]?.data;
-    if (Platform.OS === 'android' && code) {
+    if (Platform.OS === 'android' && code && !showAlert && !openLocationModal) {
       const barcodeType = barcodes.barcodes[0]?.type
       await barcodeHandler(code, barcodeType);
     }
@@ -327,10 +335,11 @@ const ScannerBarcode = () => {
   };
 
   const onBackHandler = useCallback(() => {
+    const isScannerScene = Actions.currentScene === "scannerBarcode"
     const isScanGoProduct = basket?.isStoreCheckoutCart;
     const isFEF = appConfig.appName === 'fareastflora';
     setIsGoBack(true);
-    if (isFEF && !isEmptyObject(basket) && isScanGoProduct) {
+    if (isFEF && !isEmptyObject(basket) && isScanGoProduct && !isOpenDetailPage && isScannerScene) {
       setShowAlert(true);
     } else {
       Actions.pop();
@@ -427,7 +436,7 @@ const ScannerBarcode = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isLoadingLocationModal} />
       {renderHeader()}
-      {!isLoadingLocationModal && !openLocationModal && !showAlert && renderScanner()}
+      {!isLoadingLocationModal && renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
       <ModalAction
