@@ -29,7 +29,7 @@ import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 
 import appConfig from '../config/appConfig';
 
-import {getBasket, getProductByOutlet} from '../actions/product.action';
+import {getProductByOutlet} from '../actions/product.action';
 import {getSVCBalance} from '../actions/SVC.action';
 import {dataPointHistory} from '../actions/rewards.action';
 import {dataTransaction} from '../actions/sales.action';
@@ -39,7 +39,7 @@ import {myVouchers} from '../actions/account.action';
 import {getUserProfile} from '../actions/user.action';
 import {dataPromotion} from '../actions/promotion.action';
 import {Body} from '../components/layout';
-import {getTermsConditions} from '../actions/order.action';
+import {getTermsConditions, getBasket} from '../actions/order.action';
 import {
   normalizeLayoutSizeHeight,
   normalizeLayoutSizeWidth,

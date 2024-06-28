@@ -15,8 +15,8 @@ import {
   changeOrderingMode,
   getOrderingMode,
   removeBasket,
+  getBasket
 } from '../actions/order.action';
-import {getBasket} from '../actions/product.action';
 import {getOutletById} from '../actions/stores.action';
 import {updateUser} from '../actions/user.action';
 

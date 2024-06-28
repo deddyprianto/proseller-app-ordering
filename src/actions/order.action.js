@@ -1855,23 +1855,22 @@ export const getBasket = params => {
         );
       }
       console.log(response, 'response get data basket');
-      if (response.success === false) {
+      if (!response.success) {
         dispatch({
           type: 'DATA_BASKET',
           product: undefined,
         });
       } else {
-        let data = response.response.data;
+        const data = response.response.data;
         dispatch({
           type: 'DATA_BASKET',
           product: data,
         });
         // check if ordering mode is exist (cart has submitted)
-        let order = response.response.data;
-        if (order?.orderingMode !== undefined && order?.tableNo !== undefined) {
+        if (data?.orderingMode && data?.tableNo) {
           dispatch({
             type: 'ORDER_TYPE',
-            orderType: order.orderingMode,
+            orderType: data?.orderingMode,
           });
         }
       }
@@ -1879,6 +1878,7 @@ export const getBasket = params => {
       return response;
     } catch (error) {
       reportSentry('cart/getcart', null, error);
+      console.log('cek error get cart => ', error);
       return error;
     }
   };

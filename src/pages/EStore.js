@@ -10,12 +10,12 @@ import {
   Image,
   SafeAreaView,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
 import {useDispatch, useSelector} from 'react-redux';
 
 import appConfig from '../config/appConfig';
 
-import {getBasket, getProductEStoreByOutlet} from '../actions/product.action';
+import {getProductEStoreByOutlet} from '../actions/product.action';
+import {getBasket} from '../actions/order.action'
 
 import EStoreList from '../components/eStoreList';
 import {Header} from '../components/layout';
