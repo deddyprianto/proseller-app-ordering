@@ -1878,7 +1878,6 @@ export const getBasket = params => {
       return response;
     } catch (error) {
       reportSentry('cart/getcart', null, error);
-      console.log('cek error get cart => ', error);
       return error;
     }
   };
