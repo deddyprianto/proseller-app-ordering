@@ -21,7 +21,7 @@ import {
   userPosition,
 } from '../actions/user.action';
 import VersionCheck from 'react-native-version-check';
-import {Alert, Linking, PermissionsAndroid} from 'react-native';
+import {Alert, Linking, PermissionsAndroid, Platform} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
@@ -198,22 +198,22 @@ class Home extends Component {
     } catch (e) {}
   };
 
-  getUserPosition = async () => {
+  getUserPosition = async (isHighAccuracy = true) => {
     try {
       await Geolocation.getCurrentPosition(
         async position => {
           await this.props.dispatch(userPosition(position));
         },
         async error => {
-          if (error.code === 1) {
+          if (Platform.OS === "android" && error.code === 1 || error.code === 2 || error.code === 3) {
             const granted = await PermissionsAndroid.request(
               PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             );
             granted === PermissionsAndroid.RESULTS.GRANTED &&
-              this.getUserPosition();
+              this.getUserPosition(false);
           }
         },
-        {enableHighAccuracy: true, timeout: 3000, maximumAge: 1000},
+        {enableHighAccuracy: isHighAccuracy, timeout: 3000, maximumAge: 1000},
       );
     } catch (error) {
       console.log(error, 'error get position');

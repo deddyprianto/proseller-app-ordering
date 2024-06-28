@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {Linking} from 'react-native';
+import {Linking, Platform, PermissionsAndroid} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import {getDistance} from 'geolib';
 
@@ -24,7 +24,7 @@ export const useScan = () => {
     }
   }, []);
 
-  const handleGetUserPosition = async defaultOutlet => {
+  const handleGetUserPosition = async (defaultOutlet, isHighAccuracy = true) => {
     setIsLoadingLocationModal(true);
     try {
       await Geolocation.getCurrentPosition(
@@ -46,14 +46,21 @@ export const useScan = () => {
           }
           setIsLoadingLocationModal(false);
         },
-        error => {
+        async error => {
           setIsLoadingLocationModal(false);
-          if (error.code === 5) {
+          if (error.code === 5 || error.code === 2) {
             setOpenLocationModal('requestPermission');
+          }
+          if (Platform.OS === "android" && error.code === 3) {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            );
+            granted === PermissionsAndroid.RESULTS.GRANTED &&
+              handleGetUserPosition(defaultOutlet, false);
           }
           console.log('cek geolocation error:', error);
         },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 1000},
+        {enableHighAccuracy: isHighAccuracy, timeout: 3000, maximumAge: 1000},
       );
     } catch (error) {
       setIsLoadingLocationModal(false);

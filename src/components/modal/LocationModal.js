@@ -74,36 +74,40 @@ const LocationModal = ({
   };
 
   return (
-    <GlobalModal
-      title={title}
-      stickyBottom={
-        <View style={styles.containerBtnOpenSettings}>
-          {openLocationModal === 'requestPermission' && (
-            <>
-              <View style={styles.root}>
-                <GlobalButton
-                  isOutline
-                  onPress={() => handleClose()}
-                  title="Cancel"
-                />
-              </View>
-              <View style={styles.gapBtnOpenSettings} />
-            </>
-          )}
-          <View style={styles.root}>
-            <GlobalButton
-              onPress={() => onClickSubmitLocationModal()}
-              title={txtSubmit}
-            />
+    <>
+    {openModal && !!openLocationModal && (
+      <GlobalModal
+        title={title}
+        stickyBottom={
+          <View style={styles.containerBtnOpenSettings}>
+            {openLocationModal === 'requestPermission' && (
+              <>
+                <View style={styles.root}>
+                  <GlobalButton
+                    isOutline
+                    onPress={() => handleClose()}
+                    title="Cancel"
+                  />
+                </View>
+                <View style={styles.gapBtnOpenSettings} />
+              </>
+            )}
+            <View style={styles.root}>
+              <GlobalButton
+                onPress={() => onClickSubmitLocationModal()}
+                title={txtSubmit}
+              />
+            </View>
           </View>
-        </View>
-      }
-      isVisible={openModal && !!openLocationModal}
-      hideCloseIcon>
-      <GlobalText style={styles.textPopUpContentCenter}>
-        {description()}
-      </GlobalText>
-    </GlobalModal>
+        }
+        isVisible={openModal && !!openLocationModal}
+        hideCloseIcon>
+        <GlobalText style={styles.textPopUpContentCenter}>
+          {description()}
+        </GlobalText>
+      </GlobalModal>
+    )}
+    </>
   );
 };
 
