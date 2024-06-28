@@ -152,12 +152,12 @@ const NewPageIndex = () => {
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
-  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const basketStoreCheckout = useSelector(state => state.orderReducer?.dataBasket?.product?.isStoreCheckoutCart);
 
   useEffect(() => {
     const loadData = async () => {
       const isFEF = appConfig.appName === 'fareastflora';
-      basket?.isStoreCheckoutCart && isFEF && await dispatch(removeBasket());
+      basketStoreCheckout && isFEF && await dispatch(removeBasket());
       await dispatch(getColorSettings());
     };
     loadData();
