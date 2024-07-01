@@ -1,10 +1,9 @@
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import additionalSetting from '../../config/additionalSettings';
 import {navigate} from '../../utils/navigation.utils';
 
 const useSettings = () => {
   const priority_key_mandatory = 'SetLowerPriorityAsMandatory';
-  const dispatch = useDispatch();
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
@@ -27,10 +26,6 @@ const useSettings = () => {
     if (additionalSetting().cartVersion === 'basic') {
       navigate('cart', params);
     } else if (additionalSetting().cartVersion === 'advance') {
-      await dispatch({
-        type: 'SET_OPEN_CART',
-        payload: true,
-      });
       navigate('cartStep1', {step: 1, ...params});
     } else {
       navigate('cart', params);
@@ -42,7 +37,7 @@ const useSettings = () => {
       const minimumAge = orderSetting?.find(
         setting => setting.settingKey === 'MinimumAge',
       );
-      console.log({minimumAge}, 'hebat');
+
       return minimumAge;
     }
     return {minimumAge: {}};

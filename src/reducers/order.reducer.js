@@ -254,18 +254,6 @@ const orderDetail = (state = {}, action) => {
   }
 };
 
-const openCart = (state = {}, action) => {
-  switch (action.type) {
-    case 'SET_OPEN_CART':
-      return {
-        isOpenCart: action.payload,
-      };
-
-    default:
-      return state;
-  }
-};
-
 export default combineReducers({
   productsOutlet,
   dataBasket,
@@ -287,5 +275,4 @@ export default combineReducers({
   loadingOrder,
   loadingBasket,
   orderDetail,
-  openCart,
 });

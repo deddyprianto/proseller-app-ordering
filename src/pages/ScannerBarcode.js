@@ -2,6 +2,7 @@ import React, {useState, useEffect, useCallback} from 'react';
 import {RNCamera} from 'react-native-camera';
 import {useDispatch, useSelector} from 'react-redux';
 import {Actions} from 'react-native-router-flux';
+import {withNavigationFocus} from 'react-navigation';
 
 import {
   StyleSheet,
@@ -122,7 +123,7 @@ const useStyles = () => {
   });
   return {styles, theme};
 };
-const ScannerBarcode = () => {
+const ScannerBarcode = ({isFocused}) => {
   const {styles, theme} = useStyles();
   const dispatch = useDispatch();
   const {
@@ -149,7 +150,6 @@ const ScannerBarcode = () => {
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
-  const isOpenCart = useSelector(state => state.orderReducer?.openCart?.isOpenCart)
 
   useEffect(() => {
     const loadData = async () => {
@@ -179,14 +179,7 @@ const ScannerBarcode = () => {
     return () => {
       BackHandler.removeEventListener('hardwareBackPress', onBackHandler);
     };
-  }, [onBackHandler, basket, isOpenCart]);
-
-  useEffect(() => {
-    dispatch({
-      type: 'SET_OPEN_CART',
-      payload: false,
-    });
-  }, []);
+  }, [onBackHandler, basket, isFocused]);
 
   const handleOpenSearchProductByBarcodeModal = () => {
     setIsOpenSearchBarcodeModal(true);
@@ -335,17 +328,16 @@ const ScannerBarcode = () => {
   };
 
   const onBackHandler = useCallback(() => {
-    const isScannerScene = Actions.currentScene === "scannerBarcode"
     const isScanGoProduct = basket?.isStoreCheckoutCart;
     const isFEF = appConfig.appName === 'fareastflora';
     setIsGoBack(true);
-    if (isFEF && !isEmptyObject(basket) && isScanGoProduct && !isOpenDetailPage && isScannerScene) {
+    if (isFEF && !isEmptyObject(basket) && isScanGoProduct && isFocused) {
       setShowAlert(true);
     } else {
       Actions.pop();
     }
     return true;
-  }, [basket, setShowAlert]);
+  }, [basket, setShowAlert, isFocused]);
 
   const renderSearchModal = () => {
     if (isOpenSearchBarcodeModal) {
@@ -436,7 +428,7 @@ const ScannerBarcode = () => {
     <SafeAreaView style={styles.root}>
       <LoadingScreen loading={isLoading || isLoadingLocationModal} />
       {renderHeader()}
-      {!isLoadingLocationModal && renderScanner()}
+      {!isLoadingLocationModal && isFocused && renderScanner()}
       {renderSearchModal()}
       {renderButtonCartFloating()}
       <ModalAction
@@ -465,4 +457,4 @@ const ScannerBarcode = () => {
   );
 };
 
-export default ScannerBarcode;
+export default withNavigationFocus(ScannerBarcode);
