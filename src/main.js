@@ -67,9 +67,9 @@ class Main extends Component {
     } catch (e) {}
 
     try {
+      await this.props.dispatch(getTermsConditions()),
       await Promise.all([
         this.props.dispatch(dataStores()),
-        this.props.dispatch(getTermsConditions()),
         this.props.dispatch(getColorSettings()),
         this.props.dispatch(getDefaultOutlet()),
         this.props.dispatch(generateOneMapToken()),

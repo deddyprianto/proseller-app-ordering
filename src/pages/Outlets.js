@@ -20,8 +20,8 @@ import {
   changeOrderingMode,
   removeBasket,
   getTimeslot,
+  getBasket
 } from '../actions/order.action';
-import {getBasket} from '../actions/product.action';
 import {Actions} from 'react-native-router-flux';
 import awsConfig from '../config/awsConfig';
 import LoadingScreen from '../components/loadingScreen/LoadingScreen';

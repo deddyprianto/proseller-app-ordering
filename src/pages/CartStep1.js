@@ -63,10 +63,12 @@ const CartStep1 = props => {
   const {navigation} = props;
   const step = navigation.state.params?.step;
   const {styles} = useStyles();
+  const {calculatePriceAferDiscount} = useCalculation();
+
   const isLoadingBasket = useSelector(
     state => state.orderReducer?.loadingBasket?.isLoadingBasket,
   );
-  const {calculatePriceAferDiscount} = useCalculation();
+
   const renderStep = () => (
     <View>
       <GlobalText style={styles.stepText}>Step 1 of 4</GlobalText>

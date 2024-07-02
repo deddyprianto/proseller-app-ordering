@@ -27,8 +27,8 @@ import {
   changeOrderingMode,
   getOrderingMode,
   removeBasket,
+  getBasket
 } from '../../../actions/order.action';
-import {getBasket} from '../../../actions/product.action';
 import {updateUser} from '../../../actions/user.action';
 import LoadingScreen from '../../loadingScreen';
 import {getDistance} from 'geolib';

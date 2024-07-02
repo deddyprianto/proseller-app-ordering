@@ -36,6 +36,7 @@ import additionalSetting from '../config/additionalSettings';
 import {HistoryNotificationModal} from '../components/modal';
 import {
   openPopupNotification,
+  removeBasket,
   setNotificationData,
 } from '../actions/order.action';
 import {navigate} from '../utils/navigation.utils';
@@ -151,9 +152,12 @@ const NewPageIndex = () => {
   const defaultOutlet = useSelector(
     state => state.storesReducer?.defaultOutlet?.defaultOutlet,
   );
+  const basketStoreCheckout = useSelector(state => state.orderReducer?.dataBasket?.product?.isStoreCheckoutCart);
 
   useEffect(() => {
     const loadData = async () => {
+      const isFEF = appConfig.appName === 'fareastflora';
+      basketStoreCheckout && isFEF && await dispatch(removeBasket());
       await dispatch(getColorSettings());
     };
     loadData();

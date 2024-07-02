@@ -4,10 +4,10 @@ import {navigate} from '../../utils/navigation.utils';
 
 const useSettings = () => {
   const priority_key_mandatory = 'SetLowerPriorityAsMandatory';
-
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
   );
+
   const checkTncPolicyData = () => {
     if (orderSetting && Array.isArray(orderSetting)) {
       const tnc = orderSetting.find(
@@ -22,7 +22,7 @@ const useSettings = () => {
     return {tnc: null, privacy: null};
   };
 
-  const useCartVersion = params => {
+  const useCartVersion = async params => {
     if (additionalSetting().cartVersion === 'basic') {
       navigate('cart', params);
     } else if (additionalSetting().cartVersion === 'advance') {
@@ -37,7 +37,7 @@ const useSettings = () => {
       const minimumAge = orderSetting?.find(
         setting => setting.settingKey === 'MinimumAge',
       );
-      console.log({minimumAge}, 'hebat');
+
       return minimumAge;
     }
     return {minimumAge: {}};

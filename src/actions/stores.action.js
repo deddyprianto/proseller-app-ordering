@@ -57,10 +57,11 @@ export const getDefaultOutlet = () => {
       const {
         orderReducer: {
           orderingSetting: {orderingSetting},
+          outletSelectionMode: {outletSelectionMode},
         },
       } = state;
 
-      let outletSelectionMode = 'DEFAULT';
+      let outletMode = outletSelectionMode || 'DEFAULT';
       if (
         orderingSetting !== undefined &&
         orderingSetting.settings !== undefined
@@ -69,12 +70,12 @@ export const getDefaultOutlet = () => {
           item => item.settingKey === 'OutletSelection',
         );
         if (find !== undefined) {
-          outletSelectionMode = find.settingValue;
+          outletMode = find.settingValue;
         }
       }
 
-      if (outletSelectionMode === 'Customer Select Manually')
-        outletSelectionMode = 'MANUAL';
+      if (outletMode === 'Customer Select Manually')
+        outletMode = 'MANUAL';
 
       let payload = {};
       if (!isEmptyObject(userPosition) && !isEmptyObject(userPosition.coords)) {
@@ -83,7 +84,7 @@ export const getDefaultOutlet = () => {
       }
 
       let response = {};
-      if (outletSelectionMode === 'DEFAULT') {
+      if (outletMode === 'DEFAULT') {
         response = await fetchApiMasterData(
           '/outlets/defaultoutlet',
           'GET',
@@ -91,7 +92,7 @@ export const getDefaultOutlet = () => {
           200,
           token,
         );
-      } else if (outletSelectionMode === 'NEAREST') {
+      } else if (outletMode === 'NEAREST') {
         response = await fetchApiMasterData(
           '/outlets/nearestoutlet',
           'POST',
@@ -100,10 +101,12 @@ export const getDefaultOutlet = () => {
           token,
         );
       }
+
       dispatch({
         type: 'OUTLET_SELECTION_MODE',
-        outletSelectionMode: outletSelectionMode,
+        outletSelectionMode: outletMode,
       });
+
       if (response.success) {
         if (response.response?.data?.orderingStatus === 'AVAILABLE') {
           dispatch({
