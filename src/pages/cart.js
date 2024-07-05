@@ -73,6 +73,7 @@ import GlobalInputText from '../components/globalInputText';
 import {normalizeLayoutSizeWidth} from '../helper/Layout';
 import {reportSentry} from '../helper/Sentry';
 import {navigate} from '../utils/navigation.utils';
+import orderingModes from '../helper/orderingModes';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -514,6 +515,8 @@ const Cart = props => {
   const [availableSelection, saveAvailableSelection] = React.useState([]);
   const [itemSelection, setItemSelection] = React.useState('staff');
   const [loadingTimeSlot, setLoadingTimeSlot] = React.useState(false);
+  const [orderingModesField, setOrderingModesField] = useState(orderingModes());
+
   const outlet = useSelector(
     state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
@@ -540,34 +543,6 @@ const Cart = props => {
     };
   }, []);
 
-  const orderingModesField = [
-    {
-      key: 'STOREPICKUP',
-      isEnabledFieldName: 'enableStorePickUp',
-      displayName: outlet.storePickUpName || 'Store Pick Up',
-    },
-    {
-      key: 'DELIVERY',
-      isEnabledFieldName: 'enableDelivery',
-      displayName: outlet.deliveryName || 'Delivery',
-    },
-    {
-      key: 'TAKEAWAY',
-      isEnabledFieldName: 'enableTakeAway',
-      displayName: outlet.takeAwayName || 'Take Away',
-    },
-    {
-      key: 'DINEIN',
-      isEnabledFieldName: 'enableDineIn',
-      displayName: outlet.dineInName || 'Dine In',
-    },
-    {
-      key: 'STORECHECKOUT',
-      isEnabledFieldName: 'enableStoreCheckOut',
-      displayName: outlet.storeCheckOutName || 'Store Checkout',
-    },
-  ];
-
   useEffect(() => {
     const loadData = async () => {
       await dispatch(getCompanyInfo());
@@ -578,6 +553,8 @@ const Cart = props => {
   useEffect(() => {
     const loadData = async () => {
       setLoadingTimeSlot(true);
+      setOrderingModesField(orderingModes(outlet));
+
       if (awsConfig.COMPANY_TYPE !== 'Retail') {
         setAvailableTimes(dataTimeslot);
       } else {
@@ -642,7 +619,8 @@ const Cart = props => {
   }, [outlet, basket, orderingModesField, dispatch]);
 
   useEffect(() => {
-    if (basket?.isStoreCheckoutCart) {
+    const isFEF = appConfig.appName === 'fareastflora';
+    if (basket?.isStoreCheckoutCart && !isFEF) {
       const findStoreCheckout = orderingModesField.find(
         data => data.key === 'STORECHECKOUT',
       );

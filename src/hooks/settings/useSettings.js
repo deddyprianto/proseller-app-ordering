@@ -1,11 +1,20 @@
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import additionalSetting from '../../config/additionalSettings';
 import {navigate} from '../../utils/navigation.utils';
+import orderingModes from '../../helper/orderingModes';
+import {changeOrderingMode} from '../../actions/order.action';
+import appConfig from '../../config/appConfig';
 
 const useSettings = () => {
   const priority_key_mandatory = 'SetLowerPriorityAsMandatory';
+  const dispatch = useDispatch();
+
   const orderSetting = useSelector(
     state => state.orderReducer?.orderingSetting?.orderingSetting?.settings,
+  );
+  const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
+  const outlet = useSelector(
+    state => state.storesReducer.defaultOutlet.defaultOutlet,
   );
 
   const checkTncPolicyData = () => {
@@ -23,6 +32,21 @@ const useSettings = () => {
   };
 
   const useCartVersion = async params => {
+    const isFEF = appConfig.appName === 'fareastflora';
+    if (basket?.isStoreCheckoutCart && isFEF) {
+      const findStoreCheckout = orderingModes(outlet)?.find(
+        data => data.key === 'STORECHECKOUT',
+      );
+
+      if (findStoreCheckout) {
+        dispatch(
+          changeOrderingMode({
+            orderingMode: findStoreCheckout.key,
+          }),
+        );
+      }
+    }
+
     if (additionalSetting().cartVersion === 'basic') {
       navigate('cart', params);
     } else if (additionalSetting().cartVersion === 'advance') {
