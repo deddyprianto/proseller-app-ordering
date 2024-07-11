@@ -3,7 +3,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
-  ActivityIndicator,
 } from 'react-native';
 import GlobalText from '../globalText';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,6 +18,7 @@ import {
 } from '../../actions/order.action';
 import {showSnackbar} from '../../actions/setting.action';
 import LoadingScreen from '../loadingScreen';
+import GlobalInputText from '../globalInputText';
 
 const useStyles = () => {
   const theme = Theme();
@@ -118,6 +118,8 @@ const CustomFieldProvider = () => {
   const [isLoadingDataDelivery, setIsLoadingDataDelivery] = React.useState(
     false,
   );
+  const [selectedField, setSelectedField] = React.useState(false);
+
   const {getDeliveryProviderFee} = usePayment();
   const {convertOrderActionDate} = useDate();
   const orderingDate = useSelector(
@@ -133,11 +135,13 @@ const CustomFieldProvider = () => {
   const basket = useSelector(state => state.orderReducer?.dataBasket?.product);
 
   const dispatch = useDispatch();
+
   const onOpenModal = async field => {
     await setOptions(field?.options);
     await setSelectedName(field?.value);
     await setSelectedRawName(field?.name);
     await setActiveModal(true);
+    setSelectedField(field);
   };
 
   const closeModal = () => setActiveModal(false);
@@ -181,8 +185,10 @@ const CustomFieldProvider = () => {
       );
       await dispatch(updateProvider(findSelectedProfider));
       closeDeliveryPopup();
+      setSelectedValue(null);
     } else {
       closeDeliveryPopup();
+      setSelectedValue(null);
     }
   };
   const closeDeliveryPopup = () => {
@@ -206,6 +212,15 @@ const CustomFieldProvider = () => {
     }
     return styles.touchableItem;
   };
+
+  const handleDisableSaveButton = () => {
+    const isDisabled = isLoadingDataDelivery || !selectedValue
+    if (!options) {
+      return isDisabled || selectedValue > selectedField?.max || selectedValue < selectedField?.min
+    }
+    return isDisabled
+  }
+
   return (
     <>
       {orderingDate &&
@@ -244,14 +259,32 @@ const CustomFieldProvider = () => {
         isVisible={activeModal}>
         <View style={styles.p16}>
           <LoadingScreen loading={isLoadingDataDelivery} />
-          {options.map((option, index) => (
-            <TouchableOpacity
-              onPress={() => onSelectedField(option)}
-              style={handleStyle(option)}
-              key={index}>
-              <GlobalText style={styles.textMethodValue}>{option}</GlobalText>
-            </TouchableOpacity>
-          ))}
+          {options ? (
+            options?.map((option, index) => (
+              <TouchableOpacity
+                onPress={() => onSelectedField(option)}
+                style={handleStyle(option)}
+                key={index}>
+                <GlobalText style={styles.textMethodValue}>{option}</GlobalText>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <GlobalInputText
+              value={selectedValue}
+              onChangeText={value => setSelectedValue(value)}
+              placeholder={selectedRawName}
+              label={`${selectedRawName} (min ${selectedField.min} max ${selectedField.max})`}
+              isError={
+                selectedValue > selectedField?.max ||
+                selectedValue < selectedField?.min ||
+                !selectedValue
+              }
+              errorMessage={`Please enter a ${selectedRawName} from ${
+                selectedField?.min
+              } to ${selectedField?.max}`}
+              keyboardType="numeric"
+            />
+          )}
           <View style={styles.actionButton}>
             <GlobalButton
               onPress={closeModal}
@@ -261,7 +294,7 @@ const CustomFieldProvider = () => {
             />
 
             <GlobalButton
-              disabled={isLoadingDataDelivery}
+              disabled={handleDisableSaveButton()}
               onPress={onSaveData}
               buttonStyle={styles.btnStyle}>
               <GlobalText style={styles.textSave}>Save </GlobalText>
