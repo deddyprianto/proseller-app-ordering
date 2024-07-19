@@ -1,13 +1,10 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
-require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
 require_relative '../node_modules/react-native-permissions/scripts/setup'
 
 platform :ios, '11.0'
 
 target 'Automaxima' do
-  use_unimodules!
-  
   config = use_native_modules!
 
   use_react_native!(
@@ -84,6 +81,7 @@ target 'Automaxima' do
   pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
 
 
 

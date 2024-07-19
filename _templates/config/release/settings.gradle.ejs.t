@@ -4,7 +4,6 @@ force: true
 ---
 
 rootProject.name = '<%= name %>'
-apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects()
 include ':react-native-linear-gradient'
 project(':react-native-linear-gradient').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linear-gradient/android')
 include ':@react-native-firebase_crashlytics'
