@@ -4,7 +4,6 @@ force: true
 ---
 
 apply plugin: "com.android.application"
-// apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 
 import com.android.build.OutputFile
 
@@ -278,7 +277,7 @@ dependencies {
     implementation 'com.madgag.spongycastle:core:1.58.0.0'
     implementation 'com.madgag.spongycastle:prov:1.58.0.0'
     implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
-    compile project(':react-native-scan-barcode')
+    implementation 'org.jetbrains:annotations:16.0.2'
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

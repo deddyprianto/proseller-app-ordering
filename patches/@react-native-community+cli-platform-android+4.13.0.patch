@@ -1,0 +1,13 @@
+diff --git a/node_modules/@react-native-community/cli-platform-android/native_modules.gradle b/node_modules/@react-native-community/cli-platform-android/native_modules.gradle
+index 11fe3e6..97794a0 100644
+--- a/node_modules/@react-native-community/cli-platform-android/native_modules.gradle
++++ b/node_modules/@react-native-community/cli-platform-android/native_modules.gradle
+@@ -118,7 +118,7 @@ class ReactNativeModules {
+    * @param generatedFileContentsTemplate
+    */
+   void generatePackagesFile(File outputDir, String generatedFileName, String generatedFileContentsTemplate) {
+-    ArrayList<HashMap<String, String>>[] packages = this.reactNativeModules
++    def packages = this.reactNativeModules
+     String packageName = this.packageName
+ 
+     String packageImports = ""
