@@ -36,7 +36,7 @@ import {deviceUserInfo, userPosition} from '../actions/user.action';
 import Geolocation from '@react-native-community/geolocation';
 // import packageJson from '../../package';
 import PhoneInput from 'react-native-phone-input';
-// import VersionCheck from 'react-native-version-check';
+
 import {getCompanyInfo} from '../actions/stores.action';
 import {getMandatoryFields} from '../actions/account.action';
 import {navigate} from '../utils/navigation.utils';

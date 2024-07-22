@@ -7,6 +7,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Store from './store';
+import SpInAppUpdates, {IAUUpdateKind} from 'sp-react-native-in-app-updates';
 
 import {isEmptyArray, isEmptyObject} from '../helper/CheckEmpty';
 // import ProductsRetail from '../components/order/ProductsRetail';
@@ -20,8 +21,7 @@ import {
   updateUser,
   userPosition,
 } from '../actions/user.action';
-import VersionCheck from 'react-native-version-check';
-import {Alert, Linking, PermissionsAndroid, Platform} from 'react-native';
+import {Alert, PermissionsAndroid, Platform} from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import CryptoJS from 'react-native-crypto-js';
 import awsConfig from '../config/awsConfig';
@@ -49,6 +49,7 @@ class Home extends Component {
       onesignalID: null,
       refresh: false,
     };
+    this.inAppUpdates = new SpInAppUpdates();
 
     try {
       OneSignal.removeEventListener('received', this.onReceived);
@@ -172,30 +173,20 @@ class Home extends Component {
   };
 
   checkUpdateAndVersion = () => {
-    try {
-      VersionCheck.needUpdate().then(async res => {
-        if (res != null && res != undefined) {
-          if (res.isNeeded) {
-            Alert.alert(
-              'Time to Update!',
-              'Updates are already available on the store.',
-              [
-                {
-                  text: 'Later',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
-                },
-                {
-                  text: 'Update Now',
-                  onPress: () => Linking.openURL(res.storeUrl),
-                },
-              ],
-              {cancelable: false},
-            );
+    this.inAppUpdates.checkNeedsUpdate()
+      .then((result) => {
+        if (result.shouldUpdate) {
+          let updateOptions = {};
+          if (Platform.OS === 'android') {
+            updateOptions = {
+              updateType: IAUUpdateKind.IMMEDIATE,
+            };
           }
+          this.inAppUpdates.startUpdate(updateOptions);
         }
+      }).catch((error) => {
+        console.log('Check update failed:', error);
       });
-    } catch (e) {}
   };
 
   getUserPosition = async (isHighAccuracy = true) => {
