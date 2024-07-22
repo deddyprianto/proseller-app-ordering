@@ -44,7 +44,8 @@ import {dataInbox} from '../actions/inbox.action';
 import {getMandatoryFields, paymentRefNo} from '../actions/account.action';
 import {Overlay} from 'react-native-elements';
 import {getCartHomePage, getPendingCart} from '../actions/order.action';
-import VersionCheck from 'react-native-version-check';
+import SpInAppUpdates, {IAUUpdateKind} from 'sp-react-native-in-app-updates';
+
 import RewardsSVC from '../components/rewardsSVC';
 import {getSVCBalance, getSVCCard} from '../actions/SVC.action';
 import {Body} from '../components/layout';
@@ -69,6 +70,7 @@ class Rewards extends Component {
       statusGetData: true,
       onesignalID: null,
     };
+    this.inAppUpdates = new SpInAppUpdates();
 
     try {
       // OneSignal.removeEventListener('received', this.onReceived);
@@ -276,27 +278,21 @@ class Rewards extends Component {
   };
 
   checkUpdateAndVersion = () => {
-    try {
-      VersionCheck.needUpdate().then(async res => {
-        if (res != null && res != undefined) {
-          if (res.isNeeded) {
-            Alert.alert(
-              'App Update.',
-              'Updates are already available on the store.',
-              [
-                {
-                  text: 'Later',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
-                },
-                {text: 'Update', onPress: () => Linking.openURL(res.storeUrl)},
-              ],
-              {cancelable: false},
-            );
+    this.inAppUpdates.checkNeedsUpdate()
+      .then((result) => {
+        if (result.shouldUpdate) {
+          let updateOptions = {};
+          if (Platform.OS === 'android') {
+            updateOptions = {
+              updateType: IAUUpdateKind.IMMEDIATE,
+            };
           }
+          this.inAppUpdates.startUpdate(updateOptions);
         }
+      })
+      .catch((error) => {
+        console.log('Check update failed:', error);
       });
-    } catch (e) {}
   };
 
   getUserPosition = async () => {
